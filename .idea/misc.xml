@@ -4,4 +4,7 @@
     <option name="sdkName" value="Hatch (aiml-dash) [Python 3.12.10]" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Hatch (aiml-dash) [Python 3.12.10]" project-jdk-type="Python SDK" />
+  <component name="PythonCompatibilityInspectionAdvertiser">
+    <option name="version" value="3" />
+  </component>
 </project>

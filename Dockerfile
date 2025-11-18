@@ -1,6 +1,12 @@
+# syntax=docker/dockerfile:1.6
+
 # Install uv
 FROM python:3.12-slim
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
 # Change the working directory to the `app` directory
 WORKDIR /app
@@ -18,4 +24,6 @@ COPY . /app
 # Sync the project
 RUN uv sync --frozen
 
-CMD [ "python", "aiml_dash/foo.py" ]
+EXPOSE 8050
+
+CMD ["python", "aiml/run.py"]

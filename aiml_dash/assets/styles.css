@@ -1,0 +1,368 @@
+/**
+ * AIML Data - Custom Styles
+ * =============================
+ * 
+ * Custom styling for the Dash application
+ */
+
+/* Root variables */
+:root {
+    --aiml-primary: #228be6;
+    --aiml-secondary: #15aabf;
+    --aiml-success: #12b886;
+    --aiml-warning: #fab005;
+    --aiml-danger: #fa5252;
+    --aiml-dark: #1a1b1e;
+    --aiml-light: #f8f9fa;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Global styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+}
+
+/* AppShell specific styles */
+.mantine-AppShell-root {
+    min-height: 100vh;
+}
+
+.mantine-AppShell-header {
+    background-color: white;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.mantine-AppShell-navbar {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+.mantine-AppShell-aside {
+    background-color: #f8f9fa;
+    border-left: 1px solid #dee2e6;
+}
+
+.mantine-AppShell-footer {
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+}
+
+.mantine-AppShell-main {
+    background-color: #ffffff;
+}
+
+/* Navigation styling */
+.nav-link {
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    transform: translateX(4px);
+}
+
+.nav-link.active {
+    background-color: var(--aiml-primary);
+    color: white !important;
+}
+
+/* Card enhancements */
+.mantine-Card-root {
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.mantine-Card-root:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* DataTable styling */
+.dash-table-container {
+    font-family: 'Inter', sans-serif;
+}
+
+/* AG Grid styling */
+.ag-theme-alpine {
+    --ag-font-family: 'Inter', sans-serif;
+    --ag-font-size: 14px;
+    --ag-header-background-color: var(--aiml-dark);
+    --ag-header-foreground-color: white;
+    --ag-odd-row-background-color: #f8f9fa;
+    --ag-row-hover-color: #e9ecef;
+    --ag-border-color: #dee2e6;
+}
+
+.ag-header-cell-label {
+    font-weight: 600;
+}
+
+.ag-cell {
+    padding: 10px 12px !important;
+}
+
+.ag-root-wrapper {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Filter section */
+.filter-section {
+    background-color: var(--aiml-light);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+/* Button enhancements */
+.mantine-Button-root {
+    transition: all 0.2s ease-in-out;
+}
+
+.mantine-Button-root:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.mantine-Button-root:active {
+    transform: translateY(0);
+}
+
+/* Badge styling */
+.mantine-Badge-root {
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+/* Notification animations */
+.mantine-Notification-root {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Code display */
+.mantine-Prism-root {
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+.mantine-Prism-code {
+    font-family: 'Fira Code', 'Monaco', 'Courier New', monospace !important;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Plotly chart container */
+.js-plotly-plot {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Loading states */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .app-header {
+        padding: 12px;
+    }
+    
+    .mantine-SimpleGrid-root {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .dash-table-container {
+        font-size: 12px;
+    }
+}
+
+/* Tabs styling */
+.mantine-Tabs-tab {
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.mantine-Tabs-tab[data-active] {
+    color: var(--aiml-primary);
+    border-bottom-color: var(--aiml-primary);
+}
+
+/* Select and MultiSelect */
+.mantine-Select-input,
+.mantine-MultiSelect-input {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.mantine-Select-input:focus,
+.mantine-MultiSelect-input:focus {
+    border-color: var(--aiml-primary);
+    box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.1);
+}
+
+/* Divider styling */
+.mantine-Divider-root {
+    border-color: #dee2e6;
+    opacity: 0.6;
+}
+
+/* Info cards */
+.info-card {
+    background: linear-gradient(135deg, var(--aiml-primary) 0%, var(--aiml-secondary) 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-md);
+}
+
+.info-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Stat display */
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 8px 0;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Page transitions */
+.page-container {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: #868e96;
+}
+
+.empty-state svg {
+    width: 64px;
+    height: 64px;
+    opacity: 0.4;
+    margin-bottom: 16px;
+}
+
+/* Success states */
+.success-message {
+    color: var(--aiml-success);
+    font-weight: 500;
+}
+
+/* Error states */
+.error-message {
+    color: var(--aiml-danger);
+    font-weight: 500;
+}
+
+/* Dataset selector */
+.dataset-selector {
+    min-width: 200px;
+    max-width: 300px;
+}
+
+/* Page header */
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--aiml-dark);
+}
+
+.page-header p {
+    font-size: 1rem;
+    color: #868e96;
+    margin: 0;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+
+.p-1 { padding: 8px; }
+.p-2 { padding: 16px; }
+.p-3 { padding: 24px; }
