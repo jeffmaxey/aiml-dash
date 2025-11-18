@@ -8,8 +8,59 @@
 
 A Dash application for Predictive Analytics and Machine Learning.
 
+## Overview
+`aiml_dash` is a Dash application designed to provide interactive insights into predictive analytics and machine learning. 
+This application serves as a platform for users to explore and visualize datasets, perform machine learning experiments 
+and develop insights through an intuitive web interface.
+
 - **Github repository**: <https://github.com/jeffmaxey/aiml-dash/>
 - **Documentation** <https://jeffmaxey.github.io/aiml-dash/>
+
+## Installation
+To install the `aiml_dash` application, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/aiml_dash.git
+   cd aiml_dash
+   ```
+
+2. Create a virtual environment (optional but recommended):
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+
+3. Install the required dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Usage
+To run the Dash application, execute the following command:
+
+```bash
+python src/aiml_dash/app.py
+```
+
+Once the application is running, open your web browser and navigate to `http://127.0.0.1:8050` to access the application.
+
+## Features
+- Interactive visualizations of AI and machine learning datasets.
+- User-friendly interface for data exploration.
+- Customizable components for enhanced user experience.
+
+## Contributing
+Contributions are welcome! If you would like to contribute to the `aiml_dash` project, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your branch and create a pull request.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 
 ## Getting started with your project
 

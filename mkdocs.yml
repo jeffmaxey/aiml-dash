@@ -2,7 +2,7 @@ site_name: aiml-dash
 repo_url: https://github.com/jeffmaxey/aiml-dash
 site_url: https://jeffmaxey.github.io/aiml-dash
 site_description: A Dash application for Predictive Analytics and Machine Learning.
-site_author: Jeff Maxey
+site_author: Jeff A. Maxey
 edit_uri: edit/main/docs/
 repo_name: jeffmaxey/aiml-dash
 copyright: Maintained by <a href="https://jeffmaxey.com">jeffmaxey</a>.

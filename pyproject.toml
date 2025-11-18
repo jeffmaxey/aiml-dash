@@ -2,7 +2,7 @@
 name = "aiml-dash"
 version = "0.0.1"
 description = "A Dash application for Predictive Analytics and Machine Learning."
-authors = [{ name = "Jeff Maxey", email = "jeffmaxey@proton.me" }]
+authors = [{ name = "Jeff A. Maxey", email = "aiml-dash@proton.mee" }]
 readme = "README.md"
 keywords = ['python']
 requires-python = ">=3.9,<4.0"
@@ -114,3 +114,4 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["aiml_dash"]
+
