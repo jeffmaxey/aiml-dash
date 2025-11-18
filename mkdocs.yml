@@ -1,0 +1,52 @@
+site_name: aiml-dash
+repo_url: https://github.com/jeffmaxey/aiml-dash
+site_url: https://jeffmaxey.github.io/aiml-dash
+site_description: A Dash application for Predictive Analytics and Machine Learning.
+site_author: Jeff Maxey
+edit_uri: edit/main/docs/
+repo_name: jeffmaxey/aiml-dash
+copyright: Maintained by <a href="https://jeffmaxey.com">jeffmaxey</a>.
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["aiml_dash"]
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jeffmaxey/aiml-dash
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/aiml-dash
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
