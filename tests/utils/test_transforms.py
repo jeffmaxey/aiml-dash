@@ -44,9 +44,9 @@ def sample_array():
 def sample_dataframe():
     """Create a sample dataframe for testing."""
     return pd.DataFrame({
-        'x': [1, 2, 3, 4, 5],
-        'y': [10, 20, 30, 40, 50],
-        'cat': ['A', 'B', 'A', 'B', 'A'],
+        "x": [1, 2, 3, 4, 5],
+        "y": [10, 20, 30, 40, 50],
+        "cat": ["A", "B", "A", "B", "A"],
     })
 
 
@@ -68,7 +68,7 @@ class TestBasicTransforms:
     def test_square(self, sample_series):
         """Test square transformation."""
         result = square(sample_series)
-        expected = sample_series ** 2
+        expected = sample_series**2
         pd.testing.assert_series_equal(result, expected)
 
     def test_inverse(self):
@@ -151,31 +151,31 @@ class TestTypeConversions:
         """Test conversion to integer."""
         series = pd.Series([1, 2, 3, 4])
         result = as_integer(series)
-        assert result.dtype == 'Int64'
+        assert result.dtype == "Int64"
 
     def test_as_integer_with_strings(self):
         """Test integer conversion with strings."""
-        series = pd.Series(['1', '2', '3', '4'])
+        series = pd.Series(["1", "2", "3", "4"])
         result = as_integer(series)
-        assert result.dtype == 'Int64'
+        assert result.dtype == "Int64"
 
     def test_as_numeric(self):
         """Test conversion to numeric."""
-        series = pd.Series(['1.5', '2.7', '3.2', 'invalid'])
+        series = pd.Series(["1.5", "2.7", "3.2", "invalid"])
         result = as_numeric(series)
         assert pd.api.types.is_numeric_dtype(result)
         assert result.isna().sum() == 1  # 'invalid' becomes NaN
 
     def test_as_factor(self):
         """Test conversion to categorical."""
-        series = pd.Series(['A', 'B', 'A', 'C', 'B'])
+        series = pd.Series(["A", "B", "A", "C", "B"])
         result = as_factor(series)
         assert isinstance(result, pd.Categorical)
         assert not result.ordered
 
     def test_as_factor_ordered(self):
         """Test conversion to ordered categorical."""
-        series = pd.Series(['low', 'medium', 'high', 'low'])
+        series = pd.Series(["low", "medium", "high", "low"])
         result = as_factor(series, ordered=True)
         assert isinstance(result, pd.Categorical)
         assert result.ordered
@@ -217,16 +217,16 @@ class TestRefactor:
 
     def test_refactor_basic(self):
         """Test basic refactor functionality."""
-        series = pd.Series(['B', 'A', 'C', 'A', 'B'])
+        series = pd.Series(["B", "A", "C", "A", "B"])
         result = refactor(series)
         assert isinstance(result, pd.Categorical)
 
     def test_refactor_custom_levels(self):
         """Test refactor with custom levels."""
-        series = pd.Series(['B', 'A', 'C', 'A', 'B'])
-        result = refactor(series, levs=['A', 'B', 'C'])
+        series = pd.Series(["B", "A", "C", "A", "B"])
+        result = refactor(series, levs=["A", "B", "C"])
         assert isinstance(result, pd.Categorical)
-        assert list(result.categories) == ['A', 'B', 'C']
+        assert list(result.categories) == ["A", "B", "C"]
 
 
 class TestMutateExt:
@@ -234,26 +234,26 @@ class TestMutateExt:
 
     def test_mutate_ext_center(self, sample_dataframe):
         """Test mutate_ext with center function."""
-        result = mutate_ext(sample_dataframe, 'x', 'center')
-        assert 'x_center' in result.columns
+        result = mutate_ext(sample_dataframe, "x", "center")
+        assert "x_center" in result.columns
         assert len(result.columns) == len(sample_dataframe.columns) + 1
 
     def test_mutate_ext_standardize(self, sample_dataframe):
         """Test mutate_ext with standardize function."""
-        result = mutate_ext(sample_dataframe, 'x', 'standardize')
-        assert 'x_standardize' in result.columns
+        result = mutate_ext(sample_dataframe, "x", "standardize")
+        assert "x_standardize" in result.columns
 
     def test_mutate_ext_square(self, sample_dataframe):
         """Test mutate_ext with square function."""
-        result = mutate_ext(sample_dataframe, 'x', 'square')
-        assert 'x_square' in result.columns
-        expected = sample_dataframe['x'] ** 2
-        pd.testing.assert_series_equal(result['x_square'], expected, check_names=False)
+        result = mutate_ext(sample_dataframe, "x", "square")
+        assert "x_square" in result.columns
+        expected = sample_dataframe["x"] ** 2
+        pd.testing.assert_series_equal(result["x_square"], expected, check_names=False)
 
     def test_mutate_ext_ln(self, sample_dataframe):
         """Test mutate_ext with ln function."""
-        result = mutate_ext(sample_dataframe, 'x', 'ln')
-        assert 'x_ln' in result.columns
+        result = mutate_ext(sample_dataframe, "x", "ln")
+        assert "x_ln" in result.columns
 
 
 class TestTransformFunctions:
@@ -277,23 +277,23 @@ class TestTypeConvert:
 
     def test_type_convert_to_integer(self, sample_dataframe):
         """Test type conversion to integer."""
-        result = type_convert(sample_dataframe, 'x', 'integer')
-        assert result['x'].dtype == 'Int64'
+        result = type_convert(sample_dataframe, "x", "integer")
+        assert result["x"].dtype == "Int64"
 
     def test_type_convert_to_numeric(self, sample_dataframe):
         """Test type conversion to numeric."""
-        result = type_convert(sample_dataframe, 'x', 'numeric')
-        assert pd.api.types.is_numeric_dtype(result['x'])
+        result = type_convert(sample_dataframe, "x", "numeric")
+        assert pd.api.types.is_numeric_dtype(result["x"])
 
     def test_type_convert_to_factor(self, sample_dataframe):
         """Test type conversion to factor."""
-        result = type_convert(sample_dataframe, 'cat', 'factor')
-        assert isinstance(result['cat'].dtype, pd.CategoricalDtype)
+        result = type_convert(sample_dataframe, "cat", "factor")
+        assert isinstance(result["cat"].dtype, pd.CategoricalDtype)
 
     def test_type_convert_to_character(self, sample_dataframe):
         """Test type conversion to character."""
-        result = type_convert(sample_dataframe, 'x', 'character')
-        assert result['x'].dtype == object
+        result = type_convert(sample_dataframe, "x", "character")
+        assert result["x"].dtype == object
 
 
 class TestCreateVariable:
@@ -301,21 +301,21 @@ class TestCreateVariable:
 
     def test_create_variable_simple(self, sample_dataframe):
         """Test create_variable with simple expression."""
-        result = create_variable(sample_dataframe, 'z', 'x + y')
-        assert 'z' in result.columns
-        expected = sample_dataframe['x'] + sample_dataframe['y']
-        pd.testing.assert_series_equal(result['z'], expected, check_names=False)
+        result = create_variable(sample_dataframe, "z", "x + y")
+        assert "z" in result.columns
+        expected = sample_dataframe["x"] + sample_dataframe["y"]
+        pd.testing.assert_series_equal(result["z"], expected, check_names=False)
 
     def test_create_variable_complex(self, sample_dataframe):
         """Test create_variable with complex expression."""
-        result = create_variable(sample_dataframe, 'ratio', 'y / x')
-        assert 'ratio' in result.columns
-        expected = sample_dataframe['y'] / sample_dataframe['x']
-        pd.testing.assert_series_equal(result['ratio'], expected, check_names=False)
+        result = create_variable(sample_dataframe, "ratio", "y / x")
+        assert "ratio" in result.columns
+        expected = sample_dataframe["y"] / sample_dataframe["x"]
+        pd.testing.assert_series_equal(result["ratio"], expected, check_names=False)
 
     def test_create_variable_invalid(self, sample_dataframe):
         """Test create_variable with invalid expression."""
         # Should handle error gracefully
-        result = create_variable(sample_dataframe, 'invalid', 'nonexistent_col * 2')
+        result = create_variable(sample_dataframe, "invalid", "nonexistent_col * 2")
         # Original dataframe should be unchanged or error handled
         assert len(result.columns) >= len(sample_dataframe.columns)

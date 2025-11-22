@@ -32,16 +32,7 @@ from components.shell import (
 )
 
 # Import all pages
-from pages.data import (
-    manage,
-    view,
-    explore,
-    transform,
-    visualize,
-    pivot,
-    combine,
-    report,
-)
+from pages.data import manage, view, explore, transform, visualize, pivot, combine, report, sql_query
 from pages.design import doe, sampling, sample_size, sample_size_comp, randomizer
 from pages.model import (
     linear_regression,
@@ -314,6 +305,8 @@ def load_page_content(page):
         return combine.layout()
     elif page == "report":
         return report.layout()
+    elif page == "sql-query":
+        return sql_query.layout()
     # Design pages
     elif page == "doe":
         return doe.layout()

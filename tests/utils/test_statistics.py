@@ -9,7 +9,16 @@ from aiml_dash.utils.statistics import (
     n_obs,
     n_missing,
     percentile,
-    p01, p025, p05, p10, p25, p75, p90, p95, p975, p99,
+    p01,
+    p025,
+    p05,
+    p10,
+    p25,
+    p75,
+    p90,
+    p95,
+    p975,
+    p99,
     cv,
     se,
     me,
@@ -52,9 +61,9 @@ def sample_proportion():
 def sample_dataframe():
     """Create a sample dataframe for testing."""
     return pd.DataFrame({
-        'A': [1, 2, 3, 4, 5],
-        'B': [10, 20, 30, 40, 50],
-        'C': ['cat1', 'cat2', 'cat1', 'cat2', 'cat1'],
+        "A": [1, 2, 3, 4, 5],
+        "B": [10, 20, 30, 40, 50],
+        "C": ["cat1", "cat2", "cat1", "cat2", "cat1"],
     })
 
 
@@ -263,22 +272,22 @@ class TestExplore:
 
     def test_explore_basic(self, sample_dataframe):
         """Test basic explore functionality."""
-        result = explore(sample_dataframe, vars=['A', 'B'], fun=['mean', 'min', 'max'])
+        result = explore(sample_dataframe, vars=["A", "B"], fun=["mean", "min", "max"])
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 1
-        assert 'A_mean' in result.columns
-        assert 'B_mean' in result.columns
+        assert "A_mean" in result.columns
+        assert "B_mean" in result.columns
 
     def test_explore_with_groupby(self, sample_dataframe):
         """Test explore with groupby."""
-        result = explore(sample_dataframe, vars=['A'], byvar=['C'], fun=['mean'])
+        result = explore(sample_dataframe, vars=["A"], byvar=["C"], fun=["mean"])
         assert isinstance(result, pd.DataFrame)
-        assert 'C' in result.columns
+        assert "C" in result.columns
         assert len(result) == 2  # Two categories
 
     def test_explore_with_filter(self, sample_dataframe):
         """Test explore with data filter."""
-        result = explore(sample_dataframe, vars=['A'], fun=['mean'], data_filter='A > 2')
+        result = explore(sample_dataframe, vars=["A"], fun=["mean"], data_filter="A > 2")
         assert isinstance(result, pd.DataFrame)
         # Should only include rows where A > 2
 
@@ -290,19 +299,19 @@ class TestChiSquare:
         """Test basic chi-square test."""
         observed = pd.DataFrame([[10, 20], [30, 40]])
         result = chi_square_test(observed)
-        assert 'chi2' in result
-        assert 'p_value' in result
-        assert 'dof' in result
-        assert 'expected' in result
-        assert 'significant' in result
-        assert isinstance(result['chi2'], float)
-        assert isinstance(result['p_value'], float)
-        assert isinstance(result['dof'], int)
-        assert isinstance(result['significant'], (bool, np.bool_))
+        assert "chi2" in result
+        assert "p_value" in result
+        assert "dof" in result
+        assert "expected" in result
+        assert "significant" in result
+        assert isinstance(result["chi2"], float)
+        assert isinstance(result["p_value"], float)
+        assert isinstance(result["dof"], int)
+        assert isinstance(result["significant"], (bool, np.bool_))
 
     def test_chi_square_test_error_handling(self):
         """Test chi-square test error handling."""
         # Test with invalid data
         observed = pd.DataFrame([[-1, -2]])
         result = chi_square_test(observed)
-        assert 'error' in result or 'chi2' in result
+        assert "error" in result or "chi2" in result

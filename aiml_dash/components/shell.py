@@ -120,6 +120,7 @@ def create_navigation():
         {"value": "pivot", "label": "Pivot", "icon": "carbon:data-reference"},
         {"value": "combine", "label": "Combine", "icon": "carbon:data-connected"},
         {"value": "report", "label": "Report", "icon": "carbon:document"},
+        {"value": "sql-query", "label": "SQL Query", "icon": "carbon:data-base"},
     ]
 
     # Design pages
@@ -307,6 +308,39 @@ def create_navigation():
             dmc.AccordionItem(
                 children=[
                     dmc.AccordionControl(
+                        "Basics",
+                        icon=DashIconify(icon="carbon:calculator", width=20, height=20),
+                    ),
+                    dmc.AccordionPanel(
+                        dmc.Stack(
+                            [
+                                dmc.Text("Means", size="xs", fw=600, c="dimmed", pl="xs"),
+                                *create_nav_links(basics_means_items),
+                                dmc.Divider(my="xs"),
+                                dmc.Text(
+                                    "Proportions",
+                                    size="xs",
+                                    fw=600,
+                                    c="dimmed",
+                                    pl="xs",
+                                ),
+                                *create_nav_links(basics_props_items),
+                                dmc.Divider(my="xs"),
+                                dmc.Text("Tables", size="xs", fw=600, c="dimmed", pl="xs"),
+                                *create_nav_links(basics_tables_items),
+                                dmc.Divider(my="xs"),
+                                dmc.Text("Other", size="xs", fw=600, c="dimmed", pl="xs"),
+                                *create_nav_links(basics_other_items),
+                            ],
+                            gap="xs",
+                        )
+                    ),
+                ],
+                value="basics",
+            ),
+            dmc.AccordionItem(
+                children=[
+                    dmc.AccordionControl(
                         "Design",
                         icon=DashIconify(icon="carbon:chemistry", width=20, height=20),
                     ),
@@ -356,39 +390,6 @@ def create_navigation():
                     dmc.AccordionPanel(dmc.Stack(create_nav_links(multivariate_items), gap="xs")),
                 ],
                 value="multivariate",
-            ),
-            dmc.AccordionItem(
-                children=[
-                    dmc.AccordionControl(
-                        "Basics",
-                        icon=DashIconify(icon="carbon:calculator", width=20, height=20),
-                    ),
-                    dmc.AccordionPanel(
-                        dmc.Stack(
-                            [
-                                dmc.Text("Means", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(basics_means_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text(
-                                    "Proportions",
-                                    size="xs",
-                                    fw=600,
-                                    c="dimmed",
-                                    pl="xs",
-                                ),
-                                *create_nav_links(basics_props_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text("Tables", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(basics_tables_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text("Other", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(basics_other_items),
-                            ],
-                            gap="xs",
-                        )
-                    ),
-                ],
-                value="basics",
             ),
         ],
         value=["data"],  # Start with data section expanded

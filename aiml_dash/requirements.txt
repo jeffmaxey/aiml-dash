@@ -26,3 +26,6 @@ html5lib>=1.1
 brotli>=1.0.9
 blinker>=1.6.2
 itsdangerous>=2.1.2
+pydantic-settings
+pyodbc
+sqlalchemy
