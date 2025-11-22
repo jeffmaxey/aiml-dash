@@ -343,7 +343,7 @@ def create_info_card(title: str, value: Any, icon: str, color: str = "blue") -> 
                             dmc.Text(title, size="sm", c="dimmed"),
                             dmc.Text(str(value), size="xl", fw=700),
                         ],
-                        spacing=0,
+                        gap=0,
                     ),
                 ],
                 justify="space-between",
