@@ -7,7 +7,7 @@ Reusable components for the AIML Dash AppShell structure.
 
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
-from utils.constants import APP_TITLE, GITHUB_URL
+from aiml_dash.utils.constants import APP_TITLE, GITHUB_URL
 
 
 theme_toggle = dmc.Switch(
