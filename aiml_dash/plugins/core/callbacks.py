@@ -13,6 +13,9 @@ from dash_iconify import DashIconify
 
 from aiml_dash.plugins.core.components import create_plugin_toggle_card
 
+ENABLED_PLUGINS_KEY = "enabled_plugins"
+FALLBACK_PLUGINS_KEY = "plugins"
+
 
 def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
     """Return a set of locked plugin identifiers."""
@@ -90,13 +93,13 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
     locked = _get_locked_plugins(metadata)
 
     try:
-        _, content_string = contents.split(",")
+        _, content_string = contents.split(",", 1)
         decoded = base64.b64decode(content_string)
         payload = json.loads(decoded.decode("utf-8"))
-        if "enabled_plugins" in payload:
-            enabled_plugins = payload.get("enabled_plugins")
+        if ENABLED_PLUGINS_KEY in payload:
+            enabled_plugins = payload.get(ENABLED_PLUGINS_KEY)
         else:
-            enabled_plugins = payload.get("plugins")
+            enabled_plugins = payload.get(FALLBACK_PLUGINS_KEY)
         if not isinstance(enabled_plugins, list):
             raise ValueError("Missing enabled_plugins list")
         cleaned = [plugin for plugin in enabled_plugins if plugin in valid_plugins]

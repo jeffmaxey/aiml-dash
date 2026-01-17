@@ -168,7 +168,8 @@ def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
             )
         )
 
-    expanded = [sections[0]["label"]] if sections else []
+    expanded_label = sections[0]["label"] if sections else None
+    expanded = [expanded_label] if expanded_label else []
     return dmc.Accordion(
         children=accordion_items,
         value=expanded,

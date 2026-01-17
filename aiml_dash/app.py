@@ -307,7 +307,7 @@ def ensure_active_page(enabled_plugins, active_page):
     page_registry = get_page_registry(enabled_plugins)
     if not page_registry or active_page in page_registry:
         return dash.no_update
-    return "home" if "home" in page_registry else next(iter(page_registry))
+    return "home" if "home" in page_registry else next(iter(page_registry), "home")
 
 
 @callback(
