@@ -2,7 +2,7 @@
 
 from aiml_dash.plugins.core import callbacks
 from aiml_dash.plugins.core.layout import help_layout, home_layout, settings_layout
-from aiml_dash.plugins.models import Plugin, PluginPage
+from aiml_dash.plugins.models import HOME_PAGE_ID, Plugin, PluginPage
 
 
 def get_plugin() -> Plugin:
@@ -10,7 +10,7 @@ def get_plugin() -> Plugin:
 
     pages = [
         PluginPage(
-            id="home",
+            id=HOME_PAGE_ID,
             label="Home",
             icon="carbon:home",
             section="Core",

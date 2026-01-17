@@ -32,6 +32,7 @@ from components.shell import (
 )
 
 # Import all pages
+from aiml_dash.plugins.models import HOME_PAGE_ID
 from aiml_dash.plugins.registry import (
     build_navigation_sections,
     get_default_enabled_plugins,
@@ -132,7 +133,7 @@ app.layout = dmc.MantineProvider(
             # Store for application state
             dcc.Store(id="app-state", storage_type="session"),
             # Store for active page
-            dcc.Store(id="active-page", data="home"),
+            dcc.Store(id="active-page", data=HOME_PAGE_ID),
             # Store for navbar collapsed state
             dcc.Store(id="navbar-collapsed", data=False),
             # Store for aside collapsed state
@@ -273,7 +274,7 @@ def load_page_content(page, enabled_plugins):
     if page in page_registry:
         return page_registry[page].layout()
 
-    fallback = page_registry.get("home") if page_registry else None
+    fallback = page_registry.get(HOME_PAGE_ID) if page_registry else None
     if fallback is None:
         fallback = next(iter(page_registry.values()), None)
 
@@ -307,7 +308,7 @@ def ensure_active_page(enabled_plugins, active_page):
     page_registry = get_page_registry(enabled_plugins)
     if not page_registry or active_page in page_registry:
         return dash.no_update
-    return "home" if "home" in page_registry else next(iter(page_registry), "home")
+    return HOME_PAGE_ID if HOME_PAGE_ID in page_registry else next(iter(page_registry), HOME_PAGE_ID)
 
 
 @callback(
@@ -499,7 +500,7 @@ def import_state(contents, filename):
 
             # Extract UI state components
             app_state = ui_state.get("app_state", {})
-            active_page = ui_state.get("active_page", "home")
+            active_page = ui_state.get("active_page", HOME_PAGE_ID)
             enabled_plugins = normalize_enabled_plugins(ui_state.get("enabled_plugins"))
             navbar_collapsed = ui_state.get("navbar_collapsed", False)
             aside_collapsed = ui_state.get("aside_collapsed", False)
@@ -508,7 +509,7 @@ def import_state(contents, filename):
         elif version.startswith("1."):
             # Old format - basic state only
             app_state = state.get("app_state", {})
-            active_page = state.get("active_page", "home")
+            active_page = state.get("active_page", HOME_PAGE_ID)
             enabled_plugins = normalize_enabled_plugins(state.get("enabled_plugins"))
             navbar_collapsed = state.get("navbar_collapsed", False)
             aside_collapsed = state.get("aside_collapsed", False)

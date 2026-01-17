@@ -7,6 +7,8 @@ Reusable components for the AIML Dash AppShell structure.
 
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+
+from aiml_dash.plugins.models import HOME_PAGE_ID
 from aiml_dash.utils.constants import APP_TITLE, GITHUB_URL
 
 
@@ -260,7 +262,7 @@ def create_footer():
             dmc.Text(APP_TITLE, size="sm", c="dimmed"),
             dmc.Group(
                 [
-                    dmc.Anchor("Documentation", href="#home", size="sm", c="dimmed"),
+                    dmc.Anchor("Documentation", href=f"#{HOME_PAGE_ID}", size="sm", c="dimmed"),
                     dmc.Text("•", size="sm", c="dimmed"),
                     dmc.Anchor(
                         "GitHub",

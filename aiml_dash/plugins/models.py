@@ -7,6 +7,8 @@ from typing import Callable, Sequence
 
 from dash.development.base_component import Component
 
+HOME_PAGE_ID = "home"
+
 
 @dataclass(frozen=True)
 class PluginPage:
