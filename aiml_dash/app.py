@@ -275,8 +275,8 @@ def load_page_content(page, enabled_plugins):
         return page_registry[page].layout()
 
     fallback = page_registry.get("home") if page_registry else None
-    if fallback is None and page_registry:
-        fallback = next(iter(page_registry.values()))
+    if fallback is None:
+        fallback = next(iter(page_registry.values()), None)
 
     if fallback:
         return fallback.layout()

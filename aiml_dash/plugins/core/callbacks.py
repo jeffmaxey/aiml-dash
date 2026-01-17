@@ -19,7 +19,7 @@ def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
 
     if not metadata:
         return set()
-    return {plugin.get("id") for plugin in metadata if plugin.get("locked")} - {None}
+    return {plugin_id for plugin in metadata if (plugin_id := plugin.get("id")) and plugin.get("locked")}
 
 
 @callback(
@@ -88,7 +88,10 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
         _, content_string = contents.split(",")
         decoded = base64.b64decode(content_string)
         payload = json.loads(decoded.decode("utf-8"))
-        enabled_plugins = payload.get("enabled_plugins") or payload.get("plugins")
+        if "enabled_plugins" in payload:
+            enabled_plugins = payload.get("enabled_plugins")
+        else:
+            enabled_plugins = payload.get("plugins")
         if not isinstance(enabled_plugins, list):
             raise ValueError("Missing enabled_plugins list")
         cleaned = [plugin for plugin in enabled_plugins if plugin in valid_plugins]

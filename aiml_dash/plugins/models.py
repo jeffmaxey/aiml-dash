@@ -34,4 +34,4 @@ class Plugin:
     version: str = "1.0"
     default_enabled: bool = True
     locked: bool = False
-    register_callbacks: Callable[..., None] | None = None
+    register_callbacks: Callable[[object], None] | None = None

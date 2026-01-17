@@ -4,7 +4,7 @@ Plugin registry and navigation helpers for AIML Dash.
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, TypedDict
 
 from aiml_dash.plugins import core, example_plugin, legacy, template_plugin
 from aiml_dash.plugins.models import Plugin, PluginPage
@@ -29,6 +29,23 @@ SECTION_ICONS = {
     "Multivariate": "carbon:chart-multitype",
     "Plugins": "carbon:plugin",
 }
+
+
+class NavigationGroup(TypedDict):
+    """Typed structure for grouped navigation pages."""
+
+    label: str
+    order: int
+    pages: list[PluginPage]
+
+
+class NavigationSection(TypedDict, total=False):
+    """Typed structure for navigation sections."""
+
+    label: str
+    icon: str
+    pages: list[PluginPage]
+    groups: list[NavigationGroup]
 
 
 def get_plugins() -> Sequence[Plugin]:
@@ -95,14 +112,14 @@ def get_page_registry(enabled_plugins: Iterable[str] | None = None) -> dict[str,
     return {page.id: page for page in get_pages(enabled_plugins)}
 
 
-def build_navigation_sections(pages: Sequence[PluginPage]) -> list[dict[str, object]]:
+def build_navigation_sections(pages: Sequence[PluginPage]) -> list[NavigationSection]:
     """Build navigation sections from plugin pages."""
 
     section_map: dict[str, list[PluginPage]] = {}
     for page in pages:
         section_map.setdefault(page.section, []).append(page)
 
-    sections: list[dict[str, object]] = []
+    sections: list[NavigationSection] = []
     for section in SECTION_ORDER:
         if section not in section_map:
             continue
@@ -111,7 +128,7 @@ def build_navigation_sections(pages: Sequence[PluginPage]) -> list[dict[str, obj
         for page in section_pages:
             group_key = page.group or ""
             groups.setdefault(group_key, []).append(page)
-        section_entry: dict[str, object] = {
+        section_entry: NavigationSection = {
             "label": section,
             "icon": SECTION_ICONS.get(section, "carbon:document"),
         }

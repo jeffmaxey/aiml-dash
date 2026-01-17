@@ -5,11 +5,13 @@ from __future__ import annotations
 from importlib import import_module
 from typing import Callable
 
+from dash.development.base_component import Component
 
-def _lazy_layout(module_path: str) -> Callable[[], object]:
+
+def _lazy_layout(module_path: str) -> Callable[[], Component]:
     """Create a lazy layout loader."""
 
-    def _layout() -> object:
+    def _layout() -> Component:
         module = import_module(module_path)
         return module.layout()
 

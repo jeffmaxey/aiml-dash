@@ -101,7 +101,7 @@ def create_header():
     )
 
 
-def create_navigation(sections):
+def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
     """
     Create navigation sidebar for AppShellNavbar.
 
