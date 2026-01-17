@@ -4,15 +4,17 @@ Interactive demonstration of the Central Limit Theorem.
 """
 
 from dash import dcc, callback, Input, Output, State
+from dash.development.base_component import Component
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import numpy as np
+import numpy.typing as npt
 from scipy import stats
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def layout():
+def layout() -> Component:
     """Create layout for CLT simulation page."""
     return dmc.Container(
         fluid=True,
@@ -205,15 +207,28 @@ def layout():
     ],
     prevent_initial_call=True,
 )
-def run_clt_simulation(n_clicks, distribution, sample_size, num_samples, seed):
+def run_clt_simulation(
+    n_clicks: int | None,
+    distribution: str | None,
+    sample_size: int | float | None,
+    num_samples: int | float | None,
+    seed: int | None,
+) -> tuple[list[Component], dict[str, str], go.Figure | dict[str, object]]:
     """Run CLT simulation."""
     try:
+        if sample_size is None or num_samples is None:
+            raise ValueError("Sample size and number of samples are required.")
+        sample_size_int = int(sample_size)
+        num_samples_int = int(num_samples)
+        if distribution is None:
+            distribution = "uniform"
         # Set random seed for reproducibility
         np.random.seed(seed)
 
         # Generate population based on distribution type
         pop_size = 100000
 
+        population: npt.NDArray[np.float64]
         if distribution == "uniform":
             population = np.random.uniform(0, 10, pop_size)
             pop_mean = 5.0
@@ -227,11 +242,11 @@ def run_clt_simulation(n_clicks, distribution, sample_size, num_samples, seed):
             pop_mean = 2.0
             pop_std = 2.0
         elif distribution == "binomial":
-            population = np.random.binomial(10, 0.5, pop_size)
+            population = np.random.binomial(10, 0.5, pop_size).astype(np.float64)
             pop_mean = 5.0
             pop_std = np.sqrt(10 * 0.5 * 0.5)
         elif distribution == "poisson":
-            population = np.random.poisson(5, pop_size)
+            population = np.random.poisson(5, pop_size).astype(np.float64)
             pop_mean = 5.0
             pop_std = np.sqrt(5.0)
         else:  # beta (skewed)
@@ -240,24 +255,24 @@ def run_clt_simulation(n_clicks, distribution, sample_size, num_samples, seed):
             pop_std = np.sqrt((2 * 5) / ((2 + 5) ** 2 * (2 + 5 + 1))) * 10
 
         # Draw samples and calculate means
-        sample_means = []
-        for _ in range(num_samples):
-            sample = np.random.choice(population, size=sample_size, replace=True)
-            sample_means.append(np.mean(sample))
+        sample_means: list[float] = []
+        for _ in range(num_samples_int):
+            sample = np.random.choice(population, size=sample_size_int, replace=True)
+            sample_means.append(float(np.mean(sample)))
 
-        sample_means = np.array(sample_means)
+        sample_means_array = np.array(sample_means, dtype=np.float64)
 
         # Calculate statistics
-        mean_of_means = np.mean(sample_means)
-        std_of_means = np.std(sample_means, ddof=1)
-        theoretical_std = pop_std / np.sqrt(sample_size)
+        mean_of_means = np.mean(sample_means_array)
+        std_of_means = np.std(sample_means_array, ddof=1)
+        theoretical_std = pop_std / np.sqrt(sample_size_int)
 
         # Normality test (Shapiro-Wilk)
-        if len(sample_means) <= 5000:
-            shapiro_stat, shapiro_p = stats.shapiro(sample_means)
+        if len(sample_means_array) <= 5000:
+            shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
         else:
             # Use Kolmogorov-Smirnov for large samples
-            shapiro_stat, shapiro_p = stats.kstest((sample_means - mean_of_means) / std_of_means, "norm")
+            shapiro_stat, shapiro_p = stats.kstest((sample_means_array - mean_of_means) / std_of_means, "norm")
 
         # Create statistics display
         stats_content = [
@@ -421,7 +436,7 @@ def run_clt_simulation(n_clicks, distribution, sample_size, num_samples, seed):
         # Sampling distribution histogram
         fig.add_trace(
             go.Histogram(
-                x=sample_means,
+                x=sample_means_array,
                 name="Sample Means",
                 marker=dict(color="#1c7ed6", opacity=0.7),
                 nbinsx=50,
@@ -432,12 +447,12 @@ def run_clt_simulation(n_clicks, distribution, sample_size, num_samples, seed):
         )
 
         # Overlay normal distribution on sampling distribution
-        x_range = np.linspace(sample_means.min(), sample_means.max(), 200)
+        x_range = np.linspace(sample_means_array.min(), sample_means_array.max(), 200)
         normal_pdf = stats.norm.pdf(x_range, mean_of_means, std_of_means)
         # Scale to match histogram
-        hist_counts, _ = np.histogram(sample_means, bins=50)
-        bin_width = (sample_means.max() - sample_means.min()) / 50
-        scale_factor = len(sample_means) * bin_width
+        hist_counts, _ = np.histogram(sample_means_array, bins=50)
+        bin_width = (sample_means_array.max() - sample_means_array.min()) / 50
+        scale_factor = len(sample_means_array) * bin_width
 
         fig.add_trace(
             go.Scatter(

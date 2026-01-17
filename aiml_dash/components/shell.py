@@ -5,8 +5,13 @@ App Shell Components
 Reusable components for the AIML Dash AppShell structure.
 """
 
+from typing import cast
+
+from dash.development.base_component import Component
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+
+from aiml_dash.plugins.models import HOME_PAGE_ID
 from aiml_dash.utils.constants import APP_TITLE, GITHUB_URL
 
 
@@ -101,300 +106,82 @@ def create_header():
     )
 
 
-def create_navigation():
+def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
     """
     Create navigation sidebar for AppShellNavbar.
+
+    Parameters
+    ----------
+    sections : list[dict[str, object]]
+        Navigation sections with page metadata
 
     Returns
     -------
     dmc.Accordion
         Navigation links in collapsible sections
     """
-    # Data pages
-    data_items = [
-        {"value": "manage", "label": "Manage", "icon": "carbon:data-table"},
-        {"value": "view", "label": "View", "icon": "carbon:view"},
-        {"value": "explore", "label": "Explore", "icon": "carbon:explore"},
-        {"value": "transform", "label": "Transform", "icon": "carbon:settings-adjust"},
-        {"value": "visualize", "label": "Visualize", "icon": "carbon:chart-scatter"},
-        {"value": "pivot", "label": "Pivot", "icon": "carbon:data-reference"},
-        {"value": "combine", "label": "Combine", "icon": "carbon:data-connected"},
-        {"value": "report", "label": "Report", "icon": "carbon:document"},
-        {"value": "sql-query", "label": "SQL Query", "icon": "carbon:data-base"},
-    ]
 
-    # Design pages
-    design_items = [
-        {"value": "doe", "label": "DOE", "icon": "carbon:chemistry"},
-        {"value": "sampling", "label": "Sampling", "icon": "carbon:diagram-reference"},
-        {"value": "sample_size", "label": "Sample Size", "icon": "carbon:calculator"},
-        {
-            "value": "sample_size_comp",
-            "label": "Sample Size Comparison",
-            "icon": "carbon:comparison",
-        },
-        {"value": "randomizer", "label": "Randomizer", "icon": "carbon:shuffle"},
-    ]
+    def get_attr(item, key, fallback=""):
+        """Read a key from a page definition."""
+        if hasattr(item, key):
+            return getattr(item, key)
+        if isinstance(item, dict):
+            return item.get(key, fallback)
+        return fallback
 
-    # Model pages
-    model_estimate_items = [
-        {
-            "value": "linear-regression",
-            "label": "Linear Regression",
-            "icon": "carbon:chart-line",
-        },
-        {
-            "value": "logistic-regression",
-            "label": "Logistic Regression",
-            "icon": "carbon:operations-record",
-        },
-        {
-            "value": "multinomial-logit",
-            "label": "Multinomial Logit",
-            "icon": "carbon:flow",
-        },
-        {"value": "naive-bayes", "label": "Naive Bayes", "icon": "carbon:calculation"},
-        {
-            "value": "neural-network",
-            "label": "Neural Network",
-            "icon": "carbon:network-3",
-        },
-    ]
-
-    model_trees_items = [
-        {
-            "value": "decision-tree",
-            "label": "Decision Tree",
-            "icon": "carbon:tree-view",
-        },
-        {"value": "random-forest", "label": "Random Forest", "icon": "carbon:trees"},
-        {
-            "value": "gradient-boosting",
-            "label": "Gradient Boosting",
-            "icon": "carbon:chart-stacked",
-        },
-    ]
-
-    model_evaluate_items = [
-        {
-            "value": "evaluate-regression",
-            "label": "Evaluate Regression",
-            "icon": "carbon:chart-evaluation",
-        },
-        {
-            "value": "evaluate-classification",
-            "label": "Evaluate Classification",
-            "icon": "carbon:chart-custom",
-        },
-    ]
-
-    model_other_items = [
-        {
-            "value": "collaborative-filtering",
-            "label": "Collaborative Filtering",
-            "icon": "carbon:recommend",
-        },
-        {
-            "value": "decision-analysis",
-            "label": "Decision Analysis",
-            "icon": "carbon:decision-tree",
-        },
-        {"value": "simulator", "label": "Simulate", "icon": "carbon:chart-scatter"},
-    ]
-
-    # Multivariate pages
-    multivariate_items = [
-        {"value": "pre-factor", "label": "Pre-Factor", "icon": "carbon:chart-radar"},
-        {
-            "value": "full-factor",
-            "label": "Full Factor",
-            "icon": "carbon:analytics-custom",
-        },
-        {
-            "value": "kmeans-cluster",
-            "label": "K-Means Clustering",
-            "icon": "carbon:chart-cluster-bar",
-        },
-        {
-            "value": "hierarchical-cluster",
-            "label": "Hierarchical Clustering",
-            "icon": "carbon:tree-view-alt",
-        },
-        {
-            "value": "perceptual-map",
-            "label": "Perceptual Map",
-            "icon": "carbon:chart-bubble-packed",
-        },
-        {"value": "mds", "label": "MDS", "icon": "carbon:chart-3d"},
-        {"value": "conjoint", "label": "Conjoint Analysis", "icon": "carbon:analytics"},
-    ]
-
-    # Basics pages
-    basics_means_items = [
-        {
-            "value": "single-mean",
-            "label": "Single Mean",
-            "icon": "carbon:chart-average",
-        },
-        {"value": "compare-means", "label": "Compare Means", "icon": "carbon:compare"},
-    ]
-
-    basics_props_items = [
-        {
-            "value": "single-prop",
-            "label": "Single Proportion",
-            "icon": "carbon:percentage",
-        },
-        {
-            "value": "compare-props",
-            "label": "Compare Proportions",
-            "icon": "carbon:percentage",
-        },
-    ]
-
-    basics_tables_items = [
-        {"value": "cross-tabs", "label": "Cross Tabs", "icon": "carbon:table-split"},
-        {
-            "value": "goodness",
-            "label": "Goodness of Fit",
-            "icon": "carbon:fit-to-screen",
-        },
-    ]
-
-    basics_other_items = [
-        {
-            "value": "correlation",
-            "label": "Correlation",
-            "icon": "carbon:connection-signal",
-        },
-        {"value": "clt", "label": "CLT", "icon": "carbon:chart-line-data"},
-        {
-            "value": "prob-calc",
-            "label": "Probability Calc",
-            "icon": "carbon:calculator-check",
-        },
-    ]
-
-    def create_nav_links(items):
+    def create_nav_links(items: list[object]) -> list[dmc.NavLink]:
         """Helper to create navigation links."""
         links = []
         for item in items:
+            page_id = get_attr(item, "id", get_attr(item, "value"))
             links.append(
                 dmc.NavLink(
-                    label=item["label"],
-                    leftSection=DashIconify(icon=item["icon"], width=20, height=20),
+                    label=get_attr(item, "label"),
+                    leftSection=DashIconify(icon=get_attr(item, "icon"), width=20, height=20),
                     active=False,
                     variant="subtle",
-                    id={"type": "nav-link", "index": item["value"]},
+                    id={"type": "nav-link", "index": page_id},
                     n_clicks=0,
-                    href=f"#{item['value']}",
+                    href=f"#{page_id}",
                 )
             )
         return links
 
-    # Create collapsible accordion with sections
+    accordion_items = []
+    for section in sections:
+        panel_children: list[Component] = []
+        pages = cast(list[object], section.get("pages") or [])
+        if pages:
+            panel_children.extend(create_nav_links(pages))
+        groups = cast(list[dict[str, object]], section.get("groups") or [])
+        for index, group in enumerate(groups):
+            label = group.get("label") if isinstance(group, dict) else None
+            if label:
+                panel_children.append(dmc.Text(label, size="xs", fw=600, c="dimmed", pl="xs"))
+            group_pages = group.get("pages") if isinstance(group, dict) else []
+            panel_children.extend(create_nav_links(cast(list[object], group_pages or [])))
+            if index < len(groups) - 1:
+                panel_children.append(dmc.Divider(my="xs"))
+        accordion_items.append(
+            dmc.AccordionItem(
+                children=[
+                    dmc.AccordionControl(
+                        section.get("label"),
+                        icon=DashIconify(icon=section.get("icon"), width=20, height=20),
+                    ),
+                    dmc.AccordionPanel(dmc.Stack(panel_children, gap="xs")),
+                ],
+                value=section.get("label"),
+            )
+        )
+
+    expanded_label = sections[0]["label"] if sections else None
+    expanded = [expanded_label] if expanded_label else []
     return dmc.Accordion(
-        children=[
-            dmc.AccordionItem(
-                children=[
-                    dmc.AccordionControl(
-                        "Data",
-                        icon=DashIconify(icon="carbon:data-base", width=20, height=20),
-                    ),
-                    dmc.AccordionPanel(dmc.Stack(create_nav_links(data_items), gap="xs")),
-                ],
-                value="data",
-            ),
-            dmc.AccordionItem(
-                children=[
-                    dmc.AccordionControl(
-                        "Basics",
-                        icon=DashIconify(icon="carbon:calculator", width=20, height=20),
-                    ),
-                    dmc.AccordionPanel(
-                        dmc.Stack(
-                            [
-                                dmc.Text("Means", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(basics_means_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text(
-                                    "Proportions",
-                                    size="xs",
-                                    fw=600,
-                                    c="dimmed",
-                                    pl="xs",
-                                ),
-                                *create_nav_links(basics_props_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text("Tables", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(basics_tables_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text("Other", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(basics_other_items),
-                            ],
-                            gap="xs",
-                        )
-                    ),
-                ],
-                value="basics",
-            ),
-            dmc.AccordionItem(
-                children=[
-                    dmc.AccordionControl(
-                        "Design",
-                        icon=DashIconify(icon="carbon:chemistry", width=20, height=20),
-                    ),
-                    dmc.AccordionPanel(dmc.Stack(create_nav_links(design_items), gap="xs")),
-                ],
-                value="design",
-            ),
-            dmc.AccordionItem(
-                children=[
-                    dmc.AccordionControl(
-                        "Model",
-                        icon=DashIconify(icon="carbon:machine-learning", width=20, height=20),
-                    ),
-                    dmc.AccordionPanel(
-                        dmc.Stack(
-                            [
-                                dmc.Text("Estimate", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(model_estimate_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text("Trees", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(model_trees_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text("Evaluate", size="xs", fw=600, c="dimmed", pl="xs"),
-                                *create_nav_links(model_evaluate_items),
-                                dmc.Divider(my="xs"),
-                                dmc.Text(
-                                    "Recommend & Decide",
-                                    size="xs",
-                                    fw=600,
-                                    c="dimmed",
-                                    pl="xs",
-                                ),
-                                *create_nav_links(model_other_items),
-                            ],
-                            gap="xs",
-                        )
-                    ),
-                ],
-                value="model",
-            ),
-            dmc.AccordionItem(
-                children=[
-                    dmc.AccordionControl(
-                        "Multivariate",
-                        icon=DashIconify(icon="carbon:chart-multitype", width=20, height=20),
-                    ),
-                    dmc.AccordionPanel(dmc.Stack(create_nav_links(multivariate_items), gap="xs")),
-                ],
-                value="multivariate",
-            ),
-        ],
-        value=["data"],  # Start with data section expanded
+        children=accordion_items,
+        value=expanded,
         chevronPosition="right",
-        multiple=True,  # Allow multiple sections to be open
+        multiple=True,
     )
 
 
@@ -480,7 +267,7 @@ def create_footer():
             dmc.Text(APP_TITLE, size="sm", c="dimmed"),
             dmc.Group(
                 [
-                    dmc.Anchor("Documentation", href="#", size="sm", c="dimmed"),
+                    dmc.Anchor("Documentation", href=f"#{HOME_PAGE_ID}", size="sm", c="dimmed"),
                     dmc.Text("•", size="sm", c="dimmed"),
                     dmc.Anchor(
                         "GitHub",
@@ -490,7 +277,13 @@ def create_footer():
                         target="_blank",
                     ),
                     dmc.Text("•", size="sm", c="dimmed"),
-                    dmc.Anchor("Report Issue", href="#", size="sm", c="dimmed"),
+                    dmc.Anchor(
+                        "Report Issue",
+                        href=f"{GITHUB_URL}/issues",
+                        size="sm",
+                        c="dimmed",
+                        target="_blank",
+                    ),
                 ],
                 gap="xs",
             ),

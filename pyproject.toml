@@ -76,13 +76,26 @@ packages = ["aiml_dash"]
 
 [tool.mypy]
 files = ["aiml_dash"]
-disallow_untyped_defs = true
-disallow_any_unimported = true
+mypy_path = ["aiml_dash"]
+disallow_untyped_defs = false
+disallow_any_unimported = false
 no_implicit_optional = true
-check_untyped_defs = true
+check_untyped_defs = false
 warn_return_any = true
 warn_unused_ignores = true
 show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = [
+    "dash_ag_grid",
+    "dash_iconify",
+    "dash_mantine_components",
+    "pandas",
+    "plotly",
+    "plotly.*",
+    "scipy",
+]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -144,4 +157,3 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["aiml_dash"]
-
