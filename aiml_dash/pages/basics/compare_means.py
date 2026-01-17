@@ -5,7 +5,8 @@ Compare Means Test Page
 Two-sample t-test to compare means between two groups.
 """
 
-from dash import html, dcc, Input, Output, State, callback
+from dash import dcc, html, Input, Output, State, callback
+from dash.development.base_component import Component
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 import dash_ag_grid as dag
@@ -13,12 +14,13 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import plotly.express as px
+from plotly.graph_objects import Figure
 
 from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
-def layout():
+def layout() -> Component:
     """Create the compare means test page layout."""
     return dmc.Container(
         [
@@ -172,7 +174,7 @@ def layout():
     Output("cmean-dataset", "data"),
     Input("cmean-dataset", "id"),
 )
-def update_datasets(_):
+def update_datasets(_: str) -> list[dict[str, str]]:
     """Update available datasets."""
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
@@ -182,7 +184,7 @@ def update_datasets(_):
     [Output("cmean-variable", "data"), Output("cmean-group", "data")],
     Input("cmean-dataset", "value"),
 )
-def update_variables(dataset_name):
+def update_variables(dataset_name: str | None) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     """Update available variables when dataset changes."""
     if not dataset_name:
         return [], []
@@ -213,7 +215,15 @@ def update_variables(dataset_name):
     ],
     prevent_initial_call=True,
 )
-def run_compare_means_test(n_clicks, dataset_name, variable, group, alternative, equal_var, confidence):
+def run_compare_means_test(
+    n_clicks: int | None,
+    dataset_name: str | None,
+    variable: str | None,
+    group: str | None,
+    alternative: str | None,
+    equal_var: bool | None,
+    confidence: float | None,
+) -> tuple[Component, Figure | dict[str, object], Component]:
     """Run two-sample t-test."""
     if not all([dataset_name, variable, group]):
         return (
@@ -228,6 +238,12 @@ def run_compare_means_test(n_clicks, dataset_name, variable, group, alternative,
         )
 
     try:
+        if confidence is None:
+            confidence = 0.95
+        if alternative is None:
+            alternative = "two-sided"
+        if equal_var is None:
+            equal_var = True
         # Get data
         df = data_manager.get_dataset(dataset_name)
         df_clean = df[[variable, group]].dropna()

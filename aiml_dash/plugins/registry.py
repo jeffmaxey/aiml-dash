@@ -135,7 +135,7 @@ def build_navigation_sections(pages: Sequence[PluginPage]) -> list[NavigationSec
         if "" in groups:
             section_entry["pages"] = sorted(groups.pop(""), key=lambda item: item.order)
         if groups:
-            group_entries = []
+            group_entries: list[NavigationGroup] = []
             for group_label, group_pages in groups.items():
                 sorted_pages = sorted(group_pages, key=lambda item: item.order)
                 group_entries.append(

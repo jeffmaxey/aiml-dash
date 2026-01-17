@@ -5,6 +5,9 @@ App Shell Components
 Reusable components for the AIML Dash AppShell structure.
 """
 
+from typing import cast
+
+from dash.development.base_component import Component
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
@@ -126,7 +129,7 @@ def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
             return item.get(key, fallback)
         return fallback
 
-    def create_nav_links(items):
+    def create_nav_links(items: list[object]) -> list[dmc.NavLink]:
         """Helper to create navigation links."""
         links = []
         for item in items:
@@ -146,15 +149,17 @@ def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
 
     accordion_items = []
     for section in sections:
-        panel_children = []
-        if section.get("pages"):
-            panel_children.extend(create_nav_links(section["pages"]))
-        groups = section.get("groups") or []
+        panel_children: list[Component] = []
+        pages = cast(list[object], section.get("pages") or [])
+        if pages:
+            panel_children.extend(create_nav_links(pages))
+        groups = cast(list[dict[str, object]], section.get("groups") or [])
         for index, group in enumerate(groups):
-            label = group.get("label")
+            label = group.get("label") if isinstance(group, dict) else None
             if label:
                 panel_children.append(dmc.Text(label, size="xs", fw=600, c="dimmed", pl="xs"))
-            panel_children.extend(create_nav_links(group.get("pages") or []))
+            group_pages = group.get("pages") if isinstance(group, dict) else []
+            panel_children.extend(create_nav_links(cast(list[object], group_pages or [])))
             if index < len(groups) - 1:
                 panel_children.append(dmc.Divider(my="xs"))
         accordion_items.append(
