@@ -32,42 +32,14 @@ from components.shell import (
 )
 
 # Import all pages
-from pages.data import manage, view, explore, transform, visualize, pivot, combine, report, sql_query
-from pages.design import doe, sampling, sample_size, sample_size_comp, randomizer
-from pages.model import (
-    linear_regression,
-    logistic_regression,
-    multinomial_logit,
-    naive_bayes,
-    neural_network,
-    decision_tree,
-    random_forest,
-    gradient_boosting,
-    evaluate_regression,
-    evaluate_classification,
-    collaborative_filtering,
-    decision_analysis,
-    simulator,
-)
-from pages.multivariate import (
-    pre_factor,
-    full_factor,
-    kmeans_cluster,
-    hierarchical_cluster,
-    perceptual_map,
-    mds,
-    conjoint,
-)
-from pages.basics import (
-    single_mean,
-    compare_means,
-    single_prop,
-    compare_props,
-    cross_tabs,
-    goodness,
-    correlation,
-    clt,
-    prob_calc,
+from aiml_dash.plugins.registry import (
+    build_navigation_sections,
+    get_default_enabled_plugins,
+    get_page_registry,
+    get_pages,
+    get_plugin_metadata,
+    normalize_enabled_plugins,
+    register_plugin_callbacks,
 )
 
 # Initialize app
@@ -79,6 +51,11 @@ app = Dash(
 )
 
 server = app.server
+
+# Plugin defaults
+DEFAULT_ENABLED_PLUGINS = get_default_enabled_plugins()
+DEFAULT_NAVIGATION = create_navigation(build_navigation_sections(get_pages(DEFAULT_ENABLED_PLUGINS)))
+register_plugin_callbacks(app)
 
 # ==============================================================================
 # MAIN LAYOUT WITH APPSHELL
@@ -109,8 +86,9 @@ app.layout = dmc.MantineProvider(
                         dmc.ScrollArea(
                             offsetScrollbars=True,
                             type="scroll",
-                            children=create_navigation(),
+                            children=DEFAULT_NAVIGATION,
                             p="md",
+                            id="app-navigation",
                         ),
                         id="app-navbar",
                     ),
@@ -150,10 +128,12 @@ app.layout = dmc.MantineProvider(
             # Notification container
             dmc.NotificationContainer(id="notification-container"),
             dcc.Store(id="color-scheme-storage", storage_type="local"),
+            dcc.Store(id="plugin-metadata", data=get_plugin_metadata()),
+            dcc.Store(id="enabled-plugins", storage_type="local", data=DEFAULT_ENABLED_PLUGINS),
             # Store for application state
             dcc.Store(id="app-state", storage_type="session"),
             # Store for active page
-            dcc.Store(id="active-page", data="manage"),
+            dcc.Store(id="active-page", data="home"),
             # Store for navbar collapsed state
             dcc.Store(id="navbar-collapsed", data=False),
             # Store for aside collapsed state
@@ -285,105 +265,50 @@ def update_aside_state(collapsed):
 @callback(
     Output("page-content", "children"),
     Input("active-page", "data"),
+    Input("enabled-plugins", "data"),
 )
-def load_page_content(page):
+def load_page_content(page, enabled_plugins):
     """Load content for the selected page."""
-    # Data pages
-    if page == "manage":
-        return manage.layout()
-    elif page == "view":
-        return view.layout()
-    elif page == "explore":
-        return explore.layout()
-    elif page == "transform":
-        return transform.layout()
-    elif page == "visualize":
-        return visualize.layout()
-    elif page == "pivot":
-        return pivot.layout()
-    elif page == "combine":
-        return combine.layout()
-    elif page == "report":
-        return report.layout()
-    elif page == "sql-query":
-        return sql_query.layout()
-    # Design pages
-    elif page == "doe":
-        return doe.layout()
-    elif page == "sampling":
-        return sampling.layout()
-    elif page == "sample_size":
-        return sample_size.layout()
-    elif page == "sample_size_comp":
-        return sample_size_comp.layout()
-    elif page == "randomizer":
-        return randomizer.layout()
-    # Model pages - Estimate
-    elif page == "linear-regression":
-        return linear_regression.layout()
-    elif page == "logistic-regression":
-        return logistic_regression.layout()
-    elif page == "multinomial-logit":
-        return multinomial_logit.layout()
-    elif page == "naive-bayes":
-        return naive_bayes.layout()
-    elif page == "neural-network":
-        return neural_network.layout()
-    # Model pages - Trees
-    elif page == "decision-tree":
-        return decision_tree.layout()
-    elif page == "random-forest":
-        return random_forest.layout()
-    elif page == "gradient-boosting":
-        return gradient_boosting.layout()
-    # Model pages - Evaluate
-    elif page == "evaluate-regression":
-        return evaluate_regression.layout()
-    elif page == "evaluate-classification":
-        return evaluate_classification.layout()
-    # Model pages - Other
-    elif page == "collaborative-filtering":
-        return collaborative_filtering.layout()
-    elif page == "decision-analysis":
-        return decision_analysis.layout()
-    elif page == "simulator":
-        return simulator.layout()
-    # Multivariate pages
-    elif page == "pre-factor":
-        return pre_factor.layout()
-    elif page == "full-factor":
-        return full_factor.layout()
-    elif page == "kmeans-cluster":
-        return kmeans_cluster.layout()
-    elif page == "hierarchical-cluster":
-        return hierarchical_cluster.layout()
-    elif page == "perceptual-map":
-        return perceptual_map.layout()
-    elif page == "mds":
-        return mds.layout()
-    elif page == "conjoint":
-        return conjoint.layout()
-    # Basics pages
-    elif page == "single-mean":
-        return single_mean.layout()
-    elif page == "compare-means":
-        return compare_means.layout()
-    elif page == "single-prop":
-        return single_prop.layout()
-    elif page == "compare-props":
-        return compare_props.layout()
-    elif page == "cross-tabs":
-        return cross_tabs.layout()
-    elif page == "goodness":
-        return goodness.layout()
-    elif page == "correlation":
-        return correlation.layout()
-    elif page == "clt":
-        return clt.layout()
-    elif page == "prob-calc":
-        return prob_calc.layout()
-    else:
-        return dmc.Center(dmc.Text("Page not found", size="xl", c="dimmed"), style={"height": "50vh"})
+
+    page_registry = get_page_registry(enabled_plugins)
+    if page in page_registry:
+        return page_registry[page].layout()
+
+    fallback = page_registry.get("home") if page_registry else None
+    if fallback is None and page_registry:
+        fallback = next(iter(page_registry.values()))
+
+    if fallback:
+        return fallback.layout()
+
+    return dmc.Center(dmc.Text("Page not found", size="xl", c="dimmed"), style={"height": "50vh"})
+
+
+@callback(
+    Output("app-navigation", "children"),
+    Input("enabled-plugins", "data"),
+)
+def update_navigation(enabled_plugins):
+    """Update navigation based on enabled plugins."""
+
+    pages = get_pages(enabled_plugins)
+    return create_navigation(build_navigation_sections(pages))
+
+
+@callback(
+    Output("active-page", "data", allow_duplicate=True),
+    Input("enabled-plugins", "data"),
+    State("active-page", "data"),
+    prevent_initial_call=True,
+)
+def ensure_active_page(enabled_plugins, active_page):
+    """Ensure the active page is still enabled."""
+
+    enabled_plugins = normalize_enabled_plugins(enabled_plugins)
+    page_registry = get_page_registry(enabled_plugins)
+    if not page_registry or active_page in page_registry:
+        return dash.no_update
+    return "home" if "home" in page_registry else next(iter(page_registry))
 
 
 @callback(
@@ -460,12 +385,21 @@ def update_dataset_info(dataset_name):
     Input("export-state-btn", "n_clicks"),
     State("app-state", "data"),
     State("active-page", "data"),
+    State("enabled-plugins", "data"),
     State("navbar-collapsed", "data"),
     State("aside-collapsed", "data"),
     State("dataset-selector", "value"),
     prevent_initial_call=True,
 )
-def export_state(n_clicks, app_state, active_page, navbar_collapsed, aside_collapsed, active_dataset):
+def export_state(
+    n_clicks,
+    app_state,
+    active_page,
+    enabled_plugins,
+    navbar_collapsed,
+    aside_collapsed,
+    active_dataset,
+):
     """Export complete application state including all datasets to JSON file."""
     if not n_clicks:
         return dash.no_update
@@ -474,21 +408,24 @@ def export_state(n_clicks, app_state, active_page, navbar_collapsed, aside_colla
     data_state = data_manager.export_all_state()
 
     # Collect all UI state information
+    enabled_plugins = normalize_enabled_plugins(enabled_plugins)
     state = {
         "version": "2.0",
         "timestamp": datetime.now().isoformat(),
         "ui_state": {
             "app_state": app_state or {},
             "active_page": active_page,
+            "enabled_plugins": enabled_plugins,
             "navbar_collapsed": navbar_collapsed,
             "aside_collapsed": aside_collapsed,
             "active_dataset": active_dataset,
         },
         "data_state": data_state,
-        "page_count": 8,
+        "page_count": len(get_page_registry(enabled_plugins)),
         "feature_flags": {
             "collapsible_panels": True,
             "state_export_import": True,
+            "plugin_framework": True,
         },
     }
 
@@ -517,6 +454,7 @@ def toggle_import_modal(n_clicks, is_open):
 @callback(
     Output("app-state", "data", allow_duplicate=True),
     Output("active-page", "data", allow_duplicate=True),
+    Output("enabled-plugins", "data", allow_duplicate=True),
     Output("navbar-collapsed", "data", allow_duplicate=True),
     Output("aside-collapsed", "data", allow_duplicate=True),
     Output("dataset-selector", "value", allow_duplicate=True),
@@ -530,6 +468,7 @@ def import_state(contents, filename):
     """Import complete application state including all datasets from JSON file."""
     if not contents:
         return (
+            dash.no_update,
             dash.no_update,
             dash.no_update,
             dash.no_update,
@@ -561,7 +500,8 @@ def import_state(contents, filename):
 
             # Extract UI state components
             app_state = ui_state.get("app_state", {})
-            active_page = ui_state.get("active_page", "manage")
+            active_page = ui_state.get("active_page", "home")
+            enabled_plugins = normalize_enabled_plugins(ui_state.get("enabled_plugins"))
             navbar_collapsed = ui_state.get("navbar_collapsed", False)
             aside_collapsed = ui_state.get("aside_collapsed", False)
             active_dataset = ui_state.get("active_dataset")
@@ -569,7 +509,8 @@ def import_state(contents, filename):
         elif version.startswith("1."):
             # Old format - basic state only
             app_state = state.get("app_state", {})
-            active_page = state.get("active_page", "manage")
+            active_page = state.get("active_page", "home")
+            enabled_plugins = normalize_enabled_plugins(state.get("enabled_plugins"))
             navbar_collapsed = state.get("navbar_collapsed", False)
             aside_collapsed = state.get("aside_collapsed", False)
             active_dataset = state.get("active_dataset")
@@ -598,6 +539,7 @@ def import_state(contents, filename):
         return (
             app_state,
             active_page,
+            enabled_plugins,
             navbar_collapsed,
             aside_collapsed,
             active_dataset,
@@ -621,6 +563,7 @@ def import_state(contents, filename):
             icon=DashIconify(icon="carbon:warning"),
         )
         return (
+            dash.no_update,
             dash.no_update,
             dash.no_update,
             dash.no_update,
