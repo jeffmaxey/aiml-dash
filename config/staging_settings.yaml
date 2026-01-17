@@ -1,0 +1,36 @@
+allowed_hosts:
+- '*'
+app_description: A Dash application for Predictive Analytics and Machine Learning.
+app_name: AIML Dash Staging
+app_title: AIML Dash
+app_version: 1.0.0
+auto_save: true
+cache_default_timeout: 300
+cache_enabled: true
+cache_timeout: 3600
+cache_type: SimpleCache
+callback_timeout: 300
+data_cache_size: 100
+database_echo: false
+database_url: null
+debug: false
+default_confidence_level: 0.95
+default_plot_height: 600
+default_plot_width: null
+default_random_seed: 1234
+enable_caching: true
+enable_compression: true
+enable_talisman: false
+github_url: https://github.com/jeffmaxey/aiml-dash
+host: 0.0.0.0
+log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+log_level: INFO
+max_datasets: 100
+max_iterations: 10000
+max_upload_size_mb: 100
+page_size: 50
+plot_template: plotly_white
+port: 8080
+secret_key: null
+session_lifetime_hours: 24
+theme: light

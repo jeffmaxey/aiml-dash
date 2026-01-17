@@ -6,7 +6,7 @@ import pytest
 import base64
 import io
 
-from aiml_dash.utils.data_manager import DataManager, data_manager
+from aiml_dash.managers.data_manager import DataManager, data_manager
 
 
 @pytest.fixture
@@ -222,7 +222,7 @@ class TestExportDataset:
     def test_export_dataset_csv(self, dm, sample_dataframe):
         """Test exporting dataset to CSV."""
         dm.add_dataset("test_data", sample_dataframe)
-        result = dm.export_dataset("test_data", format="csv")
+        result = dm.export_dataset("test_data", file_format="csv")
 
         assert result is not None
         assert "A,B,C" in result
@@ -230,14 +230,14 @@ class TestExportDataset:
     def test_export_dataset_json(self, dm, sample_dataframe):
         """Test exporting dataset to JSON."""
         dm.add_dataset("test_data", sample_dataframe)
-        result = dm.export_dataset("test_data", format="json")
+        result = dm.export_dataset("test_data", file_format="json")
 
         assert result is not None
         assert isinstance(result, str)
 
     def test_export_nonexistent_dataset(self, dm):
         """Test exporting nonexistent dataset returns None."""
-        result = dm.export_dataset("nonexistent", format="csv")
+        result = dm.export_dataset("nonexistent", file_format="csv")
         assert result is None
 
 

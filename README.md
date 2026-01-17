@@ -111,7 +111,7 @@ To finalize the set-up for publishing to PyPI, see [here](https://fpgmaas.github
 For activating the automatic documentation with MkDocs, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/mkdocs/#enabling-the-documentation-on-github).
 To enable the code coverage reports, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/codecov/).
 
-## Releasing a new version
+## Releasing a New Version
 
 - Create an API Token on [PyPI](https://pypi.org/).
 - Add the API Token to your projects secrets with the name `PYPI_TOKEN` by visiting [this page](https://github.com/jeffmaxey/aiml-dash/settings/secrets/actions/new).
@@ -123,3 +123,56 @@ For more details, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/
 ---
 
 Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
+
+---
+
+## Quick Start
+To set up your development environment:
+
+```bash
+make install
+```
+This creates a virtual environment using uv and installs pre-commit hooks.
+
+## Build Options
+1. Python Package Build
+```bash
+make build
+```
+Creates a wheel file in the `dist/` directory.
+
+2. Docker Build
+```bash
+make build
+```
+
+Then run:
+```bash
+docker run -p 8050:8050 aiml-dash
+```
+
+3. Development Setup
+```bash
+# Install dependencies
+make install
+
+# Run quality checks
+make check
+
+# Run tests
+make test
+```
+
+## Running the Application
+After installation, start the app with:
+```bash
+python aiml_dash/run.py
+```
+Access at `http://127.0.0.1:8050`
+
+Other Useful Commands
+- `make docs` - Build and serve documentation
+- `make clean-build` - Clean build artifacts
+- `make help` - Show all available commands
+
+The project uses `uv` for dependency management (a fast Python package installer) and includes Docker support for containerized deployment.

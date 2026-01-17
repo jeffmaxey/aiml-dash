@@ -9,71 +9,73 @@ Author: Converted from aiml.data R package
 License: AGPL-3
 """
 
-import dash
-from dash import Dash, html, dcc, Input, Output, State, callback, ALL, ctx
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import json
 import base64
+import json
 from datetime import datetime
 
-# Import constants
-from utils.constants import APP_TITLE
-
-# Import utilities
-from utils.data_manager import data_manager
+import dash
+import dash_mantine_components as dmc
+from dash import ALL, Dash, Input, Output, State, callback, ctx, dcc, html
 
 # Import shell components
-from components.shell import (
-    create_header,
-    create_navigation,
+from dash_aiml.components.shell import (
     create_aside,
     create_footer,
+    create_header,
+    create_navigation,
 )
+from dash_aiml.pages.basics import (
+    clt,
+    compare_means,
+    compare_props,
+    correlation,
+    cross_tabs,
+    goodness,
+    prob_calc,
+    single_mean,
+    single_prop,
+)
+from dash_aiml.pages.data import combine, explore, manage, pivot, report, sql_query, transform, view, visualize
+from dash_aiml.pages.design import doe, randomizer, sample_size, sample_size_comp, sampling
 
 # Import all pages
-from pages.data import manage, view, explore, transform, visualize, pivot, combine, report, sql_query
-from pages.design import doe, sampling, sample_size, sample_size_comp, randomizer
-from pages.model import (
+from dash_aiml.pages.general import projects
+from dash_aiml.pages.model import (
+    collaborative_filtering,
+    decision_analysis,
+    decision_tree,
+    evaluate_classification,
+    evaluate_regression,
+    gradient_boosting,
     linear_regression,
     logistic_regression,
     multinomial_logit,
     naive_bayes,
     neural_network,
-    decision_tree,
     random_forest,
-    gradient_boosting,
-    evaluate_regression,
-    evaluate_classification,
-    collaborative_filtering,
-    decision_analysis,
     simulator,
 )
-from pages.multivariate import (
-    pre_factor,
-    full_factor,
-    kmeans_cluster,
-    hierarchical_cluster,
-    perceptual_map,
-    mds,
+from dash_aiml.pages.multivariate import (
     conjoint,
+    full_factor,
+    hierarchical_cluster,
+    kmeans_cluster,
+    mds,
+    perceptual_map,
+    pre_factor,
 )
-from pages.basics import (
-    single_mean,
-    compare_means,
-    single_prop,
-    compare_props,
-    cross_tabs,
-    goodness,
-    correlation,
-    clt,
-    prob_calc,
-)
+
+# Import utilities
+from dash_aiml.utils.app_manager import app_manager
+
+# Import settings
+from dash_aiml.utils.settings import app_settings
+from dash_iconify import DashIconify
 
 # Initialize app
 app = Dash(
     __name__,
-    title=APP_TITLE,
+    title=app_settings.APP_TITLE,
     suppress_callback_exceptions=True,
     external_stylesheets=["https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"],
 )
@@ -288,8 +290,11 @@ def update_aside_state(collapsed):
 )
 def load_page_content(page):
     """Load content for the selected page."""
+    # Projects pages
+    if page == "projects":
+        return projects.layout()
     # Data pages
-    if page == "manage":
+    elif page == "manage":
         return manage.layout()
     elif page == "view":
         return view.layout()
@@ -413,11 +418,11 @@ def update_active_page(n_clicks, ids):
 )
 def update_dataset_selector(ts, current_value):
     """Update dataset selector dropdown options."""
-    datasets = data_manager.get_dataset_names()
+    datasets = app_manager.data_manager.get_dataset_names()
     data = [{"label": name, "value": name} for name in datasets]
 
     # Set value to active dataset or current selection
-    active = data_manager.get_active_dataset_name()
+    active = app_manager.data_manager.get_active_dataset_name()
     value = current_value if current_value in datasets else active
 
     return data, value
@@ -435,8 +440,8 @@ def update_dataset_info(dataset_name):
     if not dataset_name:
         return "0 rows", "0 cols", "No dataset selected", ""
 
-    data_manager.set_active_dataset(dataset_name)
-    info = data_manager.get_dataset_info(dataset_name)
+    app_manager.data_manager.set_active_dataset(dataset_name)
+    info = app_manager.data_manager.get_dataset_info(dataset_name)
 
     rows = info.get("rows", 0)
     cols = info.get("columns", 0)
@@ -471,7 +476,7 @@ def export_state(n_clicks, app_state, active_page, navbar_collapsed, aside_colla
         return dash.no_update
 
     # Get complete data manager state (includes all datasets)
-    data_state = data_manager.export_all_state()
+    data_state = app_manager.data_manager.export_all_state()
 
     # Collect all UI state information
     state = {
@@ -555,7 +560,7 @@ def import_state(contents, filename):
             data_state = state.get("data_state", {})
 
             # Restore all datasets
-            success, msg = data_manager.import_all_state(data_state)
+            success, msg = app_manager.data_manager.import_all_state(data_state)
             if not success:
                 raise ValueError(msg)
 
@@ -578,7 +583,7 @@ def import_state(contents, filename):
             raise ValueError(f"Unknown state version: {version}")
 
         # Validate dataset exists
-        available_datasets = data_manager.get_dataset_names()
+        available_datasets = app_manager.data_manager.get_dataset_names()
         if active_dataset and active_dataset not in available_datasets:
             active_dataset = available_datasets[0] if available_datasets else None
 
@@ -640,7 +645,7 @@ if __name__ == "__main__":
     print("AIML Data - Python Dash Application")
     print("=" * 70)
     print("\nStarting application...")
-    print(f"Available datasets: {', '.join(data_manager.get_dataset_names())}")
+    print(f"Available datasets: {', '.join(app_manager.data_manager.get_dataset_names())}")
     print("\nNavigate to: http://localhost:8050")
     print("\nPress Ctrl+C to stop the server")
     print("=" * 70 + "\n")

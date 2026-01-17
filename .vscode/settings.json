@@ -1,0 +1,25 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /workspaces/aiml-dash && /workspaces/aiml-dash/\\.venv/bin/python -m pytest tests/utils/test_data_project_integration\\.py -v$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/workspaces/aiml-dash/.venv/bin/python": true,
+        "/^cd /workspaces/aiml-dash && python -m py_compile aiml_dash/app\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /workspaces/aiml-dash && python -m py_compile aiml_dash/pages/data/manage\\.py aiml_dash/pages/basics/single_mean\\.py aiml_dash/pages/model/linear_regression\\.py aiml_dash/pages/multivariate/pre_factor\\.py aiml_dash/pages/design/sampling\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /workspaces/aiml-dash && python -c \"from aiml_dash\\.utils\\.app_manager import app_manager; print\\('✓ app_manager import successful'\\); print\\(f'✓ Datasets available: \\{len\\(app_manager\\.data_manager\\.get_dataset_names\\(\\)\\)\\}'\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^cd /workspaces/aiml-dash && source \\.venv/bin/activate && python examples/settings_import_export_example\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
