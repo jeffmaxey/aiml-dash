@@ -79,7 +79,7 @@ def get_plugin_metadata() -> list[dict[str, object]]:
 
 
 def get_default_enabled_plugins() -> list[str]:
-    """Return the list of plugins enabled by default."""
+    """Return the list of plugins enabled by default, including locked plugins."""
 
     return [plugin.id for plugin in get_plugins() if plugin.default_enabled or plugin.locked]
 

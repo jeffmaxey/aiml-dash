@@ -4,4 +4,4 @@
 def register_callbacks(_app: object) -> None:
     """Register callbacks for the example plugin (none required)."""
 
-    pass
+    ...

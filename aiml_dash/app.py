@@ -54,7 +54,6 @@ server = app.server
 
 # Plugin defaults
 DEFAULT_ENABLED_PLUGINS = get_default_enabled_plugins()
-DEFAULT_NAVIGATION = create_navigation(build_navigation_sections(get_pages(DEFAULT_ENABLED_PLUGINS)))
 register_plugin_callbacks(app)
 
 # ==============================================================================
@@ -86,7 +85,7 @@ app.layout = dmc.MantineProvider(
                         dmc.ScrollArea(
                             offsetScrollbars=True,
                             type="scroll",
-                            children=DEFAULT_NAVIGATION,
+                            children=dmc.Loader(color="blue", size="sm"),
                             p="md",
                             id="app-navigation",
                         ),

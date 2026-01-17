@@ -19,7 +19,12 @@ def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
 
     if not metadata:
         return set()
-    return {plugin_id for plugin in metadata if (plugin_id := plugin.get("id")) and plugin.get("locked")}
+    locked: set[str] = set()
+    for plugin in metadata:
+        plugin_id = plugin.get("id")
+        if plugin_id and plugin.get("locked"):
+            locked.add(plugin_id)
+    return locked
 
 
 @callback(
@@ -116,4 +121,4 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
 def register_callbacks(_app: object) -> None:
     """Register core plugin callbacks."""
 
-    pass
+    ...
