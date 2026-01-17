@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import base64
+import binascii
 import json
 
 import dash
-from dash import Input, Output, State, callback, ALL
+from dash import ALL, Input, Output, State, callback
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
@@ -99,7 +100,7 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
             title="Import complete",
         )
         return final_plugins, message
-    except Exception as exc:  # pragma: no cover - defensive error handling
+    except (binascii.Error, json.JSONDecodeError, UnicodeDecodeError, ValueError) as exc:
         message = dmc.Alert(
             f"Import failed: {exc}",
             color="red",
@@ -112,4 +113,4 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
 def register_callbacks(_app: object) -> None:
     """Register core plugin callbacks."""
 
-    return None
+    pass
