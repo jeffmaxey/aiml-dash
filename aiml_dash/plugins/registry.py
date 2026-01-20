@@ -1,14 +1,17 @@
 """
 Plugin registry and navigation helpers for AIML Dash.
+
+This module provides backward-compatible functions that delegate to the PluginManager
+for backend operations while maintaining UI-related functionality.
 """
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence, TypedDict
+from collections.abc import Iterable, Sequence
+from typing import TypedDict
 
-from aiml_dash.plugins import core, example_plugin, legacy, template_plugin
 from aiml_dash.plugins.models import Plugin, PluginPage
-
+from aiml_dash.plugins.plugin_manager import get_default_manager
 
 SECTION_ORDER = [
     "Core",
@@ -49,50 +52,48 @@ class NavigationSection(TypedDict, total=False):
 
 
 def get_plugins() -> Sequence[Plugin]:
-    """Return the ordered list of available plugins."""
+    """
+    Return the ordered list of available plugins.
 
-    return [core.get_plugin(), legacy.get_plugin(), example_plugin.get_plugin(), template_plugin.get_plugin()]
+    Delegates to PluginManager for plugin discovery and registration.
+    """
+    return get_default_manager().get_plugins()
 
 
 def get_plugin_registry() -> dict[str, Plugin]:
-    """Return plugins keyed by their identifier."""
+    """
+    Return plugins keyed by their identifier.
 
-    return {plugin.id: plugin for plugin in get_plugins()}
+    Delegates to PluginManager for plugin registry access.
+    """
+    return get_default_manager().get_plugin_registry()
 
 
 def get_plugin_metadata() -> list[dict[str, object]]:
-    """Return plugin metadata for UI rendering."""
+    """
+    Return plugin metadata for UI rendering.
 
-    metadata = []
-    for plugin in get_plugins():
-        metadata.append(
-            {
-                "id": plugin.id,
-                "name": plugin.name,
-                "description": plugin.description,
-                "version": plugin.version,
-                "locked": plugin.locked,
-                "default_enabled": plugin.default_enabled,
-            }
-        )
-    return metadata
+    Delegates to PluginManager for metadata generation.
+    """
+    return get_default_manager().get_plugin_metadata()
 
 
 def get_default_enabled_plugins() -> list[str]:
-    """Return the list of plugins enabled by default, including locked plugins."""
+    """
+    Return the list of plugins enabled by default, including locked plugins.
 
-    return [plugin.id for plugin in get_plugins() if plugin.default_enabled or plugin.locked]
+    Delegates to PluginManager for default plugin management.
+    """
+    return get_default_manager().get_default_enabled_plugins()
 
 
 def normalize_enabled_plugins(enabled_plugins: Iterable[str] | None) -> list[str]:
-    """Normalize enabled plugins to include locked entries."""
+    """
+    Normalize enabled plugins to include locked entries.
 
-    registry = get_plugin_registry()
-    enabled = list(enabled_plugins or get_default_enabled_plugins())
-    for plugin in registry.values():
-        if plugin.locked and plugin.id not in enabled:
-            enabled.append(plugin.id)
-    return [plugin_id for plugin_id in enabled if plugin_id in registry]
+    Delegates to PluginManager for normalization logic.
+    """
+    return get_default_manager().normalize_enabled_plugins(enabled_plugins)
 
 
 def get_pages(enabled_plugins: Iterable[str] | None = None) -> list[PluginPage]:
@@ -151,8 +152,9 @@ def build_navigation_sections(pages: Sequence[PluginPage]) -> list[NavigationSec
 
 
 def register_plugin_callbacks(app: object) -> None:
-    """Register callbacks defined by plugins."""
+    """
+    Register callbacks defined by plugins.
 
-    for plugin in get_plugins():
-        if plugin.register_callbacks:
-            plugin.register_callbacks(app)
+    Delegates to PluginManager for callback registration.
+    """
+    get_default_manager().register_callbacks(app)
