@@ -5,15 +5,14 @@ Hierarchical Clustering Page
 Perform hierarchical clustering with dendrograms.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from scipy.cluster.hierarchy import linkage
 import plotly.figure_factory as ff
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy.cluster.hierarchy import linkage
+from sklearn.preprocessing import StandardScaler
 from utils.data_manager import data_manager
 
 
@@ -237,6 +236,6 @@ def run_hierarchical(n_clicks, dataset_name, variables, method, metric):
     except Exception as e:
         return (
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             dmc.Notification(title="Error", message=str(e), color="red", action="show"),
         )

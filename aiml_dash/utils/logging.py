@@ -8,15 +8,14 @@ Centralized logging setup for the AIML Dash application.
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from aiml_dash.utils.config import settings
 
 
 def setup_logging(
-    level: Optional[str] = None,
-    log_file: Optional[Path] = None,
-    format_string: Optional[str] = None,
+    level: str | None = None,
+    log_file: Path | None = None,
+    format_string: str | None = None,
 ) -> None:
     """
     Configure application logging.

@@ -5,22 +5,21 @@ Evaluate Regression Page
 Evaluate and compare regression model performance.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from sklearn.metrics import (
-    mean_squared_error,
-    mean_absolute_error,
-    r2_score,
-    mean_absolute_percentage_error,
-)
-import plotly.graph_objects as go
+import pandas as pd
 import plotly.express as px
-
+import plotly.graph_objects as go
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_absolute_percentage_error,
+    mean_squared_error,
+    r2_score,
+)
 from utils.data_manager import data_manager
 
 
@@ -447,7 +446,7 @@ def evaluate_regression(n_clicks, dataset_name, actual_col, pred_col, compare_co
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             {},
             {},

@@ -7,8 +7,8 @@ import binascii
 import json
 
 import dash
-from dash import ALL, Input, Output, State, callback
 import dash_mantine_components as dmc
+from dash import ALL, Input, Output, State, callback
 from dash_iconify import DashIconify
 
 from aiml_dash.plugins.core.components import create_plugin_toggle_card

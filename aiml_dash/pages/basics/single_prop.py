@@ -3,14 +3,13 @@ Single Proportion Test Page
 Tests whether a sample proportion is significantly different from a hypothesized value.
 """
 
-from dash import dcc, callback, Input, Output, State
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc
+from dash_iconify import DashIconify
+from scipy import stats
 from utils.data_manager import data_manager
-
 
 # ==============================================================================
 # LAYOUT
@@ -318,7 +317,7 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
         z = stats.norm.ppf(1 - alpha / 2)
         denominator = 1 + z**2 / n
         center = (p_hat + z**2 / (2 * n)) / denominator
-        margin = z * np.sqrt((p_hat * (1 - p_hat) / n + z**2 / (4 * n**2))) / denominator
+        margin = z * np.sqrt(p_hat * (1 - p_hat) / n + z**2 / (4 * n**2)) / denominator
         ci_lower = center - margin
         ci_upper = center + margin
 
@@ -495,7 +494,7 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
         return (
             [
                 dmc.Alert(
-                    f"Error running test: {str(e)}",
+                    f"Error running test: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

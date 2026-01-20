@@ -5,18 +5,17 @@ Compare Means Test Page
 Two-sample t-test to compare means between two groups.
 """
 
-from dash import dcc, html, Input, Output, State, callback
-from dash.development.base_component import Component
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from scipy import stats
+import pandas as pd
 import plotly.express as px
-from plotly.graph_objects import Figure
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash.development.base_component import Component
+from dash_iconify import DashIconify
+from plotly.graph_objects import Figure
+from scipy import stats
 from utils.data_manager import data_manager
 
 
@@ -389,7 +388,7 @@ def run_compare_means_test(
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             dmc.Notification(title="Error", message=str(e), color="red", action="show"),
         )

@@ -6,12 +6,11 @@ Statistical exploration and summary statistics with grouping.
 """
 
 import dash
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-
-from components.common import create_page_header, create_filter_section
+import dash_mantine_components as dmc
+from components.common import create_filter_section, create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 from utils.statistics import STAT_FUNCTIONS, explore
 
@@ -231,7 +230,7 @@ def calculate_statistics(n_clicks, dataset_name, vars, byvar, functions, data_fi
 
     except Exception as e:
         return dmc.Alert(
-            f"Error calculating statistics: {str(e)}",
+            f"Error calculating statistics: {e!s}",
             title="Calculation Error",
             color="red",
             icon=DashIconify(icon="carbon:warning"),

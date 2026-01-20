@@ -5,15 +5,14 @@ Collaborative Filtering Page
 Build recommendation systems using collaborative filtering.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
-
+import pandas as pd
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.metrics.pairwise import cosine_similarity
 from utils.data_manager import data_manager
 
 
@@ -355,7 +354,7 @@ def build_model(n_clicks, dataset_name, user_col, item_col, rating_col, method, 
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             None,
             dmc.Notification(
@@ -477,4 +476,4 @@ def get_recommendations(n_clicks, target_user, top_n, model_data):
         )
 
     except Exception as e:
-        return dmc.Text(f"Error: {str(e)}", c="red")
+        return dmc.Text(f"Error: {e!s}", c="red")

@@ -9,27 +9,28 @@ Author: Converted from aiml.data R package
 License: AGPL-3
 """
 
-import dash
-from dash import Dash, html, dcc, Input, Output, State, callback, ALL, ctx
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import json
 import base64
+import json
 from datetime import datetime
+
+import dash
+import dash_mantine_components as dmc
+
+# Import shell components
+from components.shell import (
+    create_aside,
+    create_footer,
+    create_header,
+    create_navigation,
+)
+from dash import ALL, Dash, Input, Output, State, callback, ctx, dcc, html
+from dash_iconify import DashIconify
 
 # Import constants
 from utils.constants import APP_TITLE
 
 # Import utilities
 from utils.data_manager import data_manager
-
-# Import shell components
-from components.shell import (
-    create_header,
-    create_navigation,
-    create_aside,
-    create_footer,
-)
 
 # Import all pages
 from aiml_dash.plugins.models import HOME_PAGE_ID
@@ -551,7 +552,7 @@ def import_state(contents, filename):
         error_msg = dmc.Alert(
             [
                 dmc.Text("Failed to import state", fw=500),
-                dmc.Text(f"Error: {str(e)}", size="sm"),
+                dmc.Text(f"Error: {e!s}", size="sm"),
                 dmc.Text(
                     "Please ensure you're importing a valid AIML state file",
                     size="xs",

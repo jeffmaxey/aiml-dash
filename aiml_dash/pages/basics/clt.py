@@ -3,15 +3,15 @@ Central Limit Theorem Simulation
 Interactive demonstration of the Central Limit Theorem.
 """
 
-from dash import dcc, callback, Input, Output, State
-from dash.development.base_component import Component
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
 import numpy.typing as npt
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc
+from dash.development.base_component import Component
+from dash_iconify import DashIconify
 from plotly.subplots import make_subplots
+from scipy import stats
 
 
 def layout() -> Component:
@@ -502,7 +502,7 @@ def run_clt_simulation(
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

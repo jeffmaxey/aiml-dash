@@ -5,16 +5,15 @@ Pre-Factor Analysis Page
 Explore data for factor analysis. Test assumptions and determine optimal number of factors.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
+import dash_mantine_components as dmc
 import numpy as np
-from scipy.stats import chi2
-import plotly.graph_objects as go
 import plotly.express as px
-
+import plotly.graph_objects as go
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy.stats import chi2
 from utils.data_manager import data_manager
 
 
@@ -408,7 +407,7 @@ def run_prefactor_analysis(n_clicks, dataset_name, variables, max_factors):
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             {},
             "",

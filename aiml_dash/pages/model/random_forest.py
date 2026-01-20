@@ -5,15 +5,14 @@ Random Forest Page
 Ensemble of decision trees for robust prediction.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
+import plotly.graph_objects as go
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, r2_score
-import plotly.graph_objects as go
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -243,7 +242,7 @@ def train_forest(n, dataset, response, explanatory, rf_type, n_trees, max_depth,
         )
 
     except Exception as e:
-        return None, None, dmc.Alert(f"Error: {str(e)}", color="red")
+        return None, None, dmc.Alert(f"Error: {e!s}", color="red")
 
 
 @callback(

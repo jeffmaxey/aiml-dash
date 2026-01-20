@@ -6,15 +6,14 @@ Create perceptual maps using correspondence analysis to visualize brand position
 and relationships between categorical variables.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -539,7 +538,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
     except Exception as e:
         return (
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             "",
             {},
             None,

@@ -5,16 +5,15 @@ Neural Network Page
 Multi-layer perceptron neural network for classification and regression.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from sklearn.neural_network import MLPClassifier, MLPRegressor
-from sklearn.metrics import accuracy_score, r2_score
-from sklearn.preprocessing import StandardScaler
 import plotly.graph_objects as go
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.metrics import accuracy_score, r2_score
+from sklearn.neural_network import MLPClassifier, MLPRegressor
+from sklearn.preprocessing import StandardScaler
 from utils.data_manager import data_manager
 
 
@@ -358,7 +357,7 @@ def train_network(
         )
 
     except Exception as e:
-        return None, None, dmc.Alert(f"Error: {str(e)}", color="red")
+        return None, None, dmc.Alert(f"Error: {e!s}", color="red")
 
 
 @callback(

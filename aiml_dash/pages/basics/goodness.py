@@ -3,14 +3,14 @@ Goodness of Fit Test Page
 Chi-square test to compare observed frequencies with expected frequencies.
 """
 
-from dash import html, dcc, callback, Input, Output, State
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from scipy import stats
+import pandas as pd
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy import stats
 from utils.data_manager import data_manager
 
 
@@ -503,7 +503,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

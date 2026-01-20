@@ -6,12 +6,11 @@ Interactive data table viewer with filtering and sorting.
 """
 
 import dash
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-
-from components.common import create_page_header, create_filter_section
+import dash_mantine_components as dmc
+from components.common import create_filter_section, create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -113,7 +112,7 @@ def update_view_table(dataset_name, filter_expr, sort_by, slice_expr):
 
     except Exception as e:
         return dmc.Alert(
-            f"Error applying filters: {str(e)}",
+            f"Error applying filters: {e!s}",
             title="Filter Error",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
@@ -199,7 +198,7 @@ def export_csv(n_clicks, dataset_name, filter_expr, sort_by, slice_expr):
                 df = df.iloc[start:end]
 
     except Exception as e:
-        print(f"Error exporting: {str(e)}")
+        print(f"Error exporting: {e!s}")
         return dash.no_update
 
     # Return CSV download

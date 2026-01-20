@@ -3,12 +3,12 @@ Compare Proportions Test Page
 Two-sample test for comparing proportions between independent groups.
 """
 
-from dash import dcc, callback, Input, Output, State
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc
+from dash_iconify import DashIconify
+from scipy import stats
 from utils.data_manager import data_manager
 
 
@@ -590,7 +590,7 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

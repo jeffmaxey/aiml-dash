@@ -7,13 +7,14 @@ unit tests to verify correct paging behavior.
 
 from __future__ import annotations
 
-from typing import List, Dict, Any, Tuple, Optional
+from typing import Any
+
 import pandas as pd
 
 
 def paginate_df(
-    df: pd.DataFrame, page_current: int, page_size: int, sort_by: Optional[List[Dict[str, Any]]] = None
-) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    df: pd.DataFrame, page_current: int, page_size: int, sort_by: list[dict[str, Any]] | None = None
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """
     Return a page slice of `df` and column definitions suitable for dash DataTable.
 

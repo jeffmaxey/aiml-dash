@@ -5,52 +5,52 @@ Transform Functions
 Data transformation functions mirroring aiml.data R package.
 """
 
-import pandas as pd
+
 import numpy as np
-from typing import Union, Optional, List, Dict
+import pandas as pd
 
 
-def center(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def center(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Center variable by subtracting the mean."""
     return x - x.mean()
 
 
-def standardize(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def standardize(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Standardize variable to mean=0, sd=1."""
     return (x - x.mean()) / x.std()
 
 
-def square(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def square(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Square the variable."""
     return x**2
 
 
-def inverse(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def inverse(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Calculate 1/x."""
     return 1 / x
 
 
-def normalize(x: Union[pd.Series, np.ndarray], y: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def normalize(x: pd.Series | np.ndarray, y: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Normalize x by y (x/y)."""
     return x / y
 
 
-def ln(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def ln(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Natural logarithm."""
     return np.log(x)
 
 
-def log10(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def log10(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Base-10 logarithm."""
     return np.log10(x)
 
 
-def exp(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def exp(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Exponential function."""
     return np.exp(x)
 
 
-def sqrt(x: Union[pd.Series, np.ndarray]) -> Union[pd.Series, np.ndarray]:
+def sqrt(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
     """Square root."""
     return np.sqrt(x)
 
@@ -102,7 +102,7 @@ def as_character(x: pd.Series) -> pd.Series:
     return x.astype(str)
 
 
-def make_train(p: float = 0.7, n: int = 100, seed: Optional[int] = None) -> np.ndarray:
+def make_train(p: float = 0.7, n: int = 100, seed: int | None = None) -> np.ndarray:
     """
     Create train/test split indicator.
 
@@ -126,7 +126,7 @@ def make_train(p: float = 0.7, n: int = 100, seed: Optional[int] = None) -> np.n
     return np.random.rand(n) < p
 
 
-def refactor(x: pd.Series, levs: Optional[List[str]] = None) -> pd.Categorical:
+def refactor(x: pd.Series, levs: list[str] | None = None) -> pd.Categorical:
     """
     Refactor categorical variable.
 
@@ -148,7 +148,7 @@ def refactor(x: pd.Series, levs: Optional[List[str]] = None) -> pd.Categorical:
     return pd.Categorical(x, categories=levs, ordered=False)
 
 
-def mutate_ext(df: pd.DataFrame, var: str, function: str, args: Optional[Dict] = None) -> pd.DataFrame:
+def mutate_ext(df: pd.DataFrame, var: str, function: str, args: dict | None = None) -> pd.DataFrame:
     """
     Extended mutate - apply transformation and add as new column.
 
@@ -263,6 +263,6 @@ def create_variable(df: pd.DataFrame, var_name: str, expression: str) -> pd.Data
         # Evaluate expression in context of dataframe
         result[var_name] = result.eval(expression)
     except Exception as e:
-        print(f"Error creating variable: {str(e)}")
+        print(f"Error creating variable: {e!s}")
 
     return result

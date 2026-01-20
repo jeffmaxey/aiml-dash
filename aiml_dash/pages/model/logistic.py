@@ -5,24 +5,23 @@ Logistic Regression Page
 Binary logistic regression for classification problems.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import pandas as pd
 import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
+    confusion_matrix,
+    f1_score,
     precision_score,
     recall_score,
-    f1_score,
     roc_auc_score,
-    confusion_matrix,
 )
-import plotly.graph_objects as go
-import plotly.express as px
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -277,7 +276,7 @@ def estimate_model(n_clicks, dataset_name, response, predictors):
 
         return model_store, summary, confusion_output
     except Exception as e:
-        return None, f"Error: {str(e)}", None
+        return None, f"Error: {e!s}", None
 
 
 @callback(

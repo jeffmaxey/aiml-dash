@@ -6,11 +6,10 @@ Generate Python code and reproducible reports.
 """
 
 import dash
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 

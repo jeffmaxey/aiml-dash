@@ -5,18 +5,17 @@ Linear Regression (OLS) Page
 Ordinary Least Squares regression for continuous outcomes.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
 import plotly.graph_objects as go
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler
 from utils.data_manager import data_manager
 
 
@@ -670,7 +669,7 @@ def estimate_model(n_clicks, dataset_name, response, explanatory, options, inter
         return model_data, info, notification
 
     except Exception as e:
-        return None, dmc.Alert(f"Error: {str(e)}", color="red"), None
+        return None, dmc.Alert(f"Error: {e!s}", color="red"), None
 
 
 @callback(
@@ -772,7 +771,7 @@ def generate_predictions(n_clicks, model_data, pred_type, pred_dataset, pred_cmd
             ])
 
     except Exception as e:
-        return dmc.Alert(f"Error: {str(e)}", color="red")
+        return dmc.Alert(f"Error: {e!s}", color="red")
 
 
 @callback(
@@ -890,7 +889,7 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
     except Exception as e:
         fig = go.Figure()
         fig.add_annotation(
-            text=f"Error: {str(e)}",
+            text=f"Error: {e!s}",
             xref="paper",
             yref="paper",
             x=0.5,

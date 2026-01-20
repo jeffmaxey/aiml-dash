@@ -6,13 +6,12 @@ Generate random samples using different sampling methods.
 """
 
 import dash
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import pandas as pd
 import numpy as np
-
+import pandas as pd
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -295,7 +294,7 @@ def generate_sample(n_clicks, method, size, strata_var, seed):
 
     except Exception as e:
         return dmc.Alert(
-            f"Error generating sample: {str(e)}",
+            f"Error generating sample: {e!s}",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
         ), None

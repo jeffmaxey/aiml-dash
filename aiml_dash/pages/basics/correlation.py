@@ -1,11 +1,11 @@
 """Correlation Analysis Page"""
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
 import plotly.express as px
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -146,6 +146,6 @@ def calculate_correlation(n_clicks, dataset_name, variables, method):
             action="show",
         )
     except Exception as e:
-        return dmc.Text(f"Error: {str(e)}", c="red"), dmc.Notification(
+        return dmc.Text(f"Error: {e!s}", c="red"), dmc.Notification(
             title="Error", message=str(e), color="red", action="show"
         )

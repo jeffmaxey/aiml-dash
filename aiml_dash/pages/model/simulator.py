@@ -5,14 +5,13 @@ Simulator Page
 Run Monte Carlo simulations for scenario analysis and risk assessment.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
+import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 
 
 def layout():
@@ -498,7 +497,7 @@ def run_simulation(n_clicks, n_iter, seed, formula, vars_data):
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             {},
             "",

@@ -5,16 +5,15 @@ Multinomial Logistic Regression Page
 Multinomial logistic regression for multi-class classification problems.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
+import dash_mantine_components as dmc
 import pandas as pd
+import plotly.express as px
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import plotly.express as px
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -350,7 +349,7 @@ def train_model(n_clicks, dataset_name, target, features, solver, max_iter, test
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             "",
             None,

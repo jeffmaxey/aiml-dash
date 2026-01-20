@@ -5,15 +5,14 @@ Logistic Regression (GLM) Page
 Generalized Linear Model for binary classification outcomes.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
 )
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -211,7 +210,7 @@ def estimate_model(n_clicks, dataset_name, response, explanatory):
 
         return model_data, info
     except Exception as e:
-        return None, dmc.Alert(f"Error: {str(e)}", color="red")
+        return None, dmc.Alert(f"Error: {e!s}", color="red")
 
 
 @callback(

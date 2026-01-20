@@ -4,12 +4,12 @@ Calculate probabilities and critical values for various distributions.
 """
 
 import dash
-from dash import html, dcc, callback, Input, Output, State
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy import stats
 
 
 def layout():
@@ -608,7 +608,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

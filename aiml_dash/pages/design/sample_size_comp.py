@@ -5,13 +5,12 @@ Sample Size Comparison Page
 Compare sample sizes across different scenarios and parameters.
 """
 
-from dash import dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import plotly.graph_objects as go
 import numpy as np
-
+import plotly.graph_objects as go
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc
+from dash_iconify import DashIconify
 
 
 def layout():
@@ -208,7 +207,7 @@ def compare_sample_sizes(n_clicks, test_type, effect_min, effect_max, power_leve
         # Return empty figure with error message
         fig = go.Figure()
         fig.add_annotation(
-            text=f"Error: {str(e)}",
+            text=f"Error: {e!s}",
             xref="paper",
             yref="paper",
             x=0.5,

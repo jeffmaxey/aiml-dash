@@ -6,13 +6,12 @@ Create pivot tables with aggregations and chi-square tests.
 """
 
 import dash
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
+import dash_mantine_components as dmc
 import pandas as pd
-
-from components.common import create_page_header, create_filter_section
+from components.common import create_filter_section, create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 from utils.statistics import chi_square_test
 
@@ -376,7 +375,7 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
 
     except Exception as e:
         error = dmc.Alert(
-            f"Error creating pivot table: {str(e)}",
+            f"Error creating pivot table: {e!s}",
             title="Pivot Error",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
