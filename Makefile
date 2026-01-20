@@ -40,11 +40,11 @@ build-and-publish: build publish ## Build and publish.
 
 .PHONY: docs-test
 docs-test: ## Test if documentation can be built without warnings or errors
-	@uv run mkdocs build -s
+	@uv run mkdocs build -s -f configs/mkdocs.yml
 
 .PHONY: docs
 docs: ## Build and serve the documentation
-	@uv run mkdocs serve
+	@uv run mkdocs serve -f configs/mkdocs.yml
 
 .PHONY: help
 help:

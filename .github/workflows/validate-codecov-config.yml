@@ -2,7 +2,7 @@ name: validate-codecov-config
 
 on:
   pull_request:
-    paths: [codecov.yaml]
+    paths: [configs/codecov.yaml]
   push:
     branches: [main]
 
@@ -12,4 +12,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate codecov configuration
-        run: curl -sSL --fail-with-body --data-binary @codecov.yaml https://codecov.io/validate
+        run: curl -sSL --fail-with-body --data-binary @configs/codecov.yaml https://codecov.io/validate
