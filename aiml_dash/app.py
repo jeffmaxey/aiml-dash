@@ -23,6 +23,9 @@ from utils.constants import APP_TITLE
 # Import utilities
 from utils.data_manager import data_manager
 
+# Import theme configuration
+from aiml_dash.theme_config import THEME_CONFIG
+
 # Import shell components
 from components.shell import (
     create_header,
@@ -62,15 +65,7 @@ register_plugin_callbacks(app)
 # ==============================================================================
 
 app.layout = dmc.MantineProvider(
-    theme={
-        "fontFamily": "'Inter', sans-serif",
-        "primaryColor": "blue",
-        "components": {
-            "Button": {"defaultProps": {"fw": 400}},
-            "Alert": {"styles": {"title": {"fontWeight": 500}}},
-            "AvatarGroup": {"styles": {"truncated": {"fontWeight": 500}}},
-        },
-    },
+    theme=THEME_CONFIG,
     children=dmc.Box(
         [
             dmc.AppShell(
