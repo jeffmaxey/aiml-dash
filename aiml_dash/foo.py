@@ -1,3 +1,11 @@
+"""
+Example Module
+==============
+
+This module provides an example function demonstrating proper docstring format.
+"""
+
+
 def foo(bar: str) -> str:
     """Summary line.
 

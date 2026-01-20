@@ -5,15 +5,14 @@ Decision Analysis Page
 Build and analyze decision trees for decision making under uncertainty.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 
 
 def layout():
@@ -392,7 +391,7 @@ def analyze_decision(n_clicks, tree_spec):
                             y=evs,
                             mode="lines",
                             name=f"{first_branch['name']} - {chance_branches[0]['name']}",
-                            line=dict(width=2),
+                            line={"width": 2},
                         )
                     )
 
@@ -440,7 +439,7 @@ def analyze_decision(n_clicks, tree_spec):
 
     except Exception as e:
         return (
-            dmc.Text(f"Error parsing decision tree: {str(e)}", c="red"),
+            dmc.Text(f"Error parsing decision tree: {e!s}", c="red"),
             "",
             {},
             None,

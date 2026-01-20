@@ -3,11 +3,10 @@
 Check that all dependencies and modules are properly installed
 """
 
-from importlib import import_module
 import pkgutil
 import sys
+from importlib import import_module
 from pathlib import Path
-
 
 PROJECT_DIR = Path(__file__).parent.resolve()
 

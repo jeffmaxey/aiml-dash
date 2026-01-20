@@ -3,15 +3,15 @@ Central Limit Theorem Simulation
 Interactive demonstration of the Central Limit Theorem.
 """
 
-from dash import dcc, callback, Input, Output, State
-from dash.development.base_component import Component
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
 import numpy.typing as npt
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc
+from dash.development.base_component import Component
+from dash_iconify import DashIconify
 from plotly.subplots import make_subplots
+from scipy import stats
 
 
 def layout() -> Component:
@@ -272,7 +272,7 @@ def run_clt_simulation(
             shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
         else:
             # Use Kolmogorov-Smirnov for large samples
-            shapiro_stat, shapiro_p = stats.kstest((sample_means_array - mean_of_means) / std_of_means, "norm")
+            _shapiro_stat, shapiro_p = stats.kstest((sample_means_array - mean_of_means) / std_of_means, "norm")
 
         # Create statistics display
         stats_content = [
@@ -425,7 +425,7 @@ def run_clt_simulation(
             go.Histogram(
                 x=pop_sample,
                 name="Population",
-                marker=dict(color="#868e96"),
+                marker={"color": "#868e96"},
                 nbinsx=50,
                 showlegend=False,
             ),
@@ -438,7 +438,7 @@ def run_clt_simulation(
             go.Histogram(
                 x=sample_means_array,
                 name="Sample Means",
-                marker=dict(color="#1c7ed6", opacity=0.7),
+                marker={"color": "#1c7ed6", "opacity": 0.7},
                 nbinsx=50,
                 showlegend=False,
             ),
@@ -450,7 +450,7 @@ def run_clt_simulation(
         x_range = np.linspace(sample_means_array.min(), sample_means_array.max(), 200)
         normal_pdf = stats.norm.pdf(x_range, mean_of_means, std_of_means)
         # Scale to match histogram
-        hist_counts, _ = np.histogram(sample_means_array, bins=50)
+        _hist_counts, _ = np.histogram(sample_means_array, bins=50)
         bin_width = (sample_means_array.max() - sample_means_array.min()) / 50
         scale_factor = len(sample_means_array) * bin_width
 
@@ -460,7 +460,7 @@ def run_clt_simulation(
                 y=normal_pdf * scale_factor,
                 name="Normal Distribution",
                 mode="lines",
-                line=dict(color="red", width=2),
+                line={"color": "red", "width": 2},
                 showlegend=True,
             ),
             row=2,
@@ -470,7 +470,7 @@ def run_clt_simulation(
         # Add vertical lines for means
         fig.add_vline(
             x=pop_mean,
-            line=dict(color="red", dash="dash", width=2),
+            line={"color": "red", "dash": "dash", "width": 2},
             annotation_text=f"μ = {pop_mean:.2f}",
             row=1,
             col=1,
@@ -478,7 +478,7 @@ def run_clt_simulation(
 
         fig.add_vline(
             x=mean_of_means,
-            line=dict(color="red", dash="dash", width=2),
+            line={"color": "red", "dash": "dash", "width": 2},
             annotation_text=f"x̄ = {mean_of_means:.2f}",
             row=2,
             col=1,
@@ -493,7 +493,7 @@ def run_clt_simulation(
             height=700,
             template="plotly_white",
             showlegend=True,
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
         )
 
         return stats_content, {"display": "block"}, fig
@@ -502,7 +502,7 @@ def run_clt_simulation(
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

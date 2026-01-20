@@ -5,24 +5,23 @@ Logistic Regression Page
 Binary logistic regression for classification problems.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import pandas as pd
 import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
+    confusion_matrix,
+    f1_score,
     precision_score,
     recall_score,
-    f1_score,
     roc_auc_score,
-    confusion_matrix,
 )
-import plotly.graph_objects as go
-import plotly.express as px
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -212,7 +211,7 @@ def estimate_model(n_clicks, dataset_name, response, predictors):
         auc = roc_auc_score(y_binary, y_proba)
 
         model_store = {
-            "coefficients": {col: float(coef) for col, coef in zip(X.columns, model.coef_[0])},
+            "coefficients": {col: float(coef) for col, coef in zip(X.columns, model.coef_[0], strict=False)},
             "intercept": float(model.intercept_[0]),
             "y_true": y_binary.tolist(),
             "y_pred": y_pred.tolist(),
@@ -277,7 +276,7 @@ def estimate_model(n_clicks, dataset_name, response, predictors):
 
         return model_store, summary, confusion_output
     except Exception as e:
-        return None, f"Error: {str(e)}", None
+        return None, f"Error: {e!s}", None
 
 
 @callback(
@@ -307,7 +306,7 @@ def update_plot(plot_type, model_store):
             labels={"x": "False Positive Rate", "y": "True Positive Rate"},
             title=f"ROC Curve (AUC = {model_store['auc']:.4f})",
         )
-        fig.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode="lines", line=dict(dash="dash"), name="Random"))
+        fig.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode="lines", line={"dash": "dash"}, name="Random"))
     elif plot_type == "coefficients":
         coefs = model_store["coefficients"]
         fig = go.Figure(data=[go.Bar(x=list(coefs.values()), y=list(coefs.keys()), orientation="h")])

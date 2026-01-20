@@ -3,12 +3,12 @@ Compare Proportions Test Page
 Two-sample test for comparing proportions between independent groups.
 """
 
-from dash import dcc, callback, Input, Output, State
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc
+from dash_iconify import DashIconify
+from scipy import stats
 from utils.data_manager import data_manager
 
 
@@ -560,25 +560,25 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
             go.Bar(
                 x=[group1, group2],
                 y=[p1, p2],
-                marker=dict(color=["#1c7ed6", "#15aabf"]),
+                marker={"color": ["#1c7ed6", "#15aabf"]},
                 text=[f"{p1:.4f}", f"{p2:.4f}"],
                 textposition="outside",
-                error_y=dict(
-                    type="data",
-                    array=[
+                error_y={
+                    "type": "data",
+                    "array": [
                         stats.norm.ppf(1 - (1 - confidence) / 2) * np.sqrt(p1 * (1 - p1) / n1),
                         stats.norm.ppf(1 - (1 - confidence) / 2) * np.sqrt(p2 * (1 - p2) / n2),
                     ],
-                    visible=True,
-                    color="gray",
-                ),
+                    "visible": True,
+                    "color": "gray",
+                },
             )
         )
 
         fig.update_layout(
             title=f"Proportion Comparison by {group_var}",
             yaxis_title="Proportion",
-            yaxis=dict(range=[0, min(1, max(p1, p2) * 1.3)]),
+            yaxis={"range": [0, min(1, max(p1, p2) * 1.3)]},
             template="plotly_white",
             height=400,
             showlegend=False,
@@ -590,7 +590,7 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

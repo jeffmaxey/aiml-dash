@@ -6,14 +6,13 @@ Randomly assign subjects to treatment groups or generate random sequences.
 """
 
 import dash
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-
+import pandas as pd
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -286,7 +285,7 @@ def generate_randomization(n_clicks, n_subjects, n_groups, group_names_text, met
 
     except Exception as e:
         error_msg = dmc.Alert(
-            f"Error generating randomization: {str(e)}",
+            f"Error generating randomization: {e!s}",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
         )

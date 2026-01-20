@@ -5,26 +5,25 @@ Evaluate Classification Page
 Evaluate and compare classification model performance.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from sklearn.metrics import (
     accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    confusion_matrix,
-    roc_curve,
     auc,
     classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_curve,
 )
-import plotly.graph_objects as go
-import plotly.express as px
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -409,7 +408,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
         cm = confusion_matrix(y_actual, y_pred, labels=labels)
         confusion_fig = px.imshow(
             cm,
-            labels=dict(x="Predicted", y="Actual", color="Count"),
+            labels={"x": "Predicted", "y": "Actual", "color": "Count"},
             x=labels,
             y=labels,
             title="Confusion Matrix",
@@ -435,7 +434,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
                         y=tpr,
                         mode="lines",
                         name=f"ROC (AUC = {roc_auc:.4f})",
-                        line=dict(color="blue", width=2),
+                        line={"color": "blue", "width": 2},
                     )
                 )
                 roc_fig.add_trace(
@@ -444,7 +443,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
                         y=[0, 1],
                         mode="lines",
                         name="Random",
-                        line=dict(color="red", dash="dash"),
+                        line={"color": "red", "dash": "dash"},
                     )
                 )
                 roc_fig.update_layout(
@@ -502,7 +501,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             {},
             {},

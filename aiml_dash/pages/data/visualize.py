@@ -5,12 +5,13 @@ Visualize Page
 Data visualization with Plotly charts.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import plotly.express as px
+import contextlib
 
-from components.common import create_page_header, create_filter_section
+import dash_mantine_components as dmc
+import plotly.express as px
+from components.common import create_filter_section, create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -200,10 +201,8 @@ def create_visualization(
 
     # Apply filter
     if data_filter and data_filter.strip():
-        try:
+        with contextlib.suppress(BaseException):
             df = df.query(data_filter)
-        except:
-            pass
 
     try:
         # Create chart based on type
@@ -293,14 +292,14 @@ def create_visualization(
         fig.update_layout(
             template="plotly_white",
             height=600,
-            font=dict(family="Inter, sans-serif"),
+            font={"family": "Inter, sans-serif"},
         )
 
         return dcc.Graph(figure=fig, config={"displayModeBar": True, "displaylogo": False})
 
     except Exception as e:
         return dmc.Alert(
-            f"Error creating chart: {str(e)}",
+            f"Error creating chart: {e!s}",
             title="Visualization Error",
             color="red",
             icon=DashIconify(icon="carbon:warning"),

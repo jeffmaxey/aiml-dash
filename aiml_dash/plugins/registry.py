@@ -4,11 +4,11 @@ Plugin registry and navigation helpers for AIML Dash.
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence, TypedDict
+from collections.abc import Iterable, Sequence
+from typing import TypedDict
 
 from aiml_dash.plugins import core, example_plugin, legacy, template_plugin
 from aiml_dash.plugins.models import Plugin, PluginPage
-
 
 SECTION_ORDER = [
     "Core",

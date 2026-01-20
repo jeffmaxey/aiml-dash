@@ -5,14 +5,15 @@ Pivot Page
 Create pivot tables with aggregations and chi-square tests.
 """
 
-import dash
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import dash_ag_grid as dag
-import pandas as pd
+import contextlib
 
-from components.common import create_page_header, create_filter_section
+import dash
+import dash_ag_grid as dag
+import dash_mantine_components as dmc
+import pandas as pd
+from components.common import create_filter_section, create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 from utils.statistics import chi_square_test
 
@@ -237,10 +238,8 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
 
     # Apply filter
     if data_filter and data_filter.strip():
-        try:
+        with contextlib.suppress(BaseException):
             df = df.query(data_filter)
-        except:
-            pass
 
     try:
         # If no values specified, use count
@@ -255,7 +254,7 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
                 )
             else:
                 pivot = df[rows].value_counts().reset_index()
-                pivot.columns = list(rows) + ["count"]
+                pivot.columns = [*list(rows), "count"]
         else:
             # Create aggregation pivot
             pivot = pd.pivot_table(
@@ -360,7 +359,7 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
                             "Variables are statistically independent"
                             if chi2_results["p_value"] >= 0.05
                             else "Variables are statistically dependent",
-                            title="Interpretation (α = 0.05)",
+                            title="Interpretation (α = 0.05)",  # noqa: RUF001
                             color="blue" if chi2_results["p_value"] >= 0.05 else "green",
                         ),
                     ],
@@ -376,7 +375,7 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
 
     except Exception as e:
         error = dmc.Alert(
-            f"Error creating pivot table: {str(e)}",
+            f"Error creating pivot table: {e!s}",
             title="Pivot Error",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
@@ -408,10 +407,8 @@ def export_pivot(n_clicks, dataset_name, rows, cols, values, aggfunc, margins, n
 
     # Apply filter
     if data_filter and data_filter.strip():
-        try:
+        with contextlib.suppress(BaseException):
             df = df.query(data_filter)
-        except:
-            pass
 
     try:
         # Recreate pivot
@@ -425,7 +422,7 @@ def export_pivot(n_clicks, dataset_name, rows, cols, values, aggfunc, margins, n
                 )
             else:
                 pivot = df[rows].value_counts().reset_index()
-                pivot.columns = list(rows) + ["count"]
+                pivot.columns = [*list(rows), "count"]
         else:
             pivot = pd.pivot_table(
                 df,

@@ -5,10 +5,11 @@ Common Components
 Reusable UI components for the AIML Dash application.
 """
 
+from typing import Any
+
 import dash_mantine_components as dmc
+from dash import dcc, html
 from dash_iconify import DashIconify
-from dash import html, dcc
-from typing import List, Optional, Dict, Any, Literal, TypedDict
 
 
 def create_page_header(title: str, description: str, icon: str = "carbon:data-table") -> dmc.Stack:
@@ -99,7 +100,7 @@ def create_variable_selector(
     label: str,
     multiple: bool = True,
     required: bool = False,
-    description: Optional[str] = None,
+    description: str | None = None,
 ) -> dmc.Select | dmc.MultiSelect:
     """
     Create a variable selector component.
@@ -146,8 +147,8 @@ def create_variable_selector(
 
 def create_function_selector(
     func_id: str,
-    functions: Dict[str, tuple],
-    default: Optional[List[str]] = None,
+    functions: dict[str, tuple],
+    default: list[str] | None = None,
     label: str = "Functions",
 ) -> dmc.MultiSelect:
     """
@@ -169,7 +170,7 @@ def create_function_selector(
     dmc.MultiSelect
         Function selector
     """
-    data: List[Dict[str, Any]] = [
+    data: list[dict[str, Any]] = [
         {"value": k, "label": v[1] if isinstance(v, tuple) else k} for k, v in functions.items()
     ]
 
@@ -263,7 +264,7 @@ def create_code_display(code_id: str, language: str = "python") -> dmc.Code:
     )
 
 
-def create_tabs(tabs_id: str, tabs_data: List[Dict[str, Any]]) -> dmc.Tabs:
+def create_tabs(tabs_id: str, tabs_data: list[dict[str, Any]]) -> dmc.Tabs:
     """
     Create tabs component.
 

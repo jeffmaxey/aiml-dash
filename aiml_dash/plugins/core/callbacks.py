@@ -7,8 +7,8 @@ import binascii
 import json
 
 import dash
-from dash import ALL, Input, Output, State, callback
 import dash_mantine_components as dmc
+from dash import ALL, Input, Output, State, callback
 from dash_iconify import DashIconify
 
 from aiml_dash.plugins.core.components import create_plugin_toggle_card
@@ -66,7 +66,7 @@ def update_enabled_plugins(checked_values, ids, metadata):
         return dash.no_update
     locked = _get_locked_plugins(metadata)
     enabled = []
-    for checked, item in zip(checked_values, ids):
+    for checked, item in zip(checked_values, ids, strict=False):
         plugin_id = item.get("plugin") if isinstance(item, dict) else None
         if not plugin_id:
             continue

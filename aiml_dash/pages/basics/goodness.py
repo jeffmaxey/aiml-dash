@@ -3,14 +3,14 @@ Goodness of Fit Test Page
 Chi-square test to compare observed frequencies with expected frequencies.
 """
 
-from dash import html, dcc, callback, Input, Output, State
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from scipy import stats
+import pandas as pd
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy import stats
 from utils.data_manager import data_manager
 
 
@@ -464,7 +464,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
                 name="Observed",
                 x=[str(cat) for cat in categories],
                 y=observed,
-                marker=dict(color="#1c7ed6"),
+                marker={"color": "#1c7ed6"},
                 text=observed,
                 textposition="auto",
             )
@@ -475,7 +475,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
                 name="Expected",
                 x=[str(cat) for cat in categories],
                 y=expected,
-                marker=dict(color="#868e96"),
+                marker={"color": "#868e96"},
                 text=expected.round(2),
                 textposition="auto",
             )
@@ -488,7 +488,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
             barmode="group",
             template="plotly_white",
             height=400,
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
         )
 
         return (
@@ -503,7 +503,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

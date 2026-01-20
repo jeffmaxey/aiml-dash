@@ -6,21 +6,21 @@ This module contains all multivariate analysis pages for the AIML Dash applicati
 """
 
 from . import (
-    pre_factor,
-    full_factor,
-    kmeans_cluster,
-    hierarchical_cluster,
-    perceptual_map,
-    mds,
     conjoint,
+    full_factor,
+    hierarchical_cluster,
+    kmeans_cluster,
+    mds,
+    perceptual_map,
+    pre_factor,
 )
 
 __all__ = [
-    "pre_factor",
-    "full_factor",
-    "kmeans_cluster",
-    "hierarchical_cluster",
-    "perceptual_map",
-    "mds",
     "conjoint",
+    "full_factor",
+    "hierarchical_cluster",
+    "kmeans_cluster",
+    "mds",
+    "perceptual_map",
+    "pre_factor",
 ]

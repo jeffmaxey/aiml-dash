@@ -5,10 +5,12 @@ Statistical Functions
 Statistical and exploration functions mirroring aiml.data R package.
 """
 
-import pandas as pd
+import contextlib
+from typing import Any
+
 import numpy as np
+import pandas as pd
 from scipy import stats
-from typing import List, Optional, Dict, Any
 
 
 def n_obs(x: pd.Series) -> int:
@@ -189,10 +191,10 @@ STAT_FUNCTIONS = {
 
 def explore(
     df: pd.DataFrame,
-    vars: List[str],
-    byvar: Optional[List[str]] = None,
-    fun: List[str] = ["mean", "sd", "min", "max"],
-    data_filter: Optional[str] = None,
+    variables: list[str],
+    byvar: list[str] | None = None,
+    fun: list[str] | None = None,
+    data_filter: str | None = None,
 ) -> pd.DataFrame:
     """
     Explore data with summary statistics.
@@ -201,7 +203,7 @@ def explore(
     ----------
     df : pd.DataFrame
         Input data
-    vars : list of str
+    variables: list of str
         Variables to summarize
     byvar : list of str, optional
         Variables to group by
@@ -216,15 +218,15 @@ def explore(
         Summary statistics table
     """
     # Apply filter if specified
+    if fun is None:
+        fun = ["mean", "sd", "min", "max"]
     if data_filter:
-        try:
+        with contextlib.suppress(Exception):
             df = df.query(data_filter)
-        except Exception:
-            pass
 
     # Build aggregation dictionary
     agg_dict = {}
-    for var in vars:
+    for var in variables:
         agg_list = []
         for f in fun:
             if f in STAT_FUNCTIONS:
@@ -243,7 +245,7 @@ def explore(
     else:
         # No grouping - apply to entire dataset
         result_dict = {}
-        for var in vars:
+        for var in variables:
             for f in fun:
                 if f in STAT_FUNCTIONS:
                     func, _ = STAT_FUNCTIONS[f]
@@ -258,7 +260,7 @@ def explore(
     return result
 
 
-def chi_square_test(observed: pd.DataFrame) -> Dict[str, Any]:
+def chi_square_test(observed: pd.DataFrame) -> dict[str, Any]:
     """
     Perform chi-square test on a contingency table.
 

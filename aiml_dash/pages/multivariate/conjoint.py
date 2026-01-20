@@ -6,17 +6,17 @@ Perform conjoint analysis to measure consumer preferences for product attributes
 and estimate part-worth utilities.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import dash_ag_grid as dag
-import pandas as pd
-import numpy as np
-from sklearn.linear_model import LinearRegression
 from itertools import combinations
-import plotly.graph_objects as go
 
+import dash_ag_grid as dag
+import dash_mantine_components as dmc
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.linear_model import LinearRegression
 from utils.data_manager import data_manager
 
 
@@ -402,12 +402,12 @@ def run_conjoint_analysis(
         if total_importance > 0:
             importance_pct = {k: (v / total_importance) * 100 for k, v in importance.items()}
         else:
-            importance_pct = {k: 0 for k in importance.keys()}
+            importance_pct = dict.fromkeys(importance.keys(), 0)
 
         # Create part-worths plot
         partworths_fig = go.Figure()
 
-        for i, (attr, pw) in enumerate(partworths.items()):
+        for _i, (attr, pw) in enumerate(partworths.items()):
             levels = list(pw.keys())
             values = list(pw.values())
 
@@ -527,7 +527,7 @@ def run_conjoint_analysis(
         return (
             {},
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             "",
             None,
             dmc.Notification(

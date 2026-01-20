@@ -5,15 +5,14 @@ Logistic Regression (GLM) Page
 Generalized Linear Model for binary classification outcomes.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
 )
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -148,6 +147,11 @@ def layout():
 # Similar callbacks as linear regression but adapted for classification
 @callback(Output("logit-dataset", "data"), Input("logit-dataset", "id"))
 def populate_datasets(_):
+    """Populate dataset dropdown with available datasets.
+
+    Returns:
+        List of dataset options for dropdown.
+    """
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
 
@@ -157,6 +161,14 @@ def populate_datasets(_):
     Input("logit-dataset", "value"),
 )
 def update_variable_lists(dataset_name):
+    """Update variable lists based on selected dataset.
+
+    Args:
+        dataset_name: Name of the selected dataset.
+
+    Returns:
+        Tuple of (response_options, explanatory_options).
+    """
     if not dataset_name:
         return [], []
     try:
@@ -178,6 +190,17 @@ def update_variable_lists(dataset_name):
     prevent_initial_call=True,
 )
 def estimate_model(n_clicks, dataset_name, response, explanatory):
+    """Estimate logistic regression model.
+
+    Args:
+        n_clicks: Number of button clicks.
+        dataset_name: Name of the dataset to analyze.
+        response: Name of the response variable.
+        explanatory: List of explanatory variable names.
+
+    Returns:
+        Tuple of (model_data, info_message).
+    """
     if not all([dataset_name, response, explanatory]):
         return None, dmc.Alert("Please select all required fields", color="red")
 
@@ -211,7 +234,7 @@ def estimate_model(n_clicks, dataset_name, response, explanatory):
 
         return model_data, info
     except Exception as e:
-        return None, dmc.Alert(f"Error: {str(e)}", color="red")
+        return None, dmc.Alert(f"Error: {e!s}", color="red")
 
 
 @callback(
@@ -219,6 +242,14 @@ def estimate_model(n_clicks, dataset_name, response, explanatory):
     Input("logit-model-store", "data"),
 )
 def update_summary(model_data):
+    """Update the summary display with model results.
+
+    Args:
+        model_data: Dictionary containing model results.
+
+    Returns:
+        Component with model summary or alert message.
+    """
     if not model_data:
         return dmc.Alert("No model estimated yet", color="yellow")
     return dmc.Stack([

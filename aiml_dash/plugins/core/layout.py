@@ -1,7 +1,7 @@
 """Layouts for core plugin pages."""
 
-from dash import dcc
 import dash_mantine_components as dmc
+from dash import dcc
 from dash_iconify import DashIconify
 
 from aiml_dash.plugins.core.components import (

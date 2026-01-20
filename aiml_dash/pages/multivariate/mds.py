@@ -6,17 +6,16 @@ Perform multi-dimensional scaling to visualize similarity/dissimilarity between 
 in a low-dimensional space.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import pandas as pd
 import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from sklearn.manifold import MDS as SklearnMDS
 from sklearn.metrics import pairwise_distances
-import plotly.graph_objects as go
-import plotly.express as px
-
-from components.common import create_page_header
 from utils.data_manager import data_manager
 
 
@@ -385,7 +384,7 @@ def run_mds(
                 x=coord_df["Dim1"],
                 y=coord_df["Dim2"],
                 mode="markers+text",
-                marker=dict(size=12, color="blue"),
+                marker={"size": 12, "color": "blue"},
                 text=coord_df.index,
                 textposition="top center",
                 hovertemplate="<b>%{text}</b><br>Dim1: %{x:.3f}<br>Dim2: %{y:.3f}<extra></extra>",
@@ -442,7 +441,7 @@ def run_mds(
                 x=original_dists,
                 y=reduced_dists,
                 mode="markers",
-                marker=dict(size=5, opacity=0.5),
+                marker={"size": 5, "opacity": 0.5},
                 name="Distances",
             )
         )
@@ -455,7 +454,7 @@ def run_mds(
                 x=[min_dist, max_dist],
                 y=[min_dist, max_dist],
                 mode="lines",
-                line=dict(color="red", dash="dash"),
+                line={"color": "red", "dash": "dash"},
                 name="Perfect Fit",
             )
         )
@@ -469,7 +468,7 @@ def run_mds(
         # Distance matrix heatmap
         dist_fig = px.imshow(
             distance_matrix,
-            labels=dict(x="Object", y="Object", color="Distance"),
+            labels={"x": "Object", "y": "Object", "color": "Distance"},
             x=labels,
             y=labels,
             title="Distance Matrix",
@@ -503,7 +502,7 @@ def run_mds(
     except Exception as e:
         return (
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             "",
             None,

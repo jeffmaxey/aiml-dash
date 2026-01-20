@@ -10,13 +10,13 @@ from __future__ import annotations
 import dash
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
-from dash import Input, Output, State, callback, dcc, html
+from dash import Input, Output, State, callback, html
 from dash_iconify import DashIconify
 
 from aiml_dash.components.common import create_page_header
+from aiml_dash.utils.data_manager import data_manager
 from aiml_dash.utils.database import db_manager
 from aiml_dash.utils.logging import get_logger
-from aiml_dash.utils.data_manager import data_manager
 
 logger = get_logger(__name__)
 
@@ -280,7 +280,7 @@ def save_connection(n_clicks, name, dialect, server, database, username, passwor
         logger.error(f"Error saving connection: {e}", exc_info=True)
         return dmc.Notification(
             title="Error",
-            message=f"Failed to save connection: {str(e)}",
+            message=f"Failed to save connection: {e!s}",
             action="show",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
@@ -315,7 +315,7 @@ def test_connection(n_clicks, connection_name):
     except Exception as e:
         logger.error(f"Connection test failed: {e}", exc_info=True)
         return dmc.Alert(
-            f"Connection failed: {str(e)}",
+            f"Connection failed: {e!s}",
             title="Test Failed",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
@@ -399,7 +399,7 @@ def execute_query(exec_clicks, preview_clicks, connection_name, query, dataset_n
     except Exception as e:
         logger.error(f"Query execution failed: {e}", exc_info=True)
         return dmc.Alert(
-            f"Query failed: {str(e)}",
+            f"Query failed: {e!s}",
             title="Execution Error",
             color="red",
             icon=DashIconify(icon="carbon:warning"),

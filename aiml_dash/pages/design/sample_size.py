@@ -5,13 +5,12 @@ Sample Size Page
 Calculate required sample size for different types of tests.
 """
 
-from dash import html, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from scipy import stats
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, html
+from dash_iconify import DashIconify
+from scipy import stats
 
 
 def layout():
@@ -73,7 +72,7 @@ def layout():
                                         ),
                                         dmc.NumberInput(
                                             id="ss-alpha",
-                                            label="Significance level (α)",
+                                            label="Significance level (α)",  # noqa: RUF001
                                             value=0.5,
                                             min=0.01,
                                             max=2.0,
@@ -321,7 +320,7 @@ def calculate_sample_size(n_clicks, test_type, effect_size, power, alpha, altern
                         [
                             dmc.Text("Interpretation:", style={"fontWeight": "bold"}),
                             dmc.Text(
-                                f"To detect an effect size of {effect_size:.2f} with {power * 100:.0f}% power at α={alpha:.3f}, you need a sample size of {n} observations."
+                                f"To detect an effect size of {effect_size:.2f} with {power * 100:.0f}% power at α={alpha:.3f}, you need a sample size of {n} observations."  # noqa: RUF001
                             ),
                         ],
                         gap="xs",
@@ -338,7 +337,7 @@ def calculate_sample_size(n_clicks, test_type, effect_size, power, alpha, altern
 
     except Exception as e:
         return dmc.Alert(
-            f"Error calculating sample size: {str(e)}",
+            f"Error calculating sample size: {e!s}",
             color="red",
             icon=DashIconify(icon="carbon:warning"),
         )

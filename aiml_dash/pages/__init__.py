@@ -12,6 +12,6 @@ Organized by functionality:
 """
 
 # Import subpackages for convenience
-from . import data, design, model, multivariate, basics
+from . import basics, data, design, model, multivariate
 
-__all__ = ["data", "design", "model", "multivariate", "basics"]
+__all__ = ["basics", "data", "design", "model", "multivariate"]

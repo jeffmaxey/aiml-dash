@@ -16,4 +16,4 @@ if __name__ == "__main__":
     print("Navigate to: http://localhost:8050")
     print("\nPress Ctrl+C to stop the server\n")
 
-    app.run(debug=True, host="0.0.0.0", port=8050)
+    app.run(debug=True, host="127.0.0.1", port=8050)

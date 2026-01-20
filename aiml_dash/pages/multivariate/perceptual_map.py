@@ -6,15 +6,14 @@ Create perceptual maps using correspondence analysis to visualize brand position
 and relationships between categorical variables.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -327,7 +326,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
             contingency = pd.crosstab(df[row_var], df[col_var])
 
         # Store original for later
-        original_table = contingency.copy()
+        contingency.copy()
 
         # Correspondence analysis using SVD
         # Step 1: Calculate proportions
@@ -342,10 +341,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
         expected = np.outer(row_masses, col_masses)
 
         # Step 4: Standardized residuals (if normalize)
-        if normalize:
-            residuals = (P - expected) / np.sqrt(expected)
-        else:
-            residuals = P - expected
+        residuals = (P - expected) / np.sqrt(expected) if normalize else P - expected
 
         # Step 5: SVD
         U, s, Vt = np.linalg.svd(residuals, full_matrices=False)
@@ -381,7 +377,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
                 x=row_coord_df["Dim1"],
                 y=row_coord_df["Dim2"],
                 mode="markers+text",
-                marker=dict(size=12, color="blue", symbol="circle"),
+                marker={"size": 12, "color": "blue", "symbol": "circle"},
                 text=row_coord_df.index,
                 textposition="top center",
                 name=row_var,
@@ -395,7 +391,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
                 x=col_coord_df["Dim1"],
                 y=col_coord_df["Dim2"],
                 mode="markers+text",
-                marker=dict(size=10, color="red", symbol="diamond"),
+                marker={"size": 10, "color": "red", "symbol": "diamond"},
                 text=col_coord_df.index,
                 textposition="bottom center",
                 name=col_var,
@@ -510,7 +506,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
             title="Scree Plot: Explained Variance by Dimension",
             xaxis_title="Dimension",
             yaxis_title="Explained Variance (%)",
-            yaxis2=dict(title="Cumulative (%)", overlaying="y", side="right"),
+            yaxis2={"title": "Cumulative (%)", "overlaying": "y", "side": "right"},
             hovermode="x unified",
         )
 
@@ -539,7 +535,7 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
     except Exception as e:
         return (
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             "",
             {},
             None,

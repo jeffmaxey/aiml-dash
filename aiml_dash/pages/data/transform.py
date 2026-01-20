@@ -6,11 +6,10 @@ Data transformation - create new variables, change types, apply functions.
 """
 
 import dash
-from dash import html, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 from utils.transforms import TRANSFORM_FUNCTIONS, create_variable
 
@@ -339,7 +338,7 @@ def create_new_variable(n_clicks, dataset_name, var_name, expression):
     except Exception as e:
         return dmc.Notification(
             title="Error",
-            message=f"Could not create variable: {str(e)}",
+            message=f"Could not create variable: {e!s}",
             color="red",
             action="show",
         ), dash.no_update
@@ -384,7 +383,7 @@ def apply_transformation(n_clicks, dataset_name, var, function):
     except Exception as e:
         return dmc.Notification(
             title="Error",
-            message=f"Transformation failed: {str(e)}",
+            message=f"Transformation failed: {e!s}",
             color="red",
             action="show",
         ), dash.no_update

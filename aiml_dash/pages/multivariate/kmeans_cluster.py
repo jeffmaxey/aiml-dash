@@ -5,18 +5,17 @@ K-Means Clustering Page
 Perform K-means clustering to segment data into groups.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
-import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score
-import plotly.graph_objects as go
+import pandas as pd
 import plotly.express as px
-
+import plotly.graph_objects as go
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
 from utils.data_manager import data_manager
 
 
@@ -158,12 +157,25 @@ def layout():
 
 @callback(Output("kmeans-dataset", "data"), Input("kmeans-dataset", "id"))
 def update_datasets(_):
+    """Populate dataset dropdown with available datasets.
+
+    Returns:
+        List of dataset options for dropdown.
+    """
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
 
 
 @callback(Output("kmeans-variables", "data"), Input("kmeans-dataset", "value"))
 def update_variables(dataset_name):
+    """Update variable options based on selected dataset.
+
+    Args:
+        dataset_name: Name of the selected dataset.
+
+    Returns:
+        List of numeric column options for dropdown.
+    """
     if not dataset_name:
         return []
     try:
@@ -191,6 +203,18 @@ def update_variables(dataset_name):
     prevent_initial_call=True,
 )
 def run_kmeans(n_clicks, dataset_name, variables, k, seed):
+    """Run K-means clustering and display results.
+
+    Args:
+        n_clicks: Number of button clicks.
+        dataset_name: Name of the dataset to analyze.
+        variables: List of variables for clustering.
+        k: Number of clusters.
+        seed: Random seed for reproducibility.
+
+    Returns:
+        Tuple of (cluster_plot, summary, elbow_plot, notification).
+    """
     if not all([dataset_name, variables]) or len(variables) < 2:
         return (
             {},
@@ -281,7 +305,7 @@ def run_kmeans(n_clicks, dataset_name, variables, k, seed):
     except Exception as e:
         return (
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             dmc.Notification(title="Error", message=str(e), color="red", action="show"),
         )

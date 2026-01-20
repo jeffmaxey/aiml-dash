@@ -5,17 +5,16 @@ Full Factor Analysis Page
 Perform factor analysis to identify underlying latent factors.
 """
 
-from dash import html, dcc, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
-import pandas as pd
+import dash_mantine_components as dmc
 import numpy as np
-from sklearn.decomposition import FactorAnalysis
-import plotly.graph_objects as go
+import pandas as pd
 import plotly.express as px
-
+import plotly.graph_objects as go
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from sklearn.decomposition import FactorAnalysis
 from utils.data_manager import data_manager
 
 
@@ -331,7 +330,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
                         name=var,
                         text=["", var],
                         textposition="top center",
-                        line=dict(width=2),
+                        line={"width": 2},
                     )
                 )
 
@@ -342,7 +341,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
                     x=np.cos(theta),
                     y=np.sin(theta),
                     mode="lines",
-                    line=dict(color="gray", dash="dash"),
+                    line={"color": "gray", "dash": "dash"},
                     showlegend=False,
                 )
             )
@@ -358,7 +357,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
 
         # Summary
         variance_explained = np.var(fa.transform(X_scaled), axis=0)
-        total_var = np.sum(variance_explained)
+        np.sum(variance_explained)
         prop_var = variance_explained / np.sum(np.var(X_scaled, axis=0))
 
         summary_data = []
@@ -380,7 +379,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
                 dmc.Divider(),
                 dag.AgGrid(
                     rowData=summary_data,
-                    columnDefs=[{"field": col} for col in summary_data[0].keys()],
+                    columnDefs=[{"field": col} for col in summary_data[0]],
                     defaultColDef={"sortable": False},
                     style={"height": "250px"},
                 ),
@@ -403,7 +402,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
 
     except Exception as e:
         return (
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             {},
             {},
             "",

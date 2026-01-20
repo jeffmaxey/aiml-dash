@@ -37,7 +37,7 @@ class AppSettings(BaseSettings):
 
     # Server configuration
     debug: bool = Field(default=True, description="Enable debug mode")
-    host: str = Field(default="0.0.0.0", description="Server host")
+    host: str = Field(default="127.0.0.1", description="Server host")
     port: int = Field(default=8090, description="Server port")
 
     # Data configuration

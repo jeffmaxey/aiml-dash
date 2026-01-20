@@ -3,13 +3,12 @@ Probability Calculator
 Calculate probabilities and critical values for various distributions.
 """
 
-import dash
-from dash import html, dcc, callback, Input, Output, State
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from scipy import stats
 import plotly.graph_objects as go
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy import stats
 
 
 def layout():
@@ -185,7 +184,7 @@ def update_params(distribution):
             ),
             dmc.NumberInput(
                 id="prob-param2",
-                label="Standard Deviation (σ)",
+                label="Standard Deviation (σ)",  # noqa: RUF001
                 value=1,
                 min=0.01,
                 step=0.1,
@@ -310,7 +309,7 @@ def update_input_type(calc_type):
         return [
             dmc.NumberInput(
                 id="prob-alpha",
-                label="Significance Level (α)",
+                label="Significance Level (α)",  # noqa: RUF001
                 description="For two-tailed test, α is split between tails",
                 value=0.05,
                 min=0.001,
@@ -368,7 +367,6 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
     """Calculate probability or critical value."""
     try:
         # Get additional parameters from context
-        ctx = dash.callback_context
 
         # Create distribution object
         if distribution == "normal":
@@ -434,7 +432,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                     go.Bar(
                         x=x_range,
                         y=pmf,
-                        marker=dict(color=colors),
+                        marker={"color": colors},
                         showlegend=False,
                     )
                 )
@@ -446,7 +444,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                         x=x_range,
                         y=pdf,
                         mode="lines",
-                        line=dict(color="#1c7ed6", width=2),
+                        line={"color": "#1c7ed6", "width": 2},
                         fill="tozeroy",
                         fillcolor="rgba(28, 126, 214, 0.1)",
                         showlegend=False,
@@ -461,7 +459,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                         x=x_shaded,
                         y=y_shaded,
                         mode="lines",
-                        line=dict(width=0),
+                        line={"width": 0},
                         fill="tozeroy",
                         fillcolor="rgba(28, 126, 214, 0.5)",
                         showlegend=False,
@@ -529,7 +527,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                             color="blue",
                             icon=DashIconify(icon="mdi:information"),
                             children=dmc.Text(
-                                f"For a two-tailed test with α = {alpha}, the critical values are {critical_lower:.4f} and {critical_upper:.4f}.",
+                                f"For a two-tailed test with α = {alpha}, the critical values are {critical_lower:.4f} and {critical_upper:.4f}.",  # noqa: RUF001
                                 size="sm",
                             ),
                         ),
@@ -546,7 +544,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                     go.Bar(
                         x=x_range,
                         y=pmf,
-                        marker=dict(color="#dee2e6"),
+                        marker={"color": "#dee2e6"},
                         showlegend=False,
                     )
                 )
@@ -557,7 +555,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                         x=x_range,
                         y=pdf,
                         mode="lines",
-                        line=dict(color="#1c7ed6", width=2),
+                        line={"color": "#1c7ed6", "width": 2},
                         fill="tozeroy",
                         fillcolor="rgba(28, 126, 214, 0.1)",
                         showlegend=False,
@@ -575,7 +573,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                         x=x_lower,
                         y=y_lower,
                         mode="lines",
-                        line=dict(width=0),
+                        line={"width": 0},
                         fill="tozeroy",
                         fillcolor="rgba(255, 0, 0, 0.3)",
                         name="Rejection Region",
@@ -587,7 +585,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                         x=x_upper,
                         y=y_upper,
                         mode="lines",
-                        line=dict(width=0),
+                        line={"width": 0},
                         fill="tozeroy",
                         fillcolor="rgba(255, 0, 0, 0.3)",
                         showlegend=False,
@@ -595,7 +593,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                 )
 
             fig.update_layout(
-                title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",
+                title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",  # noqa: RUF001
                 xaxis_title="x",
                 yaxis_title="Density" if distribution not in ["binomial", "poisson"] else "Probability",
                 template="plotly_white",
@@ -608,7 +606,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
         return (
             [
                 dmc.Alert(
-                    f"Error: {str(e)}",
+                    f"Error: {e!s}",
                     title="Error",
                     color="red",
                     icon=DashIconify(icon="mdi:alert-circle"),

@@ -6,13 +6,12 @@ Combine datasets using joins and set operations.
 """
 
 import dash
-from dash import html, Input, Output, State, callback
-import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import dash_ag_grid as dag
+import dash_mantine_components as dmc
 import pandas as pd
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, html
+from dash_iconify import DashIconify
 from utils.data_manager import data_manager
 
 
@@ -309,7 +308,7 @@ def combine_datasets(n_clicks, dataset1, dataset2, combine_type, join_on, result
             dash.no_update,
             dmc.Notification(
                 title="Error",
-                message=f"Could not combine datasets: {str(e)}",
+                message=f"Could not combine datasets: {e!s}",
                 color="red",
                 action="show",
             ),

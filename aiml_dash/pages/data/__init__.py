@@ -5,16 +5,16 @@ Data Pages Package
 All data-related pages for the AIML Data application.
 """
 
-from . import manage, view, explore, transform, visualize, pivot, combine, report, sql_query
+from . import combine, explore, manage, pivot, report, sql_query, transform, view, visualize
 
 __all__ = [
-    "manage",
-    "view",
-    "explore",
-    "transform",
-    "visualize",
-    "pivot",
     "combine",
+    "explore",
+    "manage",
+    "pivot",
     "report",
     "sql_query",
+    "transform",
+    "view",
+    "visualize",
 ]

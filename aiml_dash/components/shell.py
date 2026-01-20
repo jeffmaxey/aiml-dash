@@ -7,13 +7,12 @@ Reusable components for the AIML Dash AppShell structure.
 
 from typing import cast
 
-from dash.development.base_component import Component
 import dash_mantine_components as dmc
+from dash.development.base_component import Component
 from dash_iconify import DashIconify
 
 from aiml_dash.plugins.models import HOME_PAGE_ID
 from aiml_dash.utils.constants import APP_TITLE, GITHUB_URL
-
 
 theme_toggle = dmc.Switch(
     offLabel=DashIconify(icon="radix-icons:sun", width=15, color=dmc.DEFAULT_THEME["colors"]["yellow"][8]),

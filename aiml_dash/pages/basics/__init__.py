@@ -6,25 +6,25 @@ This module contains all basic statistics pages for the AIML Dash application.
 """
 
 from . import (
-    single_mean,
+    clt,
     compare_means,
-    single_prop,
     compare_props,
+    correlation,
     cross_tabs,
     goodness,
-    correlation,
-    clt,
     prob_calc,
+    single_mean,
+    single_prop,
 )
 
 __all__ = [
-    "single_mean",
+    "clt",
     "compare_means",
-    "single_prop",
     "compare_props",
+    "correlation",
     "cross_tabs",
     "goodness",
-    "correlation",
-    "clt",
     "prob_calc",
+    "single_mean",
+    "single_prop",
 ]

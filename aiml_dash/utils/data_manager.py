@@ -6,13 +6,14 @@ Handles data storage, retrieval, and session management for the AIML Dash applic
 Uses a singleton pattern to maintain datasets across callbacks.
 """
 
-import pandas as pd
-import numpy as np
-from typing import Dict, Optional, List, Any
-import io
 import base64
-from datetime import datetime
+import io
 import pickle
+from datetime import datetime
+from typing import Any
+
+import numpy as np
+import pandas as pd
 
 
 class DataManager:
@@ -27,7 +28,7 @@ class DataManager:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(DataManager, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance._initialized = False
         return cls._instance
 
@@ -36,19 +37,19 @@ class DataManager:
             return
 
         # Dictionary to store datasets
-        self.datasets: Dict[str, pd.DataFrame] = {}
+        self.datasets: dict[str, pd.DataFrame] = {}
 
         # Dictionary to store dataset metadata
-        self.metadata: Dict[str, Dict[str, Any]] = {}
+        self.metadata: dict[str, dict[str, Any]] = {}
 
         # Dictionary to store dataset load commands (for code generation)
-        self.load_commands: Dict[str, str] = {}
+        self.load_commands: dict[str, str] = {}
 
         # Dictionary to store dataset descriptions
-        self.descriptions: Dict[str, str] = {}
+        self.descriptions: dict[str, str] = {}
 
         # Current active dataset name
-        self.active_dataset: Optional[str] = None
+        self.active_dataset: str | None = None
 
         # Initialize with sample datasets
         self._load_sample_data()
@@ -136,7 +137,7 @@ class DataManager:
             self.active_dataset = "diamonds"
 
         except Exception as e:
-            print(f"Warning: Could not load sample data: {str(e)}")
+            print(f"Warning: Could not load sample data: {e!s}")
 
     def add_dataset(
         self,
@@ -169,7 +170,7 @@ class DataManager:
             "memory_usage": data.memory_usage(deep=True).sum() / 1024**2,  # MB
         }
 
-    def get_dataset(self, name: Optional[str] = None) -> Optional[pd.DataFrame]:
+    def get_dataset(self, name: str | None = None) -> pd.DataFrame | None:
         """
         Get a dataset by name, or the active dataset if name is None.
 
@@ -190,7 +191,7 @@ class DataManager:
             return self.datasets[name].copy()
         return None
 
-    def get_dataset_names(self) -> List[str]:
+    def get_dataset_names(self) -> list[str]:
         """Get list of all dataset names."""
         return list(self.datasets.keys())
 
@@ -214,11 +215,11 @@ class DataManager:
         if name in self.datasets:
             self.active_dataset = name
 
-    def get_active_dataset_name(self) -> Optional[str]:
+    def get_active_dataset_name(self) -> str | None:
         """Get the name of the active dataset."""
         return self.active_dataset
 
-    def get_dataset_info(self, name: Optional[str] = None) -> Dict[str, Any]:
+    def get_dataset_info(self, name: str | None = None) -> dict[str, Any]:
         """
         Get metadata and information about a dataset.
 
@@ -267,7 +268,7 @@ class DataManager:
         """
         try:
             # Decode the file contents
-            content_type, content_string = contents.split(",")
+            _content_type, content_string = contents.split(",")
             decoded = base64.b64decode(content_string)
 
             # Determine file type and load accordingly
@@ -284,7 +285,7 @@ class DataManager:
                 load_cmd = f'# Load data from JSON\n{filename.split(".")[0]} = pd.read_json("{filename}")'
 
             elif filename.endswith(".pkl"):
-                df = pickle.loads(decoded)
+                df = pickle.loads(decoded)  # noqa: S301
                 if not isinstance(df, pd.DataFrame):
                     return False, "Pickle file does not contain a DataFrame"
                 load_cmd = f'# Load data from pickle\n{filename.split(".")[0]} = pd.read_pickle("{filename}")'
@@ -317,9 +318,9 @@ class DataManager:
             )
 
         except Exception as e:
-            return False, f"Error loading file: {str(e)}"
+            return False, f"Error loading file: {e!s}"
 
-    def export_dataset(self, name: Optional[str] = None, format: str = "csv") -> Optional[str]:
+    def export_dataset(self, name: str | None = None, export_format: str = "csv") -> str | None:
         """
         Export a dataset to a file format.
 
@@ -327,7 +328,7 @@ class DataManager:
         ----------
         name : str, optional
             Name of the dataset to export
-        format : str
+        export_format : str
             Export format ('csv', 'excel', 'json')
 
         Returns
@@ -340,27 +341,28 @@ class DataManager:
             return None
 
         try:
-            if format == "csv":
+            if export_format == "csv":
                 return df.to_csv(index=False)
-            elif format == "excel":
+            if export_format == "excel":
                 output = io.BytesIO()
                 with pd.ExcelWriter(output, engine="openpyxl") as writer:
                     df.to_excel(writer, index=False)
                 return base64.b64encode(output.getvalue()).decode()
-            elif format == "json":
+            if export_format == "json":
                 return df.to_json(orient="records", indent=2)
+            return None
         except Exception as e:
-            print(f"Error exporting dataset: {str(e)}")
+            print(f"Error exporting dataset: {e!s}")
             return None
 
     def apply_filter(
         self,
-        name: Optional[str] = None,
-        filter_expr: Optional[str] = None,
-        sort_by: Optional[List[str]] = None,
-        ascending: Optional[List[bool]] = None,
-        rows: Optional[str] = None,
-    ) -> Optional[pd.DataFrame]:
+        name: str | None = None,
+        filter_expr: str | None = None,
+        sort_by: list[str] | None = None,
+        ascending: list[bool] | None = None,
+        rows: str | None = None,
+    ) -> pd.DataFrame | None:
         """
         Apply filter, sort, and row selection to a dataset.
 
@@ -415,10 +417,10 @@ class DataManager:
                     idx = int(rows)
                     df = df.iloc[[idx]]
 
-            return df
-
         except Exception as e:
-            print(f"Error applying filter: {str(e)}")
+            print(f"Error applying filter: {e!s}")
+            return df
+        else:
             return df
 
     def export_all_state(self) -> dict:
@@ -450,7 +452,7 @@ class DataManager:
                     "index_name": df.index.name,
                 }
             except Exception as e:
-                print(f"Warning: Could not serialize dataset '{name}': {str(e)}")
+                print(f"Warning: Could not serialize dataset '{name}': {e!s}")
 
         return state
 
@@ -513,7 +515,7 @@ class DataManager:
                                 elif "datetime" in dtype_str.lower():
                                     df[col] = pd.to_datetime(df[col], errors="coerce")
                             except Exception as e:
-                                print(f"Warning: Could not restore dtype for {name}.{col}: {str(e)}")
+                                print(f"Warning: Could not restore dtype for {name}.{col}: {e!s}")
 
                     # Restore index name
                     if dataset_info.get("index_name"):
@@ -522,20 +524,20 @@ class DataManager:
                     self.datasets[name] = df
 
                 except Exception as e:
-                    print(f"Warning: Could not restore dataset '{name}': {str(e)}")
+                    print(f"Warning: Could not restore dataset '{name}': {e!s}")
 
             # Restore active dataset
             active = state.get("active_dataset")
             if active and active in self.datasets:
                 self.active_dataset = active
             elif self.datasets:
-                self.active_dataset = list(self.datasets.keys())[0]
+                self.active_dataset = next(iter(self.datasets.keys()))
 
             dataset_count = len(self.datasets)
             return True, f"Successfully imported {dataset_count} dataset(s)"
 
         except Exception as e:
-            return False, f"Error importing state: {str(e)}"
+            return False, f"Error importing state: {e!s}"
 
 
 # Global instance

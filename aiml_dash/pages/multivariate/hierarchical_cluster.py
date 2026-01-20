@@ -5,19 +5,23 @@ Hierarchical Clustering Page
 Perform hierarchical clustering with dendrograms.
 """
 
-from dash import html, dcc, Input, Output, State, callback
 import dash_mantine_components as dmc
-from dash_iconify import DashIconify
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-from scipy.cluster.hierarchy import linkage
 import plotly.figure_factory as ff
-
 from components.common import create_page_header
+from dash import Input, Output, State, callback, dcc, html
+from dash_iconify import DashIconify
+from scipy.cluster.hierarchy import linkage
+from sklearn.preprocessing import StandardScaler
 from utils.data_manager import data_manager
 
 
 def layout():
+    """Create the hierarchical clustering page layout.
+
+    Returns:
+        Container with clustering settings and visualization tabs.
+    """
     return dmc.Container(
         [
             create_page_header(
@@ -161,11 +165,24 @@ def layout():
 
 @callback(Output("hclus-dataset", "data"), Input("hclus-dataset", "id"))
 def update_datasets(_):
+    """Populate dataset dropdown with available datasets.
+
+    Returns:
+        List of dataset options for dropdown.
+    """
     return [{"label": name, "value": name} for name in data_manager.get_dataset_names()]
 
 
 @callback(Output("hclus-variables", "data"), Input("hclus-dataset", "value"))
 def update_variables(dataset_name):
+    """Update variable options based on selected dataset.
+
+    Args:
+        dataset_name: Name of the selected dataset.
+
+    Returns:
+        List of numeric column options for dropdown.
+    """
     if not dataset_name:
         return []
     try:
@@ -191,6 +208,18 @@ def update_variables(dataset_name):
     prevent_initial_call=True,
 )
 def run_hierarchical(n_clicks, dataset_name, variables, method, metric):
+    """Run hierarchical clustering and display dendrogram.
+
+    Args:
+        n_clicks: Number of button clicks.
+        dataset_name: Name of the dataset to analyze.
+        variables: List of variables for clustering.
+        method: Linkage method (ward, complete, average, single).
+        metric: Distance metric (euclidean, cityblock, cosine).
+
+    Returns:
+        Tuple of (dendrogram_figure, summary, notification).
+    """
     if not all([dataset_name, variables]):
         return (
             {},
@@ -204,7 +233,7 @@ def run_hierarchical(n_clicks, dataset_name, variables, method, metric):
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
 
-        Z = linkage(X_scaled, method=method, metric=metric)
+        linkage(X_scaled, method=method, metric=metric)
 
         fig = ff.create_dendrogram(X_scaled, linkagefun=lambda x: linkage(x, method=method, metric=metric))
         fig.update_layout(
@@ -237,6 +266,6 @@ def run_hierarchical(n_clicks, dataset_name, variables, method, metric):
     except Exception as e:
         return (
             {},
-            dmc.Text(f"Error: {str(e)}", c="red"),
+            dmc.Text(f"Error: {e!s}", c="red"),
             dmc.Notification(title="Error", message=str(e), color="red", action="show"),
         )
