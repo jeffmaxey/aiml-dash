@@ -1,4 +1,13 @@
-"""Layout for the template plugin page."""
+"""Layout for the template plugin page.
+
+This module defines the main layout for the template plugin using Dash Mantine
+Components. It serves as a guide for developers creating new plugins.
+
+The layout includes:
+- Title and introductory description
+- Instruction cards for each plugin component
+- Examples of proper component organization
+"""
 
 import dash_mantine_components as dmc
 
@@ -7,8 +16,12 @@ from aiml_dash.plugins.template_plugin.styles import TEMPLATE_CONTAINER_SIZE
 
 
 def template_layout() -> dmc.Container:
-    """Create the template plugin layout."""
+    """Create the template plugin layout.
 
+    Returns:
+        dmc.Container: A container with the template plugin layout including
+            title, description, and instructional cards for plugin development.
+    """
     return dmc.Container(
         dmc.Stack(
             [

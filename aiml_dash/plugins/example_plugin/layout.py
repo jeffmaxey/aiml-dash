@@ -1,4 +1,14 @@
-"""Layout for the example plugin page."""
+"""Layout for the example plugin page.
+
+This module defines the main layout for the example plugin using Dash Mantine
+Components. It demonstrates how to structure a plugin page with proper
+component organization and styling.
+
+The layout includes:
+- Title and description
+- Statistic cards showing plugin features
+- Informational alert about the template plugin
+"""
 
 import dash_mantine_components as dmc
 
@@ -7,8 +17,12 @@ from aiml_dash.plugins.example_plugin.styles import EXAMPLE_CONTAINER_SIZE
 
 
 def example_layout() -> dmc.Container:
-    """Create the example plugin layout."""
+    """Create the example plugin layout.
 
+    Returns:
+        dmc.Container: A container with the example plugin layout including
+            title, description, feature statistics, and informational content.
+    """
     return dmc.Container(
         dmc.Stack(
             [
