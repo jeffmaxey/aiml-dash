@@ -748,7 +748,8 @@ def generate_predictions(n_clicks, model_data, pred_type, pred_dataset, pred_cmd
                 return dmc.Alert("Select a prediction dataset", color="red")
 
             pred_df = data_manager.get_dataset(pred_dataset)
-            pred_df[model_data["explanatory"]]
+            # Validate prediction dataset has required columns
+            X_pred = pred_df[model_data["explanatory"]]
 
             # Simple prediction (would need to recreate model)
             return dmc.Alert("Prediction from dataset completed (placeholder)", color="green")

@@ -221,8 +221,10 @@ def explore(
     if fun is None:
         fun = ["mean", "sd", "min", "max"]
     if data_filter:
-        with contextlib.suppress(Exception):
+        try:
             df = df.query(data_filter)
+        except (pd.errors.UndefinedVariableError, SyntaxError):
+            pass  # Invalid filter, use unfiltered data
 
     # Build aggregation dictionary
     agg_dict = {}

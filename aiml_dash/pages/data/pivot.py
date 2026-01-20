@@ -236,10 +236,12 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
         error = dmc.Alert("Error loading dataset", color="red")
         return error, error
 
-    # Apply filter
+    # Apply filter - use specific exception handling
     if data_filter and data_filter.strip():
-        with contextlib.suppress(BaseException):
+        try:
             df = df.query(data_filter)
+        except (pd.errors.UndefinedVariableError, SyntaxError):
+            pass  # Invalid filter, use unfiltered data
 
     try:
         # If no values specified, use count

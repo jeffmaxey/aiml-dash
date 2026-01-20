@@ -325,8 +325,8 @@ def create_perceptual_map(n_clicks, dataset_name, row_var, col_var, value_var, n
         else:
             contingency = pd.crosstab(df[row_var], df[col_var])
 
-        # Store original for later
-        contingency.copy()
+        # Store original for later (if needed for reference)
+        # original_table = contingency.copy()
 
         # Correspondence analysis using SVD
         # Step 1: Calculate proportions

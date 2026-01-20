@@ -233,7 +233,8 @@ def run_hierarchical(n_clicks, dataset_name, variables, method, metric):
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
 
-        linkage(X_scaled, method=method, metric=metric)
+        # Compute linkage matrix
+        Z = linkage(X_scaled, method=method, metric=metric)
 
         fig = ff.create_dendrogram(X_scaled, linkagefun=lambda x: linkage(x, method=method, metric=metric))
         fig.update_layout(
