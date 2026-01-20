@@ -5,7 +5,6 @@ This directory contains centralized configuration files for the aiml-dash projec
 ## Files
 
 - **`.pre-commit-config.yaml`**: Pre-commit hooks configuration for code quality checks
-- **`.pre-commit-hooks.yaml`**: Pre-commit hooks for external use
 - **`codecov.yaml`**: Codecov configuration for code coverage reporting
 - **`tox.ini`**: Tox configuration for testing across multiple Python versions
 - **`mkdocs.yml`**: MkDocs configuration for documentation generation

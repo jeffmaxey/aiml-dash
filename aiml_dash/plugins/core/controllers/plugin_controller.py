@@ -17,14 +17,11 @@ def get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
     Returns:
         Set of locked plugin IDs
     """
-    if not metadata:
-        return set()
-    locked: set[str] = set()
-    for plugin in metadata:
-        plugin_id = plugin.get("id")
-        if plugin_id and plugin.get("locked"):
-            locked.add(plugin_id)
-    return locked
+    return {
+        plugin.get("id")
+        for plugin in (metadata or [])
+        if plugin.get("id") and plugin.get("locked")
+    }
 
 
 def is_plugin_enabled(plugin_id: str, enabled_plugins: list[str] | None, metadata: list[dict[str, object]] | None) -> bool:
@@ -69,15 +66,14 @@ def process_plugin_metadata(metadata: list[dict[str, object]] | None, enabled_pl
         return []
         
     enabled = set(enabled_plugins or [])
-    processed = []
     
-    for plugin in metadata:
-        plugin_data = dict(plugin)
-        plugin_id = plugin.get("id")
-        plugin_data["enabled"] = plugin_id in enabled or bool(plugin.get("locked"))
-        processed.append(plugin_data)
-        
-    return processed
+    return [
+        {
+            **plugin.copy(),
+            "enabled": plugin.get("id") in enabled or bool(plugin.get("locked"))
+        }
+        for plugin in metadata
+    ]
 
 
 def decode_enabled_plugins(encoded_data: str | None) -> list[str] | None:
