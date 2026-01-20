@@ -11,23 +11,12 @@ from dash import ALL, Input, Output, State, callback
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 
-from aiml_dash.plugins.core.components import create_plugin_toggle_card
+# Import controller and view modules
+from aiml_dash.plugins.core.controllers import get_locked_plugins
+from aiml_dash.plugins.core.views import render_plugin_toggles as view_render_plugin_toggles
 
 ENABLED_PLUGINS_KEY = "enabled_plugins"
 FALLBACK_PLUGINS_KEY = "plugins"
-
-
-def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
-    """Return a set of locked plugin identifiers."""
-
-    if not metadata:
-        return set()
-    locked: set[str] = set()
-    for plugin in metadata:
-        plugin_id = plugin.get("id")
-        if plugin_id and plugin.get("locked"):
-            locked.add(plugin_id)
-    return locked
 
 
 @callback(
@@ -36,20 +25,12 @@ def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
     Input("enabled-plugins", "data"),
 )
 def render_plugin_toggles(metadata: list[dict[str, object]] | None, enabled_plugins: list[str] | None):
-    """Render the plugin toggle cards."""
-
-    metadata = metadata or []
-    enabled = set(enabled_plugins or [])
-    if not metadata:
-        return dmc.Alert("No plugins available.", color="gray", variant="light")
-
-    return [
-        create_plugin_toggle_card(
-            plugin,
-            checked=(plugin.get("id") in enabled or bool(plugin.get("locked"))),
-        )
-        for plugin in metadata
-    ]
+    """
+    Render the plugin toggle cards.
+    
+    This callback delegates to the view layer for rendering.
+    """
+    return view_render_plugin_toggles(metadata, enabled_plugins)
 
 
 @callback(
@@ -60,18 +41,25 @@ def render_plugin_toggles(metadata: list[dict[str, object]] | None, enabled_plug
     prevent_initial_call=True,
 )
 def update_enabled_plugins(checked_values, ids, metadata):
-    """Update enabled plugins based on toggle state."""
-
+    """
+    Update enabled plugins based on toggle state.
+    
+    This callback uses the controller layer for business logic.
+    """
     if not ids:
         return dash.no_update
-    locked = _get_locked_plugins(metadata)
+    
+    # Use controller to get locked plugins
+    locked = get_locked_plugins(metadata)
     enabled = []
+    
     for checked, item in zip(checked_values, ids):
         plugin_id = item.get("plugin") if isinstance(item, dict) else None
         if not plugin_id:
             continue
         if checked or plugin_id in locked:
             enabled.append(plugin_id)
+    
     return enabled
 
 
@@ -83,14 +71,19 @@ def update_enabled_plugins(checked_values, ids, metadata):
     prevent_initial_call=True,
 )
 def import_plugin_configuration(contents: str | None, metadata: list[dict[str, object]] | None):
-    """Import plugin configuration from an uploaded JSON file."""
-
+    """
+    Import plugin configuration from an uploaded JSON file.
+    
+    This callback combines controller logic for data processing and view logic for feedback.
+    """
     if not contents:
         return dash.no_update, dash.no_update
 
     metadata = metadata or []
     valid_plugins = {plugin.get("id") for plugin in metadata if plugin.get("id")}
-    locked = _get_locked_plugins(metadata)
+    
+    # Use controller to get locked plugins
+    locked = get_locked_plugins(metadata)
 
     try:
         _, content_string = contents.split(",", 1)
@@ -104,6 +97,8 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
             raise ValueError("Missing enabled_plugins list")
         cleaned = [plugin for plugin in enabled_plugins if plugin in valid_plugins]
         final_plugins = sorted(set(cleaned) | locked)
+        
+        # View: Success message
         message = dmc.Alert(
             "Plugin configuration imported successfully.",
             color="green",
@@ -112,6 +107,7 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
         )
         return final_plugins, message
     except (binascii.Error, json.JSONDecodeError, UnicodeDecodeError, ValueError) as exc:
+        # View: Error message
         message = dmc.Alert(
             f"Import failed: {exc}",
             color="red",

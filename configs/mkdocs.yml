@@ -9,7 +9,14 @@ copyright: Maintained by <a href="https://jeffmaxey.com">jeffmaxey</a>.
 
 nav:
   - Home: index.md
-  - Modules: modules.md
+  - Getting Started:
+    - Contributing: contributing.md
+  - Architecture:
+    - Utils: utils.md
+    - Components: components.md
+    - Pages: pages.md
+    - Plugins: plugins.md
+  - API Reference: modules.md
 plugins:
   - search
   - mkdocstrings:
