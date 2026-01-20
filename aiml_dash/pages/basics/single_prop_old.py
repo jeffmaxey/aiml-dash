@@ -5,6 +5,11 @@ from components.common import create_page_header
 
 
 def layout():
+    """Create the single proportion test page layout.
+
+    Returns:
+        Container with placeholder content.
+    """
     return dmc.Container(
         [
             create_page_header(

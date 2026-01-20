@@ -10,6 +10,11 @@ from utils.data_manager import data_manager
 
 
 def layout():
+    """Create the correlation analysis page layout.
+
+    Returns:
+        Container with correlation settings and output area.
+    """
     return dmc.Container(
         [
             create_page_header(
@@ -96,12 +101,25 @@ def layout():
 
 @callback(Output("corr-dataset", "data"), Input("corr-dataset", "id"))
 def update_datasets(_):
+    """Populate dataset dropdown with available datasets.
+
+    Returns:
+        List of dataset options for dropdown.
+    """
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
 
 
 @callback(Output("corr-variables", "data"), Input("corr-dataset", "value"))
 def update_variables(dataset_name):
+    """Update variable options based on selected dataset.
+
+    Args:
+        dataset_name: Name of the selected dataset.
+
+    Returns:
+        List of numeric column options for dropdown.
+    """
     if not dataset_name:
         return []
     try:
@@ -123,6 +141,17 @@ def update_variables(dataset_name):
     prevent_initial_call=True,
 )
 def calculate_correlation(n_clicks, dataset_name, variables, method):
+    """Calculate and display correlation matrix.
+
+    Args:
+        n_clicks: Number of button clicks.
+        dataset_name: Name of the dataset to analyze.
+        variables: List of variables to correlate.
+        method: Correlation method (pearson, spearman, or kendall).
+
+    Returns:
+        Tuple of (output_children, notification_children).
+    """
     if not all([dataset_name, variables]) or len(variables) < 2:
         return dmc.Text("Select dataset and at least 2 variables.", c="red"), dmc.Notification(
             title="Error", message="Missing inputs", color="red", action="show"
