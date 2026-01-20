@@ -49,6 +49,62 @@ Once the application is running, open your web browser and navigate to `http://1
 - Interactive visualizations of AI and machine learning datasets.
 - User-friendly interface for data exploration.
 - Customizable components for enhanced user experience.
+- Modular plugin architecture for easy extensibility.
+
+## Project Structure
+
+The project is organized into modular directories for improved maintainability:
+
+```
+aiml-dash/
+├── aiml_dash/              # Main package
+│   ├── components/         # Reusable UI components
+│   ├── pages/              # Application pages by category
+│   │   ├── basics/         # Basic statistical analyses
+│   │   ├── data/           # Data management and exploration
+│   │   ├── design/         # Experimental design
+│   │   ├── model/          # Machine learning models
+│   │   └── multivariate/   # Multivariate analysis
+│   ├── plugins/            # Plugin system
+│   │   ├── core/           # Core plugin with MVC architecture
+│   │   │   ├── controllers/  # Business logic
+│   │   │   └── views/        # UI rendering
+│   │   ├── legacy/         # Legacy features
+│   │   └── ...             # Additional plugins
+│   └── utils/              # Utility modules
+│       ├── constants.py    # Application constants
+│       ├── transforms.py   # Data transformations
+│       ├── data_manager.py # Data management
+│       └── ...             # Other utilities
+├── configs/                # Configuration files
+│   ├── .pre-commit-config.yaml
+│   ├── codecov.yaml
+│   ├── mkdocs.yml
+│   └── tox.ini
+├── docs/                   # Documentation
+│   ├── components.md       # Component documentation
+│   ├── plugins.md          # Plugin development guide
+│   ├── pages.md            # Pages documentation
+│   ├── utils.md            # Utilities documentation
+│   └── contributing.md     # Contribution guidelines
+└── tests/                  # Test suite
+```
+
+For detailed information about each module, see the [documentation](https://jeffmaxey.github.io/aiml-dash/).
+
+## Architecture
+
+The project follows a modular architecture with clear separation of concerns:
+
+- **Utils**: Reusable utility functions and data management
+- **Components**: UI components shared across pages
+- **Pages**: Application pages organized by functional area
+- **Plugins**: Modular features with MVC pattern
+  - **Controllers**: Business logic and data processing
+  - **Views**: UI rendering and presentation
+  - **Callbacks**: Coordination between controllers and views
+
+See [docs/plugins.md](docs/plugins.md) for detailed plugin architecture documentation.
 
 ## Contributing
 Contributions are welcome! If you would like to contribute to the `aiml_dash` project, please follow these steps:
