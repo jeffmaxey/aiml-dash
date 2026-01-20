@@ -211,7 +211,7 @@ def estimate_model(n_clicks, dataset_name, response, predictors):
         auc = roc_auc_score(y_binary, y_proba)
 
         model_store = {
-            "coefficients": {col: float(coef) for col, coef in zip(X.columns, model.coef_[0])},
+            "coefficients": {col: float(coef) for col, coef in zip(X.columns, model.coef_[0], strict=False)},
             "intercept": float(model.intercept_[0]),
             "y_true": y_binary.tolist(),
             "y_pred": y_pred.tolist(),
@@ -306,7 +306,7 @@ def update_plot(plot_type, model_store):
             labels={"x": "False Positive Rate", "y": "True Positive Rate"},
             title=f"ROC Curve (AUC = {model_store['auc']:.4f})",
         )
-        fig.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode="lines", line=dict(dash="dash"), name="Random"))
+        fig.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode="lines", line={"dash": "dash"}, name="Random"))
     elif plot_type == "coefficients":
         coefs = model_store["coefficients"]
         fig = go.Figure(data=[go.Bar(x=list(coefs.values()), y=list(coefs.keys()), orientation="h")])

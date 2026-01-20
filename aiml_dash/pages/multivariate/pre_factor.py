@@ -352,8 +352,8 @@ def run_prefactor_analysis(n_clicks, dataset_name, variables, max_factors):
                 y=eigenvalues,
                 mode="lines+markers",
                 name="Eigenvalues",
-                line=dict(width=2),
-                marker=dict(size=8),
+                line={"width": 2},
+                marker={"size": 8},
             )
         )
         scree_fig.add_hline(y=1, line_dash="dash", line_color="red", annotation_text="Kaiser criterion")
@@ -366,7 +366,7 @@ def run_prefactor_analysis(n_clicks, dataset_name, variables, max_factors):
         # Correlation heatmap
         corr_fig = px.imshow(
             corr_matrix,
-            labels=dict(color="Correlation"),
+            labels={"color": "Correlation"},
             title="Correlation Matrix",
             color_continuous_scale="RdBu_r",
             zmin=-1,

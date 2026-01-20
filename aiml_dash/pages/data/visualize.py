@@ -5,6 +5,8 @@ Visualize Page
 Data visualization with Plotly charts.
 """
 
+import contextlib
+
 import dash_mantine_components as dmc
 import plotly.express as px
 from components.common import create_filter_section, create_page_header
@@ -199,10 +201,8 @@ def create_visualization(
 
     # Apply filter
     if data_filter and data_filter.strip():
-        try:
+        with contextlib.suppress(BaseException):
             df = df.query(data_filter)
-        except:
-            pass
 
     try:
         # Create chart based on type
@@ -292,7 +292,7 @@ def create_visualization(
         fig.update_layout(
             template="plotly_white",
             height=600,
-            font=dict(family="Inter, sans-serif"),
+            font={"family": "Inter, sans-serif"},
         )
 
         return dcc.Graph(figure=fig, config={"displayModeBar": True, "displaylogo": False})

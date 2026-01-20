@@ -464,7 +464,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
                 name="Observed",
                 x=[str(cat) for cat in categories],
                 y=observed,
-                marker=dict(color="#1c7ed6"),
+                marker={"color": "#1c7ed6"},
                 text=observed,
                 textposition="auto",
             )
@@ -475,7 +475,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
                 name="Expected",
                 x=[str(cat) for cat in categories],
                 y=expected,
-                marker=dict(color="#868e96"),
+                marker={"color": "#868e96"},
                 text=expected.round(2),
                 textposition="auto",
             )
@@ -488,7 +488,7 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
             barmode="group",
             template="plotly_white",
             height=400,
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
         )
 
         return (

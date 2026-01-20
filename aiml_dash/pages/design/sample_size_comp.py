@@ -79,7 +79,7 @@ def layout():
                                         ),
                                         dmc.NumberInput(
                                             id="ssc-alpha",
-                                            label="Significance level (α)",
+                                            label="Significance level (α)",  # noqa: RUF001
                                             value=2.0,
                                             min=0.1,
                                             max=5.0,
@@ -184,8 +184,8 @@ def compare_sample_sizes(n_clicks, test_type, effect_min, effect_max, power_leve
                     y=sample_sizes,
                     mode="lines+markers",
                     name=f"Power = {power:.2f}",
-                    line=dict(width=2),
-                    marker=dict(size=6),
+                    line={"width": 2},
+                    marker={"size": 6},
                 )
             )
 
@@ -197,8 +197,8 @@ def compare_sample_sizes(n_clicks, test_type, effect_min, effect_max, power_leve
             hovermode="x unified",
             template="plotly_white",
             showlegend=True,
-            legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
-            margin=dict(l=50, r=50, t=50, b=50),
+            legend={"yanchor": "top", "y": 0.99, "xanchor": "right", "x": 0.99},
+            margin={"l": 50, "r": 50, "t": 50, "b": 50},
         )
 
         return fig
@@ -213,6 +213,6 @@ def compare_sample_sizes(n_clicks, test_type, effect_min, effect_max, power_leve
             x=0.5,
             y=0.5,
             showarrow=False,
-            font=dict(size=16, color="red"),
+            font={"size": 16, "color": "red"},
         )
         return fig

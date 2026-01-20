@@ -28,7 +28,7 @@ class DataManager:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(DataManager, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance._initialized = False
         return cls._instance
 
@@ -268,7 +268,7 @@ class DataManager:
         """
         try:
             # Decode the file contents
-            content_type, content_string = contents.split(",")
+            _content_type, content_string = contents.split(",")
             decoded = base64.b64decode(content_string)
 
             # Determine file type and load accordingly
@@ -285,7 +285,7 @@ class DataManager:
                 load_cmd = f'# Load data from JSON\n{filename.split(".")[0]} = pd.read_json("{filename}")'
 
             elif filename.endswith(".pkl"):
-                df = pickle.loads(decoded)
+                df = pickle.loads(decoded)  # noqa: S301
                 if not isinstance(df, pd.DataFrame):
                     return False, "Pickle file does not contain a DataFrame"
                 load_cmd = f'# Load data from pickle\n{filename.split(".")[0]} = pd.read_pickle("{filename}")'
@@ -320,7 +320,7 @@ class DataManager:
         except Exception as e:
             return False, f"Error loading file: {e!s}"
 
-    def export_dataset(self, name: str | None = None, format: str = "csv") -> str | None:
+    def export_dataset(self, name: str | None = None, export_format: str = "csv") -> str | None:
         """
         Export a dataset to a file format.
 
@@ -328,7 +328,7 @@ class DataManager:
         ----------
         name : str, optional
             Name of the dataset to export
-        format : str
+        export_format : str
             Export format ('csv', 'excel', 'json')
 
         Returns
@@ -341,15 +341,16 @@ class DataManager:
             return None
 
         try:
-            if format == "csv":
+            if export_format == "csv":
                 return df.to_csv(index=False)
-            elif format == "excel":
+            if export_format == "excel":
                 output = io.BytesIO()
                 with pd.ExcelWriter(output, engine="openpyxl") as writer:
                     df.to_excel(writer, index=False)
                 return base64.b64encode(output.getvalue()).decode()
-            elif format == "json":
+            if export_format == "json":
                 return df.to_json(orient="records", indent=2)
+            return None
         except Exception as e:
             print(f"Error exporting dataset: {e!s}")
             return None
@@ -416,10 +417,10 @@ class DataManager:
                     idx = int(rows)
                     df = df.iloc[[idx]]
 
-            return df
-
         except Exception as e:
             print(f"Error applying filter: {e!s}")
+            return df
+        else:
             return df
 
     def export_all_state(self) -> dict:
@@ -530,7 +531,7 @@ class DataManager:
             if active and active in self.datasets:
                 self.active_dataset = active
             elif self.datasets:
-                self.active_dataset = list(self.datasets.keys())[0]
+                self.active_dataset = next(iter(self.datasets.keys()))
 
             dataset_count = len(self.datasets)
             return True, f"Successfully imported {dataset_count} dataset(s)"

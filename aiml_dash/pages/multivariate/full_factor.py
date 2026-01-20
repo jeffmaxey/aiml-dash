@@ -330,7 +330,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
                         name=var,
                         text=["", var],
                         textposition="top center",
-                        line=dict(width=2),
+                        line={"width": 2},
                     )
                 )
 
@@ -341,7 +341,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
                     x=np.cos(theta),
                     y=np.sin(theta),
                     mode="lines",
-                    line=dict(color="gray", dash="dash"),
+                    line={"color": "gray", "dash": "dash"},
                     showlegend=False,
                 )
             )
@@ -357,7 +357,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
 
         # Summary
         variance_explained = np.var(fa.transform(X_scaled), axis=0)
-        total_var = np.sum(variance_explained)
+        np.sum(variance_explained)
         prop_var = variance_explained / np.sum(np.var(X_scaled, axis=0))
 
         summary_data = []
@@ -379,7 +379,7 @@ def run_factor_analysis(n_clicks, dataset_name, variables, n_factors, rotation, 
                 dmc.Divider(),
                 dag.AgGrid(
                     rowData=summary_data,
-                    columnDefs=[{"field": col} for col in summary_data[0].keys()],
+                    columnDefs=[{"field": col} for col in summary_data[0]],
                     defaultColDef={"sortable": False},
                     style={"height": "250px"},
                 ),

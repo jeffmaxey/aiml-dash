@@ -391,7 +391,7 @@ def analyze_decision(n_clicks, tree_spec):
                             y=evs,
                             mode="lines",
                             name=f"{first_branch['name']} - {chance_branches[0]['name']}",
-                            line=dict(width=2),
+                            line={"width": 2},
                         )
                     )
 

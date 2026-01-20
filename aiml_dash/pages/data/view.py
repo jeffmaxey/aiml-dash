@@ -190,12 +190,11 @@ def export_csv(n_clicks, dataset_name, filter_expr, sort_by, slice_expr):
             if valid_cols:
                 df = df.sort_values(by=valid_cols, ascending=ascending[: len(valid_cols)])
 
-        if slice_expr and slice_expr.strip():
-            if ":" in slice_expr:
-                parts = slice_expr.split(":")
-                start = int(parts[0]) if parts[0] else 0
-                end = int(parts[1]) if len(parts) > 1 and parts[1] else len(df)
-                df = df.iloc[start:end]
+        if slice_expr and slice_expr.strip() and ":" in slice_expr:
+            parts = slice_expr.split(":")
+            start = int(parts[0]) if parts[0] else 0
+            end = int(parts[1]) if len(parts) > 1 and parts[1] else len(df)
+            df = df.iloc[start:end]
 
     except Exception as e:
         print(f"Error exporting: {e!s}")

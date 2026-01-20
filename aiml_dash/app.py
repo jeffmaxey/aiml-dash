@@ -433,10 +433,10 @@ def export_state(
     # Create filename with timestamp
     filename = f"aiml_complete_state_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
-    return dict(
-        content=json.dumps(state, indent=2),
-        filename=filename,
-    )
+    return {
+        "content": json.dumps(state, indent=2),
+        "filename": filename,
+    }
 
 
 @callback(
@@ -481,7 +481,7 @@ def import_state(contents, filename):
 
     try:
         # Decode the uploaded file
-        content_type, content_string = contents.split(",")
+        _content_type, content_string = contents.split(",")
         decoded = base64.b64decode(content_string)
         state = json.loads(decoded.decode("utf-8"))
 
@@ -497,7 +497,7 @@ def import_state(contents, filename):
             # Restore all datasets
             success, msg = data_manager.import_all_state(data_state)
             if not success:
-                raise ValueError(msg)
+                raise ValueError(msg)  # noqa: TRY301
 
             # Extract UI state components
             app_state = ui_state.get("app_state", {})
@@ -517,7 +517,8 @@ def import_state(contents, filename):
             active_dataset = state.get("active_dataset")
             msg = "Imported state (v1.0 - datasets not included)"
         else:
-            raise ValueError(f"Unknown state version: {version}")
+            error_message = f"Unknown state version: {version}"
+            raise ValueError(error_message)  # noqa: TRY301
 
         # Validate dataset exists
         available_datasets = data_manager.get_dataset_names()
@@ -534,18 +535,6 @@ def import_state(contents, filename):
             title="Import Successful",
             color="green",
             icon=DashIconify(icon="carbon:checkmark"),
-        )
-
-        # Close modal and restore state
-        return (
-            app_state,
-            active_page,
-            enabled_plugins,
-            navbar_collapsed,
-            aside_collapsed,
-            active_dataset,
-            success_msg,
-            False,
         )
 
     except Exception as e:
@@ -589,4 +578,4 @@ if __name__ == "__main__":
     print("\nPress Ctrl+C to stop the server")
     print("=" * 70 + "\n")
 
-    app.run(debug=True, host="0.0.0.0", port=8050)
+    app.run(debug=True, host="127.0.0.1", port=8050)

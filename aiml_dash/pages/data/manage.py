@@ -239,7 +239,7 @@ def update_preview(dataset_name, preview_type):
                 dmc.Text("Dataset Structure", size="sm", c="dimmed"),
                 dag.AgGrid(
                     rowData=structure_data,
-                    columnDefs=[{"field": i, "filter": True} for i in structure_data[0].keys()],
+                    columnDefs=[{"field": i, "filter": True} for i in structure_data[0]],
                     defaultColDef={"resizable": True, "sortable": True},
                     className="ag-theme-alpine",
                     style={"height": "400px"},

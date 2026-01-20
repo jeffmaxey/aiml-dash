@@ -326,7 +326,7 @@ def build_model(n_clicks, dataset_name, user_col, item_col, rating_col, method, 
         similarity_fig = px.imshow(
             sample_sim,
             title=f"{label} Similarity Matrix (Sample)",
-            labels=dict(color="Similarity"),
+            labels={"color": "Similarity"},
             color_continuous_scale="RdBu_r",
         )
 

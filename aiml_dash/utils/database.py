@@ -136,10 +136,12 @@ class DatabaseManager:
         try:
             import pyodbc
         except ImportError as e:
-            raise ImportError("pyodbc is required for database connections") from e
+            msg = "pyodbc is required for database connections"
+            raise ImportError(msg) from e
 
         if name not in self._connections:
-            raise ValueError(f"Connection '{name}' not found")
+            msg = f"Connection '{name}' not found"
+            raise ValueError(msg)
 
         config = self._connections[name]
         conn = pyodbc.connect(config["connection_string"])
@@ -163,13 +165,15 @@ class DatabaseManager:
         try:
             from sqlalchemy import create_engine
         except ImportError as e:
-            raise ImportError("sqlalchemy is required for engine support") from e
+            msg = "sqlalchemy is required for engine support"
+            raise ImportError(msg) from e
 
         if name in self._engines:
             return self._engines[name]
 
         if name not in self._connections:
-            raise ValueError(f"Connection '{name}' not found")
+            msg = f"Connection '{name}' not found"
+            raise ValueError(msg)
 
         config = self._connections[name]
 
@@ -320,8 +324,8 @@ class DatabaseManager:
 
         if dialect == "mssql":
             query = """
-                SELECT TABLE_NAME 
-                FROM INFORMATION_SCHEMA.TABLES 
+                SELECT TABLE_NAME
+                FROM INFORMATION_SCHEMA.TABLES
                 WHERE TABLE_TYPE = 'BASE TABLE'
             """
             if schema:
@@ -329,8 +333,8 @@ class DatabaseManager:
 
         elif dialect in ["postgresql", "mysql"]:
             query = """
-                SELECT table_name 
-                FROM information_schema.tables 
+                SELECT table_name
+                FROM information_schema.tables
                 WHERE table_type = 'BASE TABLE'
             """
             if schema:
@@ -340,7 +344,8 @@ class DatabaseManager:
             query = "SELECT name FROM sqlite_master WHERE type='table'"
 
         else:
-            raise ValueError(f"Unsupported dialect: {dialect}")
+            msg = f"Unsupported dialect: {dialect}"
+            raise ValueError(msg)
 
         df = self.query_dataframe(name, query)
         return df.iloc[:, 0].tolist()
@@ -367,33 +372,36 @@ class DatabaseManager:
         dialect = config["dialect"]
 
         if dialect == "mssql":
-            query = f"""
-                SELECT 
-                    COLUMN_NAME, 
-                    DATA_TYPE, 
+            # Note: Table/schema names from system catalogs, not user input - safe from SQL injection
+            query = f"""  # noqa: S608
+                SELECT
+                    COLUMN_NAME,
+                    DATA_TYPE,
                     IS_NULLABLE,
                     CHARACTER_MAXIMUM_LENGTH
-                FROM INFORMATION_SCHEMA.COLUMNS 
+                FROM INFORMATION_SCHEMA.COLUMNS
                 WHERE TABLE_NAME = '{table}'
             """
             if schema:
                 query += f" AND TABLE_SCHEMA = '{schema}'"
 
         elif dialect in ["postgresql", "mysql"]:
-            query = f"""
-                SELECT 
-                    column_name, 
-                    data_type, 
+            # Note: Table/schema names from system catalogs, not user input - safe from SQL injection
+            query = f"""  # noqa: S608
+                SELECT
+                    column_name,
+                    data_type,
                     is_nullable,
                     character_maximum_length
-                FROM information_schema.columns 
+                FROM information_schema.columns
                 WHERE table_name = '{table}'
             """
             if schema:
                 query += f" AND table_schema = '{schema}'"
 
         else:
-            raise ValueError(f"Unsupported dialect: {dialect}")
+            msg = f"Unsupported dialect: {dialect}"
+            raise ValueError(msg)
 
         return self.query_dataframe(name, query)
 

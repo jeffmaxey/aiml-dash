@@ -314,7 +314,7 @@ def train_model(n_clicks, dataset_name, target, features, solver, max_iter, test
         cm = confusion_matrix(y_test, y_test_pred)
         confusion_fig = px.imshow(
             cm,
-            labels=dict(x="Predicted", y="Actual", color="Count"),
+            labels={"x": "Predicted", "y": "Actual", "color": "Count"},
             x=le.classes_,
             y=le.classes_,
             title="Confusion Matrix",

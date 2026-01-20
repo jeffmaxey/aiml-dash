@@ -221,7 +221,7 @@ def train_forest(n, dataset, response, explanatory, rf_type, n_trees, max_depth,
             score = r2_score(y, model.predict(X))
             metric = "R²"
 
-        importance = dict(zip(explanatory, model.feature_importances_))
+        importance = dict(zip(explanatory, model.feature_importances_, strict=False))
 
         results = {
             "score": score,

@@ -37,14 +37,16 @@ from dash import dcc
 
 # Try to import dash_ace; if unavailable, we'll fallback to a textarea
 try:
-    import dash_ace  # type: ignore
+    import dash_ace  # type: ignore[import-untyped]
 
     _HAS_ACE = True
 except Exception:
     _HAS_ACE = False
 
 
-def get_code_editor(id: str, value: str = "", mode: str = "r", theme: str = "github", height: str = "300px") -> Any:
+def get_code_editor(
+    editor_id: str, value: str = "", mode: str = "r", theme: str = "github", height: str = "300px"
+) -> Any:
     """
     Return a code editor component with automatic fallback support.
 
@@ -54,7 +56,7 @@ def get_code_editor(id: str, value: str = "", mode: str = "r", theme: str = "git
 
     Parameters
     ----------
-    id : str
+    editor_id : str
         Unique identifier for the Dash component.
     value : str, optional
         Initial text content to display in the editor (default is "").
@@ -112,7 +114,7 @@ def get_code_editor(id: str, value: str = "", mode: str = "r", theme: str = "git
     if _HAS_ACE:
         # Use Ace editor for richer editing experience
         return dash_ace.Ace(
-            id=id,
+            id=editor_id,
             value=value,
             mode=mode,
             theme=theme,
@@ -123,4 +125,4 @@ def get_code_editor(id: str, value: str = "", mode: str = "r", theme: str = "git
             style={"width": "100%", "height": height},
         )
     # Fallback: plain textarea (works reliably without extra dependencies)
-    return dcc.Textarea(id=id, value=value, style={"width": "100%", "height": height}, spellCheck=False)
+    return dcc.Textarea(id=editor_id, value=value, style={"width": "100%", "height": height}, spellCheck=False)

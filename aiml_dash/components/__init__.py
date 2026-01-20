@@ -23,18 +23,18 @@ from .shell import (
 )
 
 __all__ = [
-    # Common components
-    "create_page_header",
-    "create_filter_section",
-    "create_variable_selector",
-    "create_function_selector",
-    "create_download_button",
+    "create_aside",
     "create_code_display",
-    "create_tabs",
-    "create_info_card",
+    "create_download_button",
+    "create_filter_section",
+    "create_footer",
+    "create_function_selector",
     # Shell components
     "create_header",
+    "create_info_card",
     "create_navigation",
-    "create_aside",
-    "create_footer",
+    # Common components
+    "create_page_header",
+    "create_tabs",
+    "create_variable_selector",
 ]

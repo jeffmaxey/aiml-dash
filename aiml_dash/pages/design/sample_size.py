@@ -72,7 +72,7 @@ def layout():
                                         ),
                                         dmc.NumberInput(
                                             id="ss-alpha",
-                                            label="Significance level (α)",
+                                            label="Significance level (α)",  # noqa: RUF001
                                             value=0.5,
                                             min=0.01,
                                             max=2.0,
@@ -320,7 +320,7 @@ def calculate_sample_size(n_clicks, test_type, effect_size, power, alpha, altern
                         [
                             dmc.Text("Interpretation:", style={"fontWeight": "bold"}),
                             dmc.Text(
-                                f"To detect an effect size of {effect_size:.2f} with {power * 100:.0f}% power at α={alpha:.3f}, you need a sample size of {n} observations."
+                                f"To detect an effect size of {effect_size:.2f} with {power * 100:.0f}% power at α={alpha:.3f}, you need a sample size of {n} observations."  # noqa: RUF001
                             ),
                         ],
                         gap="xs",

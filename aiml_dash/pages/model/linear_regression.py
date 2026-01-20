@@ -627,8 +627,8 @@ def estimate_model(n_clicks, dataset_name, response, explanatory, options, inter
             "explanatory": list(X.columns),
             "coefficients": dict(
                 zip(
-                    ["intercept"] + list(X.columns),
-                    [model.intercept_] + list(model.coef_),
+                    ["intercept", *list(X.columns)],
+                    [model.intercept_, *list(model.coef_)], strict=False,
                 )
             ),
             "r2": r2,
@@ -748,7 +748,7 @@ def generate_predictions(n_clicks, model_data, pred_type, pred_dataset, pred_cmd
                 return dmc.Alert("Select a prediction dataset", color="red")
 
             pred_df = data_manager.get_dataset(pred_dataset)
-            X_pred = pred_df[model_data["explanatory"]]
+            pred_df[model_data["explanatory"]]
 
             # Simple prediction (would need to recreate model)
             return dmc.Alert("Prediction from dataset completed (placeholder)", color="green")
@@ -813,7 +813,7 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
                     x=y_pred,
                     y=residuals,
                     mode="markers",
-                    marker=dict(color="blue", opacity=0.6),
+                    marker={"color": "blue", "opacity": 0.6},
                     name="Residuals",
                 )
             )
@@ -832,7 +832,7 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
                     x=y,
                     y=y_pred,
                     mode="markers",
-                    marker=dict(color="blue", opacity=0.6),
+                    marker={"color": "blue", "opacity": 0.6},
                     name="Predictions",
                 )
             )
@@ -842,7 +842,7 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
                     x=[min_val, max_val],
                     y=[min_val, max_val],
                     mode="lines",
-                    line=dict(color="red", dash="dash"),
+                    line={"color": "red", "dash": "dash"},
                     name="Perfect Fit",
                 )
             )
@@ -863,7 +863,7 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
                     x=coef_values,
                     y=coef_names,
                     orientation="h",
-                    marker=dict(color="blue"),
+                    marker={"color": "blue"},
                 )
             )
             fig.update_layout(

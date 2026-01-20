@@ -222,7 +222,7 @@ def download_script(n_clicks, code, dataset_name):
         return dash.no_update
 
     filename = f"{dataset_name}_analysis.py" if dataset_name else "analysis.py"
-    return dict(content=code, filename=filename)
+    return {"content": code, "filename": filename}
 
 
 @callback(

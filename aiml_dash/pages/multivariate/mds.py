@@ -384,7 +384,7 @@ def run_mds(
                 x=coord_df["Dim1"],
                 y=coord_df["Dim2"],
                 mode="markers+text",
-                marker=dict(size=12, color="blue"),
+                marker={"size": 12, "color": "blue"},
                 text=coord_df.index,
                 textposition="top center",
                 hovertemplate="<b>%{text}</b><br>Dim1: %{x:.3f}<br>Dim2: %{y:.3f}<extra></extra>",
@@ -441,7 +441,7 @@ def run_mds(
                 x=original_dists,
                 y=reduced_dists,
                 mode="markers",
-                marker=dict(size=5, opacity=0.5),
+                marker={"size": 5, "opacity": 0.5},
                 name="Distances",
             )
         )
@@ -454,7 +454,7 @@ def run_mds(
                 x=[min_dist, max_dist],
                 y=[min_dist, max_dist],
                 mode="lines",
-                line=dict(color="red", dash="dash"),
+                line={"color": "red", "dash": "dash"},
                 name="Perfect Fit",
             )
         )
@@ -468,7 +468,7 @@ def run_mds(
         # Distance matrix heatmap
         dist_fig = px.imshow(
             distance_matrix,
-            labels=dict(x="Object", y="Object", color="Distance"),
+            labels={"x": "Object", "y": "Object", "color": "Distance"},
             x=labels,
             y=labels,
             title="Distance Matrix",

@@ -403,7 +403,7 @@ def evaluate_regression(n_clicks, dataset_name, actual_col, pred_col, compare_co
                 x=[min_val, max_val],
                 y=[min_val, max_val],
                 mode="lines",
-                line=dict(color="red", dash="dash"),
+                line={"color": "red", "dash": "dash"},
                 name="Perfect Prediction",
             )
         )

@@ -5,6 +5,7 @@ Statistical Functions
 Statistical and exploration functions mirroring aiml.data R package.
 """
 
+import contextlib
 from typing import Any
 
 import numpy as np
@@ -190,9 +191,9 @@ STAT_FUNCTIONS = {
 
 def explore(
     df: pd.DataFrame,
-    vars: list[str],
+    variables: list[str],
     byvar: list[str] | None = None,
-    fun: list[str] = ["mean", "sd", "min", "max"],
+    fun: list[str] | None = None,
     data_filter: str | None = None,
 ) -> pd.DataFrame:
     """
@@ -202,7 +203,7 @@ def explore(
     ----------
     df : pd.DataFrame
         Input data
-    vars : list of str
+    variables: list of str
         Variables to summarize
     byvar : list of str, optional
         Variables to group by
@@ -217,15 +218,15 @@ def explore(
         Summary statistics table
     """
     # Apply filter if specified
+    if fun is None:
+        fun = ["mean", "sd", "min", "max"]
     if data_filter:
-        try:
+        with contextlib.suppress(Exception):
             df = df.query(data_filter)
-        except Exception:
-            pass
 
     # Build aggregation dictionary
     agg_dict = {}
-    for var in vars:
+    for var in variables:
         agg_list = []
         for f in fun:
             if f in STAT_FUNCTIONS:
@@ -244,7 +245,7 @@ def explore(
     else:
         # No grouping - apply to entire dataset
         result_dict = {}
-        for var in vars:
+        for var in variables:
             for f in fun:
                 if f in STAT_FUNCTIONS:
                     func, _ = STAT_FUNCTIONS[f]

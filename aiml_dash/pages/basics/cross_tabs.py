@@ -259,7 +259,7 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
         contingency_table = pd.crosstab(df[row_var], df[col_var])
 
         # Run chi-square test
-        chi2, p_value, dof, expected_freq = stats.chi2_contingency(contingency_table)
+        chi2, p_value, dof, _expected_freq = stats.chi2_contingency(contingency_table)
 
         # Calculate Cramér's V (effect size)
         n = contingency_table.sum().sum()
@@ -352,7 +352,7 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
         display_df = display_table.copy()
         display_df["Total"] = contingency_table.sum(axis=1).astype(str)
         totals_row = pd.Series(
-            contingency_table.sum(axis=0).astype(str).tolist() + [str(n)],
+            [*contingency_table.sum(axis=0).astype(str).tolist(), str(n)],
             index=list(display_df.columns),
             name="Total",
         )
@@ -390,7 +390,7 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
             barmode="group",
             template="plotly_white",
             height=400,
-            legend=dict(title=col_var),
+            legend={"title": col_var},
         )
 
         return (

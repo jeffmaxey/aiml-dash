@@ -407,7 +407,7 @@ def run_conjoint_analysis(
         # Create part-worths plot
         partworths_fig = go.Figure()
 
-        for i, (attr, pw) in enumerate(partworths.items()):
+        for _i, (attr, pw) in enumerate(partworths.items()):
             levels = list(pw.keys())
             values = list(pw.values())
 

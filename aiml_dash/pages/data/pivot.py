@@ -5,6 +5,8 @@ Pivot Page
 Create pivot tables with aggregations and chi-square tests.
 """
 
+import contextlib
+
 import dash
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
@@ -236,10 +238,8 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
 
     # Apply filter
     if data_filter and data_filter.strip():
-        try:
+        with contextlib.suppress(BaseException):
             df = df.query(data_filter)
-        except:
-            pass
 
     try:
         # If no values specified, use count
@@ -254,7 +254,7 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
                 )
             else:
                 pivot = df[rows].value_counts().reset_index()
-                pivot.columns = list(rows) + ["count"]
+                pivot.columns = [*list(rows), "count"]
         else:
             # Create aggregation pivot
             pivot = pd.pivot_table(
@@ -359,7 +359,7 @@ def create_pivot_table(n_clicks, dataset_name, rows, cols, values, aggfunc, marg
                             "Variables are statistically independent"
                             if chi2_results["p_value"] >= 0.05
                             else "Variables are statistically dependent",
-                            title="Interpretation (α = 0.05)",
+                            title="Interpretation (α = 0.05)",  # noqa: RUF001
                             color="blue" if chi2_results["p_value"] >= 0.05 else "green",
                         ),
                     ],
@@ -407,10 +407,8 @@ def export_pivot(n_clicks, dataset_name, rows, cols, values, aggfunc, margins, n
 
     # Apply filter
     if data_filter and data_filter.strip():
-        try:
+        with contextlib.suppress(BaseException):
             df = df.query(data_filter)
-        except:
-            pass
 
     try:
         # Recreate pivot
@@ -424,7 +422,7 @@ def export_pivot(n_clicks, dataset_name, rows, cols, values, aggfunc, margins, n
                 )
             else:
                 pivot = df[rows].value_counts().reset_index()
-                pivot.columns = list(rows) + ["count"]
+                pivot.columns = [*list(rows), "count"]
         else:
             pivot = pd.pivot_table(
                 df,

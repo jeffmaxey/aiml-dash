@@ -408,7 +408,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
         cm = confusion_matrix(y_actual, y_pred, labels=labels)
         confusion_fig = px.imshow(
             cm,
-            labels=dict(x="Predicted", y="Actual", color="Count"),
+            labels={"x": "Predicted", "y": "Actual", "color": "Count"},
             x=labels,
             y=labels,
             title="Confusion Matrix",
@@ -434,7 +434,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
                         y=tpr,
                         mode="lines",
                         name=f"ROC (AUC = {roc_auc:.4f})",
-                        line=dict(color="blue", width=2),
+                        line={"color": "blue", "width": 2},
                     )
                 )
                 roc_fig.add_trace(
@@ -443,7 +443,7 @@ def evaluate_classification(n_clicks, dataset_name, actual_col, pred_col, proba_
                         y=[0, 1],
                         mode="lines",
                         name="Random",
-                        line=dict(color="red", dash="dash"),
+                        line={"color": "red", "dash": "dash"},
                     )
                 )
                 roc_fig.update_layout(

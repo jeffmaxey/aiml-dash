@@ -66,7 +66,7 @@ def update_enabled_plugins(checked_values, ids, metadata):
         return dash.no_update
     locked = _get_locked_plugins(metadata)
     enabled = []
-    for checked, item in zip(checked_values, ids):
+    for checked, item in zip(checked_values, ids, strict=False):
         plugin_id = item.get("plugin") if isinstance(item, dict) else None
         if not plugin_id:
             continue

@@ -443,7 +443,7 @@ def train_gradient_boosting(
             predictions = dcc.Graph(
                 figure=px.imshow(
                     cm,
-                    labels=dict(x="Predicted", y="Actual", color="Count"),
+                    labels={"x": "Predicted", "y": "Actual", "color": "Count"},
                     title="Confusion Matrix",
                     text_auto=True,
                 )

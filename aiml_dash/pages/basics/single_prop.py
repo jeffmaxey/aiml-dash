@@ -448,9 +448,9 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
             go.Bar(
                 x=["Sample", "Hypothesized"],
                 y=[p_hat, p0],
-                marker=dict(
-                    color=["#1c7ed6", "#868e96"],
-                ),
+                marker={
+                    "color": ["#1c7ed6", "#868e96"],
+                },
                 text=[f"{p_hat:.4f}", f"{p0:.4f}"],
                 textposition="outside",
                 name="Proportion",
@@ -462,17 +462,17 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
             go.Scatter(
                 x=["Sample"],
                 y=[p_hat],
-                error_y=dict(
-                    type="data",
-                    symmetric=False,
-                    array=[ci_upper - p_hat],
-                    arrayminus=[p_hat - ci_lower],
-                    color="#1c7ed6",
-                    thickness=2,
-                    width=10,
-                ),
+                error_y={
+                    "type": "data",
+                    "symmetric": False,
+                    "array": [ci_upper - p_hat],
+                    "arrayminus": [p_hat - ci_lower],
+                    "color": "#1c7ed6",
+                    "thickness": 2,
+                    "width": 10,
+                },
                 mode="markers",
-                marker=dict(size=0.1, color="rgba(0,0,0,0)"),
+                marker={"size": 0.1, "color": "rgba(0,0,0,0)"},
                 showlegend=False,
                 hoverinfo="skip",
             )
@@ -481,7 +481,7 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
         fig.update_layout(
             title=f"Proportion Comparison<br><sub>Sample vs. Hypothesized Value (p₀ = {p0})</sub>",
             yaxis_title="Proportion",
-            yaxis=dict(range=[0, min(1, max(p_hat, p0) * 1.3)]),
+            yaxis={"range": [0, min(1, max(p_hat, p0) * 1.3)]},
             template="plotly_white",
             height=400,
             showlegend=False,
