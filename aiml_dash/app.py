@@ -547,7 +547,7 @@ def import_state(contents, filename):
         error_msg = dmc.Alert(
             [
                 dmc.Text("Failed to import state", fw=500),
-                dmc.Text(f"Error: {e!s}", size="sm"),
+                dmc.Text(f"Error: {str(e)}", size="sm"),
                 dmc.Text(
                     "Please ensure you're importing a valid AIML state file",
                     size="xs",
