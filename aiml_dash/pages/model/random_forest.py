@@ -250,6 +250,14 @@ def train_forest(n, dataset, response, explanatory, rf_type, n_trees, max_depth,
     Input("rf-results-store", "data"),
 )
 def update_summary(results):
+    """Update the model summary display.
+
+    Args:
+        results: Dictionary containing model results.
+
+    Returns:
+        Component with model summary or placeholder text.
+    """
     if not results:
         return dmc.Text("No forest trained yet.", c="dimmed")
 
