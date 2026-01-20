@@ -243,6 +243,11 @@ def layout():
     Input("nn-tabs", "value"),
 )
 def update_datasets(_):
+    """Populate dataset dropdown with available datasets.
+
+    Returns:
+        List of dataset options for dropdown.
+    """
     return [{"label": name, "value": name} for name in data_manager.get_dataset_names()]
 
 
@@ -252,6 +257,14 @@ def update_datasets(_):
     Input("nn-dataset", "value"),
 )
 def update_variables(dataset_name):
+    """Update variable lists based on selected dataset.
+
+    Args:
+        dataset_name: Name of the selected dataset.
+
+    Returns:
+        Tuple of (response_options, explanatory_options).
+    """
     if not dataset_name:
         return [], []
     df = data_manager.get_dataset(dataset_name)
@@ -289,6 +302,23 @@ def train_network(
     max_iter,
     seed,
 ):
+    """Train a neural network model.
+
+    Args:
+        n_clicks: Number of button clicks.
+        dataset: Name of the dataset to use.
+        response: Response variable name.
+        explanatory: List of explanatory variable names.
+        nn_type: Type of problem (regression or classification).
+        hidden_layers: Number of hidden layers.
+        activation: Activation function.
+        lr: Learning rate for optimization.
+        max_iter: Maximum number of iterations.
+        seed: Random seed for reproducibility.
+
+    Returns:
+        Tuple of (model_config, results, status_message).
+    """
     if not all([dataset, response, explanatory]):
         return None, None, dmc.Alert("Please select all required fields", color="red")
 
@@ -366,6 +396,15 @@ def train_network(
     Input("nn-model-store", "data"),
 )
 def update_summary(results, model_config):
+    """Update the model summary display.
+
+    Args:
+        results: Dictionary containing training results.
+        model_config: Dictionary containing model configuration.
+
+    Returns:
+        Component with model summary or placeholder text.
+    """
     if not results or not model_config:
         return dmc.Text("No model trained yet.", c="dimmed")
 
@@ -386,6 +425,15 @@ def update_summary(results, model_config):
     Input("nn-results-store", "data"),
 )
 def update_plot(plot_type, results):
+    """Update the visualization plot.
+
+    Args:
+        plot_type: Type of plot to display.
+        results: Dictionary containing training results.
+
+    Returns:
+        Plotly figure object.
+    """
     if not results or not results.get("loss_curve"):
         return go.Figure().add_annotation(
             text="No model trained yet",

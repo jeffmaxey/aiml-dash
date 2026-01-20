@@ -267,6 +267,14 @@ def update_summary(results):
     Input("rf-results-store", "data"),
 )
 def update_plot(results):
+    """Update the feature importance plot.
+
+    Args:
+        results: Dictionary containing model results and feature importance.
+
+    Returns:
+        Plotly figure object showing feature importance or placeholder.
+    """
     if not results or not results.get("importance"):
         return go.Figure().add_annotation(
             text="No model trained yet",
