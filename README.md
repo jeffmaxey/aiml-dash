@@ -49,6 +49,66 @@ Once the application is running, open your web browser and navigate to `http://1
 - Interactive visualizations of AI and machine learning datasets.
 - User-friendly interface for data exploration.
 - Customizable components for enhanced user experience.
+- **Dynamic Plugin Framework**: Extensible architecture for adding new functionality.
+
+## Plugin Framework
+
+AIML Dash features a powerful plugin framework that makes it easy to extend the application with new pages and functionality. Each plugin is a self-contained module that follows a standardized structure.
+
+### Key Features
+
+- **Dynamic Discovery**: Plugins are automatically discovered from the `plugins/` directory
+- **Enable/Disable**: Plugins can be enabled or disabled at runtime through the settings page
+- **Modular Structure**: Each plugin follows a consistent structure with separate modules for layout, components, callbacks, styles, and constants
+- **Well-Documented**: All plugins include comprehensive docstrings and documentation
+- **Standalone Testing**: Plugins can be run independently for development and testing
+- **Type-Safe**: Full type hints throughout the plugin framework
+
+### Plugin Structure
+
+Each plugin consists of these modules:
+
+- `__init__.py` - Plugin registration and metadata
+- `layout.py` - Page layout definitions using Dash Mantine Components
+- `components.py` - Reusable UI components
+- `callbacks.py` - Dash callbacks for interactivity (optional)
+- `styles.py` - Style constants and configuration
+- `constants.py` - Plugin-specific constants
+
+### Quick Start: Creating a Plugin
+
+1. **Copy the template**:
+   ```bash
+   cp -r aiml_dash/plugins/template_plugin aiml_dash/plugins/my_plugin
+   ```
+
+2. **Update constants.py** with your plugin's metadata
+
+3. **Modify layout.py** to define your page structure
+
+4. **Test standalone**:
+   ```bash
+   python -m aiml_dash.plugins.standalone my_plugin
+   ```
+
+### Available Plugins
+
+- **Core**: Essential pages (home, settings, help) - locked, cannot be disabled
+- **Legacy**: Data management and legacy analysis tools
+- **Example**: Demonstration plugin showing best practices
+- **Template**: Starter template for creating new plugins
+
+### Plugin Development
+
+For detailed instructions on creating plugins, see [Plugin Development Guide](docs/PLUGIN_DEVELOPMENT.md).
+
+Key topics covered:
+- Complete plugin structure walkthrough
+- Best practices and conventions
+- Component creation and styling
+- Callback registration
+- Testing strategies
+- Advanced features (multiple pages, grouped navigation)
 
 ## UI Framework - dash-mantine-components
 

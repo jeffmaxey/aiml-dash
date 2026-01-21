@@ -9,9 +9,9 @@ Organized by functionality:
 - model: Statistical modeling pages (regression, classification, trees, evaluation, etc.)
 - multivariate: Multivariate analysis pages (factor analysis, clustering, MDS, conjoint)
 - basics: Basic statistics pages (means, proportions, correlation, hypothesis tests)
-"""
 
-# Import subpackages for convenience
-from . import basics, data, design, model, multivariate
+Note: Subpackages are not imported automatically to avoid circular dependencies.
+Import specific modules as needed.
+"""
 
 __all__ = ["basics", "data", "design", "model", "multivariate"]

@@ -1,26 +1,11 @@
 """
-Multivariate Analysis Pages Module
-===================================
+Multivariate Pages Module
+===================
 
-This module contains all multivariate analysis pages for the AIML Dash application.
+This module contains multivariate pages for the AIML Dash application.
+
+Note: Individual page modules are not imported automatically to avoid import issues.
+Import specific modules as needed.
 """
 
-from . import (
-    conjoint,
-    full_factor,
-    hierarchical_cluster,
-    kmeans_cluster,
-    mds,
-    perceptual_map,
-    pre_factor,
-)
-
-__all__ = [
-    "conjoint",
-    "full_factor",
-    "hierarchical_cluster",
-    "kmeans_cluster",
-    "mds",
-    "perceptual_map",
-    "pre_factor",
-]
+__all__ = []

@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
-"""
-Check that all dependencies and modules are properly installed
+"""Dependency and module verification tool for AIML Dash.
+
+This script checks that all required dependencies and local modules are properly
+installed and can be imported. It discovers and validates:
+- Third-party packages (dash, pandas, numpy, etc.)
+- Application modules (components, pages, plugins, utils)
+
+Usage:
+    python check_setup.py
+
+Exit Codes:
+    0: All checks passed
+    1: Some checks failed
 """
 
 import pkgutil
@@ -12,12 +23,17 @@ PROJECT_DIR = Path(__file__).parent.resolve()
 
 
 def _ensure_project_on_path() -> None:
+    """Add the project directory to sys.path if not already present."""
     if str(PROJECT_DIR) not in sys.path:
         sys.path.insert(0, str(PROJECT_DIR))
 
 
 def check_imports() -> bool:
-    """Verify required third-party packages can be imported."""
+    """Verify required third-party packages can be imported.
+    
+    Returns:
+        bool: True if all required packages are importable, False otherwise.
+    """
     required_packages = [
         ("dash", "Dash"),
         ("dash_mantine_components", "Dash Mantine Components"),
@@ -34,6 +50,7 @@ def check_imports() -> bool:
         ("pydantic", "Pydantic"),
         ("yaml", "PyYAML"),
         ("requests", "Requests"),
+        ("watchdog", "Watchdog"),
     ]
 
     print("Checking required packages...\n")
@@ -51,7 +68,12 @@ def check_imports() -> bool:
 
 
 def _discover_project_modules() -> list[str]:
-    root_packages = ("components", "pages", "utils")
+    """Discover all project modules including packages and standalone modules.
+    
+    Returns:
+        list[str]: Ordered list of unique module names discovered in the project.
+    """
+    root_packages = ("components", "pages", "plugins", "utils")
     discovered: list[str] = []
 
     for py_file in PROJECT_DIR.glob("*.py"):
@@ -80,7 +102,11 @@ def _discover_project_modules() -> list[str]:
 
 
 def check_modules() -> bool:
-    """Verify local modules can be imported."""
+    """Verify local modules can be imported.
+    
+    Returns:
+        bool: True if all discovered modules are importable, False otherwise.
+    """
     print("\n\nChecking application modules...\n")
     all_ok = True
 
@@ -96,11 +122,15 @@ def check_modules() -> bool:
 
 
 def main() -> int:
-    """Run all checks."""
+    """Run all dependency and module checks.
+    
+    Returns:
+        int: Exit code (0 for success, 1 for failure).
+    """
     _ensure_project_on_path()
 
     print("=" * 60)
-    print("Radiant Dash - Dependency Check")
+    print("AIML Dash - Dependency Check")
     print("=" * 60)
 
     packages_ok = check_imports()

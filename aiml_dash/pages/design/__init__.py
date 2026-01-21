@@ -1,17 +1,11 @@
 """
-Design Pages Package
-====================
+Design Pages Module
+===================
 
-All experimental design pages for the AIML application.
-Includes: DOE, Sampling, Sample Size, Sample Size Comparison, Randomizer
+This module contains design pages for the AIML Dash application.
+
+Note: Individual page modules are not imported automatically to avoid import issues.
+Import specific modules as needed.
 """
 
-from . import doe, randomizer, sample_size, sample_size_comp, sampling
-
-__all__ = [
-    "doe",
-    "randomizer",
-    "sample_size",
-    "sample_size_comp",
-    "sampling",
-]
+__all__ = []
