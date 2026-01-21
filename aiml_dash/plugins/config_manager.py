@@ -61,7 +61,7 @@ class PluginConfig:
         if config_file.exists():
             try:
                 with open(config_file) as f:
-                    config = json.load(f)
+                    config: dict[str, Any] = json.load(f)
                 logger.info(f"Loaded config for plugin '{plugin_id}'")
                 self._configs[plugin_id] = config
                 return config
@@ -69,8 +69,9 @@ class PluginConfig:
                 logger.error(f"Error loading config for plugin '{plugin_id}': {e}")
 
         # Return empty config if file doesn't exist or error occurred
-        self._configs[plugin_id] = {}
-        return {}
+        empty_config: dict[str, Any] = {}
+        self._configs[plugin_id] = empty_config
+        return empty_config
 
     def save_config(self, plugin_id: str, config: dict[str, Any]) -> bool:
         """Save configuration for a plugin.

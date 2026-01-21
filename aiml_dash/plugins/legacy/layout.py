@@ -12,8 +12,9 @@ def _lazy_layout(module_path: str) -> Callable[[], Component]:
     """Create a lazy layout loader."""
 
     def _layout() -> Component:
+        from typing import cast
         module = import_module(module_path)
-        return module.layout()
+        return cast(Component, module.layout())
 
     return _layout
 

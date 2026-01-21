@@ -26,7 +26,7 @@ def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
     for plugin in metadata:
         plugin_id = plugin.get("id")
         if plugin_id and plugin.get("locked"):
-            locked.add(plugin_id)
+            locked.add(str(plugin_id))
     return locked
 
 

@@ -149,7 +149,7 @@ class PluginMarketplace:
         Returns:
             list[dict[str, Any]]: List of installed plugin information.
         """
-        installed = []
+        installed: list[dict[str, Any]] = []
 
         if not plugins_dir.exists():
             return installed

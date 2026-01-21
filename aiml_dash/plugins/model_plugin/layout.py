@@ -20,9 +20,10 @@ def _create_lazy_layout(module_path: str, function_name: str = "layout") -> Call
     """
     def lazy_layout() -> Component:
         import importlib
+        from typing import cast
         module = importlib.import_module(module_path)
         layout_func = getattr(module, function_name)
-        return layout_func()
+        return cast(Component, layout_func())
     
     return lazy_layout
 

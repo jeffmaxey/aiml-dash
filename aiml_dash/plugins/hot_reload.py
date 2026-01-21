@@ -42,7 +42,7 @@ class PluginReloadHandler(FileSystemEventHandler):
         """
         self.plugins_path = plugins_path
         self.reload_callback = reload_callback
-        self.last_reload_time = {}
+        self.last_reload_time: dict[str, float] = {}
         self.debounce_seconds = 1.0
 
     def on_modified(self, event: FileSystemEvent) -> None:
@@ -54,7 +54,7 @@ class PluginReloadHandler(FileSystemEventHandler):
         if event.is_directory:
             return
 
-        file_path = Path(event.src_path)
+        file_path = Path(str(event.src_path))
 
         # Only process Python files
         if file_path.suffix != ".py":
