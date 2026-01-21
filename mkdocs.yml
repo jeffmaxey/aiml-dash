@@ -9,6 +9,7 @@ copyright: Maintained by <a href="https://jeffmaxey.com">jeffmaxey</a>.
 
 nav:
   - Home: index.md
+  - Codexer: codexer.md
   - Modules: modules.md
 plugins:
   - search
