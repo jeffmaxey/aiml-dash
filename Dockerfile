@@ -26,4 +26,4 @@ RUN uv sync --frozen
 
 EXPOSE 8050
 
-CMD ["python", "aiml/run.py"]
+CMD ["uv", "run", "python", "aiml_dash/run.py"]

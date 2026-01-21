@@ -1,7 +1,7 @@
-site_name: aiml-dash
+site_name: AIML Dash
 repo_url: https://github.com/jeffmaxey/aiml-dash
 site_url: https://jeffmaxey.github.io/aiml-dash
-site_description: A Dash application for Predictive Analytics and Machine Learning.
+site_description: A comprehensive Dash application for Predictive Analytics and Machine Learning with dynamic plugin framework.
 site_author: Jeff A. Maxey
 edit_uri: edit/main/docs/
 repo_name: jeffmaxey/aiml-dash
@@ -9,34 +9,87 @@ copyright: Maintained by <a href="https://jeffmaxey.com">jeffmaxey</a>.
 
 nav:
   - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+      - Configuration: getting-started/configuration.md
+  - User Guide:
+      - Overview: user-guide/overview.md
+      - Data Management: user-guide/data-management.md
+      - Analysis Tools: user-guide/analysis-tools.md
+      - Visualization: user-guide/visualization.md
+      - Export & Import: user-guide/export-import.md
+  - Plugin Development:
+      - Overview: plugin-development/overview.md
+      - Plugin Structure: plugin-development/structure.md
+      - Creating Plugins: plugin-development/creating-plugins.md
+      - Components & Layouts: plugin-development/components-layouts.md
+      - Callbacks: plugin-development/callbacks.md
+      - Testing: plugin-development/testing.md
+      - Best Practices: plugin-development/best-practices.md
+  - UI Components:
+      - Overview: ui-components/overview.md
+      - Layout System: ui-components/layout-system.md
+      - Common Components: ui-components/common-components.md
+      - Theming: ui-components/theming.md
+  - API Reference:
+      - Core Modules: api-reference/core.md
+      - Plugin System: api-reference/plugins.md
+      - Utilities: api-reference/utilities.md
+      - Components: api-reference/components.md
+  - Development:
+      - Contributing: development/contributing.md
+      - Architecture: development/architecture.md
+      - Testing: development/testing.md
+      - Code Style: development/code-style.md
   - Modules: modules.md
+
 plugins:
   - search
   - mkdocstrings:
       handlers:
         python:
           paths: ["aiml_dash"]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_category_heading: true
+            members_order: source
+            heading_level: 2
+
 theme:
   name: material
-  feature:
-    tabs: true
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: white
+      primary: blue
       accent: deep orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: black
+      primary: blue
       accent: deep orange
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
   icon:
     repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: Roboto Mono
 
 extra:
   social:
@@ -44,9 +97,34 @@ extra:
       link: https://github.com/jeffmaxey/aiml-dash
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/aiml-dash
+  version:
+    provider: mike
 
 markdown_extensions:
   - toc:
       permalink: true
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
   - pymdownx.arithmatex:
       generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes

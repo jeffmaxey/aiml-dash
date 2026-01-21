@@ -19,6 +19,9 @@ from aiml_dash.plugins.core.constants import (
     HELP_PAGE_ORDER,
     HOME_ICON,
     HOME_PAGE_ORDER,
+    LOGS_ICON,
+    LOGS_PAGE_ID,
+    LOGS_PAGE_ORDER,
     PLUGIN_DESCRIPTION,
     PLUGIN_ID,
     PLUGIN_NAME,
@@ -28,7 +31,7 @@ from aiml_dash.plugins.core.constants import (
     SETTINGS_PAGE_ID,
     SETTINGS_PAGE_ORDER,
 )
-from aiml_dash.plugins.core.layout import help_layout, home_layout, settings_layout
+from aiml_dash.plugins.core.layout import help_layout, home_layout, logs_layout, settings_layout
 from aiml_dash.plugins.models import HOME_PAGE_ID, Plugin, PluginPage
 
 
@@ -66,6 +69,15 @@ def get_plugin() -> Plugin:
             order=HELP_PAGE_ORDER,
             layout=help_layout,
             description="Help documentation and user guides",
+        ),
+        PluginPage(
+            id=LOGS_PAGE_ID,
+            label="Logs",
+            icon=LOGS_ICON,
+            section=SECTION_NAME,
+            order=LOGS_PAGE_ORDER,
+            layout=logs_layout,
+            description="Application logs and diagnostics",
         ),
     ]
 

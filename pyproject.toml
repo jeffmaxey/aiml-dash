@@ -1,17 +1,34 @@
 [project]
 name = "aiml-dash"
-version = "0.0.1"
-description = "A Dash application for Predictive Analytics and Machine Learning."
+version = "0.1.0"
+description = "A comprehensive Dash application for Predictive Analytics and Machine Learning with dynamic plugin framework."
 authors = [{ name = "Jeff A. Maxey", email = "aiml-dash@proton.mee" }]
 readme = "README.md"
-keywords = ['python']
+license = { text = "MIT" }
+keywords = [
+    "python",
+    "dash",
+    "machine-learning",
+    "data-analysis",
+    "predictive-analytics",
+    "web-application",
+    "data-science",
+    "visualization",
+    "plugin-framework"
+]
 requires-python = ">=3.12,<4.0"
 classifiers = [
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Visualization",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Framework :: Dash",
 ]
 dependencies = [
 "dash>=3.3.0",
