@@ -402,3 +402,180 @@ def my_callback(input_value, state_data):
 - [Dash Mantine Components](https://www.dash-mantine-components.com/)
 - [Iconify Icons](https://icon-sets.iconify.design/)
 - [AIML Dash Repository](https://github.com/jeffmaxey/aiml-dash)
+
+## Advanced Features
+
+### Plugin Dependencies
+
+Declare dependencies on other plugins:
+
+```python
+def get_plugin() -> Plugin:
+    return Plugin(
+        id=PLUGIN_ID,
+        name=PLUGIN_NAME,
+        description=PLUGIN_DESCRIPTION,
+        pages=pages,
+        version=PLUGIN_VERSION,
+        dependencies=["core", "other_plugin"],  # Required plugins
+    )
+```
+
+The framework automatically:
+- Checks that dependencies are available
+- Loads plugins in the correct order
+- Detects circular dependencies
+
+### Version Compatibility
+
+Specify minimum and maximum app versions:
+
+```python
+def get_plugin() -> Plugin:
+    return Plugin(
+        id=PLUGIN_ID,
+        name=PLUGIN_NAME,
+        description=PLUGIN_DESCRIPTION,
+        pages=pages,
+        version=PLUGIN_VERSION,
+        min_app_version="0.0.1",  # Minimum required app version
+        max_app_version="2.0.0",  # Maximum supported app version
+    )
+```
+
+### Plugin Configuration
+
+Define a configuration schema for user settings:
+
+```python
+def get_plugin() -> Plugin:
+    return Plugin(
+        id=PLUGIN_ID,
+        name=PLUGIN_NAME,
+        description=PLUGIN_DESCRIPTION,
+        pages=pages,
+        version=PLUGIN_VERSION,
+        config_schema={
+            "required": ["api_key"],
+            "properties": {
+                "api_key": {"type": "string"},
+                "timeout": {"type": "integer"},
+                "enabled_features": {"type": "array"},
+            },
+        },
+    )
+```
+
+Use the configuration manager:
+
+```python
+from aiml_dash.plugins.config_manager import PluginConfig
+
+config = PluginConfig()
+api_key = config.get_setting("my_plugin", "api_key")
+config.set_setting("my_plugin", "timeout", 30)
+```
+
+### Hot-Reloading During Development
+
+Enable hot-reloading to automatically reload plugins when code changes:
+
+```python
+from aiml_dash.plugins.hot_reload import create_hot_reloader
+from pathlib import Path
+
+plugins_path = Path("aiml_dash/plugins")
+reloader = create_hot_reloader(plugins_path)
+reloader.start()
+
+# Your plugin code will automatically reload on changes
+# Press Ctrl+C to stop the reloader
+reloader.stop()
+```
+
+Or use as a context manager:
+
+```python
+with create_hot_reloader(plugins_path) as reloader:
+    # Run your app
+    app.run(debug=True)
+```
+
+### Marketplace Integration
+
+Publish your plugin to the marketplace:
+
+```python
+def get_plugin() -> Plugin:
+    return Plugin(
+        id=PLUGIN_ID,
+        name=PLUGIN_NAME,
+        description=PLUGIN_DESCRIPTION,
+        pages=pages,
+        version=PLUGIN_VERSION,
+        marketplace_url="https://plugins.aiml-dash.org/my-plugin",
+    )
+```
+
+Users can then install it using:
+
+```python
+from aiml_dash.plugins.marketplace import create_marketplace_client
+
+marketplace = create_marketplace_client()
+success, msg = marketplace.install_plugin("my_plugin", target_dir)
+```
+
+## Testing Your Plugin
+
+### Unit Tests
+
+Create tests for your plugin components:
+
+```python
+# tests/plugins/test_my_plugin.py
+from my_plugin.components import create_my_component
+
+def test_my_component():
+    component = create_my_component("test")
+    assert component is not None
+```
+
+### Integration Tests
+
+Test plugin loading and dependencies:
+
+```python
+from aiml_dash.plugins.dependency_manager import validate_plugin
+
+def test_plugin_dependencies():
+    plugin = my_plugin.get_plugin()
+    available = {"core": core_plugin}
+    is_valid, errors = validate_plugin(plugin, available)
+    assert is_valid is True
+```
+
+### Configuration Tests
+
+Test configuration validation:
+
+```python
+from aiml_dash.plugins.config_manager import PluginConfig
+
+def test_plugin_config():
+    config_mgr = PluginConfig()
+    plugin = my_plugin.get_plugin()
+    
+    valid_config = {"api_key": "test123"}
+    is_valid, errors = config_mgr.validate_config(plugin, valid_config)
+    assert is_valid is True
+```
+
+## Best Practices for Advanced Features
+
+1. **Dependencies**: Only declare necessary dependencies to avoid tight coupling
+2. **Versioning**: Use semantic versioning (MAJOR.MINOR.PATCH)
+3. **Configuration**: Provide sensible defaults for all config options
+4. **Hot-Reloading**: Only use during development, not in production
+5. **Documentation**: Document all configuration options and dependencies
+

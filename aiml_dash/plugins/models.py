@@ -66,6 +66,11 @@ class Plugin:
         default_enabled: Whether the plugin is enabled by default.
         locked: If True, plugin cannot be disabled by users.
         register_callbacks: Optional function to register Dash callbacks.
+        dependencies: List of plugin IDs that this plugin depends on.
+        min_app_version: Minimum application version required (e.g., "0.0.1").
+        max_app_version: Maximum application version supported (e.g., "1.0.0").
+        config_schema: Optional configuration schema for plugin settings.
+        marketplace_url: Optional URL to plugin marketplace/repository.
     """
 
     id: str
@@ -76,3 +81,8 @@ class Plugin:
     default_enabled: bool = True
     locked: bool = False
     register_callbacks: Callable[[object], None] | None = None
+    dependencies: Sequence[str] = ()
+    min_app_version: str | None = None
+    max_app_version: str | None = None
+    config_schema: dict | None = None
+    marketplace_url: str | None = None

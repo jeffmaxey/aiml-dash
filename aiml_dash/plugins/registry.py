@@ -11,6 +11,8 @@ The registry provides:
 - Navigation structure building
 - Plugin enable/disable functionality
 - Callback registration for plugins
+- Dependency management and version checking
+- Plugin configuration management
 """
 
 from __future__ import annotations
@@ -19,6 +21,7 @@ from collections.abc import Iterable, Sequence
 from typing import TypedDict
 
 from aiml_dash.plugins import core, example_plugin, legacy, template_plugin
+from aiml_dash.plugins.dependency_manager import resolve_dependencies, validate_plugin
 from aiml_dash.plugins.loader import load_plugins_dynamically
 from aiml_dash.plugins.models import Plugin, PluginPage
 
