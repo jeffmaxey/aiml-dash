@@ -1,20 +1,11 @@
 """
-Data Pages Package
-==================
+Data Pages Module
+===================
 
-All data-related pages for the AIML Data application.
+This module contains data pages for the AIML Dash application.
+
+Note: Individual page modules are not imported automatically to avoid import issues.
+Import specific modules as needed.
 """
 
-from . import combine, explore, manage, pivot, report, sql_query, transform, view, visualize
-
-__all__ = [
-    "combine",
-    "explore",
-    "manage",
-    "pivot",
-    "report",
-    "sql_query",
-    "transform",
-    "view",
-    "visualize",
-]
+__all__ = []

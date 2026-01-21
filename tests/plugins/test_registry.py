@@ -20,7 +20,11 @@ def test_plugin_registry_contains_expected_plugins():
     """Ensure required plugins are registered."""
     registry = get_plugin_registry()
     assert "core" in registry
-    assert "legacy" in registry
+    assert "basics" in registry
+    assert "data" in registry
+    assert "design" in registry
+    assert "model" in registry
+    assert "multivariate" in registry
     assert "example" in registry
     assert "template" in registry
 

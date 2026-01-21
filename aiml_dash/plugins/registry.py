@@ -20,7 +20,16 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import TypedDict
 
-from aiml_dash.plugins import core, example_plugin, legacy, template_plugin
+from aiml_dash.plugins import (
+    basics_plugin,
+    core,
+    data_plugin,
+    design_plugin,
+    example_plugin,
+    model_plugin,
+    multivariate_plugin,
+    template_plugin,
+)
 from aiml_dash.plugins.dependency_manager import resolve_dependencies, validate_plugin
 from aiml_dash.plugins.loader import load_plugins_dynamically
 from aiml_dash.plugins.models import Plugin, PluginPage
@@ -87,7 +96,16 @@ def get_static_plugins() -> Sequence[Plugin]:
     Returns:
         Sequence[Plugin]: List of statically registered plugins.
     """
-    return [core.get_plugin(), legacy.get_plugin(), example_plugin.get_plugin(), template_plugin.get_plugin()]
+    return [
+        core.get_plugin(),
+        data_plugin.get_plugin(),
+        basics_plugin.get_plugin(),
+        design_plugin.get_plugin(),
+        model_plugin.get_plugin(),
+        multivariate_plugin.get_plugin(),
+        example_plugin.get_plugin(),
+        template_plugin.get_plugin(),
+    ]
 
 
 def get_plugins(enable_dynamic_loading: bool = False) -> Sequence[Plugin]:
