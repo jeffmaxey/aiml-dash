@@ -4,11 +4,17 @@ This module defines the basics plugin for AIML Dash, providing statistical
 analysis pages for means, proportions, correlations, and probability calculations.
 
 The plugin follows the standard AIML Dash plugin structure:
-- layout.py: Page layout imports from pages/basics
-- components.py: Shared UI components
-- callbacks.py: Callback registration
-- styles.py: Plugin-specific styles
+- layout.py: All page layouts extracted from pages/basics
+- components.py: Shared UI components (minimal, most components are inline)
+- callbacks.py: All callback functions extracted from pages/basics
+- styles.py: Plugin-specific style constants
 - constants.py: Plugin constants and metadata
+
+Code Migration Status:
+✓ All layouts migrated from pages/basics/ to layout.py
+✓ All callbacks migrated from pages/basics/ to callbacks.py
+✓ Style constants documented in styles.py
+✓ Components kept inline for maintainability (following best practices)
 """
 
 from aiml_dash.plugins.basics_plugin import callbacks
