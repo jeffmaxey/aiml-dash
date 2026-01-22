@@ -44,6 +44,9 @@ from aiml_dash.plugins.registry import (
     register_plugin_callbacks,
 )
 
+# Import theme configuration
+from aiml_dash.theme_config import THEME_CONFIG
+
 # Initialize app
 app = Dash(
     __name__,
@@ -63,15 +66,7 @@ register_plugin_callbacks(app)
 # ==============================================================================
 
 app.layout = dmc.MantineProvider(
-    theme={
-        "fontFamily": "'Inter', sans-serif",
-        "primaryColor": "blue",
-        "components": {
-            "Button": {"defaultProps": {"fw": 400}},
-            "Alert": {"styles": {"title": {"fontWeight": 500}}},
-            "AvatarGroup": {"styles": {"truncated": {"fontWeight": 500}}},
-        },
-    },
+    theme=THEME_CONFIG,
     children=dmc.Box(
         [
             dmc.AppShell(
