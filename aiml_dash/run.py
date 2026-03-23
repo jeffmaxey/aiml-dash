@@ -6,10 +6,10 @@ Test script for AIML Dash application
 import sys
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent))
+# Add parent directory to path so aiml_dash package is importable
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from app import app
+from aiml_dash.app import app
 
 if __name__ == "__main__":
     print("Starting AIML Dash application...")

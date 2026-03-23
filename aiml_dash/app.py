@@ -17,7 +17,7 @@ import dash
 import dash_mantine_components as dmc
 
 # Import shell components
-from components.shell import (
+from aiml_dash.components.shell import (
     create_aside,
     create_footer,
     create_header,
@@ -27,10 +27,10 @@ from dash import ALL, Dash, Input, Output, State, callback, ctx, dcc, html
 from dash_iconify import DashIconify
 
 # Import constants
-from utils.constants import APP_TITLE
+from aiml_dash.utils.constants import APP_TITLE
 
 # Import utilities
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 # Import all pages
 from aiml_dash.plugins.models import HOME_PAGE_ID

@@ -8,7 +8,7 @@ All layouts have been extracted from pages/basics/ and refactored into this plug
 
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import dcc, html
 from dash.development.base_component import Component
 from dash_iconify import DashIconify
