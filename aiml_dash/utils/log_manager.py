@@ -22,20 +22,29 @@ class LogEntry:
         timestamp: datetime | None = None,
     ):
         """Initialize a log entry.
-        
-        Args:
-            level: Log level (debug, info, warning, error)
-            message: Log message
-            source: Source of the log (core, plugins, data, callbacks)
-            timestamp: Timestamp of the log entry
-        """
+
+        Parameters
+        ----------
+        level : str
+            Input value for ``level``.
+        message : str
+            Input value for ``message``.
+        source : str
+            Input value for ``source``.
+        timestamp : datetime | None
+            Value provided for this parameter."""
         self.level = level.lower()
         self.message = message
         self.source = source.lower()
         self.timestamp = timestamp or datetime.now()
 
     def to_dict(self) -> dict[str, str]:
-        """Convert log entry to dictionary."""
+        """Convert log entry to dictionary.
+
+        Returns
+        -------
+        value : dict[str, str]
+            Result produced by this function."""
         return {
             "level": self.level,
             "message": self.message,
@@ -66,12 +75,15 @@ class LogManager:
         source: Literal["core", "plugins", "data", "callbacks"] = "core",
     ) -> None:
         """Add a log entry.
-        
-        Args:
-            level: Log level
-            message: Log message
-            source: Source of the log
-        """
+
+        Parameters
+        ----------
+        level : Literal['debug', 'info', 'warning', 'error']
+            Input value for ``level``.
+        message : str
+            Input value for ``message``.
+        source : Literal['core', 'plugins', 'data', 'callbacks']
+            Value provided for this parameter."""
         entry = LogEntry(level, message, source)
         self._logs.append(entry)
 
@@ -82,42 +94,54 @@ class LogManager:
         limit: int | None = None,
     ) -> list[dict[str, str]]:
         """Get log entries with optional filtering.
-        
-        Args:
-            level_filter: Filter by log level (all, debug, info, warning, error)
-            source_filter: Filter by source (all, core, plugins, data, callbacks)
-            limit: Maximum number of logs to return
-            
-        Returns:
-            List of log entry dictionaries
-        """
+
+        Parameters
+        ----------
+        level_filter : str
+            Input value for ``level_filter``.
+        source_filter : str
+            Input value for ``source_filter``.
+        limit : int | None
+            Input value for ``limit``.
+
+        Returns
+        -------
+        value : list[dict[str, str]]
+            Result produced by this function."""
         logs = list(self._logs)
-        
+
         # Apply filters
         if level_filter != "all":
             logs = [log for log in logs if log.level == level_filter.lower()]
-        
+
         if source_filter != "all":
             logs = [log for log in logs if log.source == source_filter.lower()]
-        
+
         # Apply limit
         if limit:
             logs = logs[-limit:]
-        
+
         return [log.to_dict() for log in reversed(logs)]
 
     def get_log_counts(self) -> dict[str, int]:
         """Get counts of logs by level.
-        
-        Returns:
-            Dictionary with counts for each log level
-        """
-        counts = {"debug": 0, "info": 0, "warning": 0, "error": 0, "total": len(self._logs)}
-        
+
+        Returns
+        -------
+        value : dict[str, int]
+            Result produced by this function."""
+        counts = {
+            "debug": 0,
+            "info": 0,
+            "warning": 0,
+            "error": 0,
+            "total": len(self._logs),
+        }
+
         for log in self._logs:
             if log.level in counts:
                 counts[log.level] += 1
-        
+
         return counts
 
     def clear_logs(self) -> None:
@@ -126,10 +150,11 @@ class LogManager:
 
     def get_logs_as_text(self) -> str:
         """Get all logs as formatted text.
-        
-        Returns:
-            Formatted string with all log entries
-        """
+
+        Returns
+        -------
+        value : str
+            Result produced by this function."""
         lines = []
         for log in self._logs:
             lines.append(

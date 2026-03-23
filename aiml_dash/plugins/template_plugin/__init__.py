@@ -23,28 +23,26 @@ To create a new plugin:
 
 from aiml_dash.plugins.models import Plugin, PluginPage
 from aiml_dash.plugins.template_plugin import callbacks
-from aiml_dash.plugins.template_plugin.constants import (
-    GROUP_NAME,
-    GROUP_ORDER,
-    PAGE_ORDER,
-    PLUGIN_DESCRIPTION,
-    PLUGIN_ID,
-    PLUGIN_NAME,
-    PLUGIN_VERSION,
-    SECTION_NAME,
-    TEMPLATE_ICON,
-    TEMPLATE_PAGE_ID,
-)
+from aiml_dash.plugins.template_plugin.constants import (GROUP_NAME,
+                                                         GROUP_ORDER,
+                                                         PAGE_ORDER,
+                                                         PLUGIN_DESCRIPTION,
+                                                         PLUGIN_ID,
+                                                         PLUGIN_NAME,
+                                                         PLUGIN_VERSION,
+                                                         SECTION_NAME,
+                                                         TEMPLATE_ICON,
+                                                         TEMPLATE_PAGE_ID)
 from aiml_dash.plugins.template_plugin.layout import template_layout
 
 
 def get_plugin() -> Plugin:
     """Return the template plugin definition.
 
-    Returns:
-        Plugin: The template plugin providing a scaffold for new plugin development.
-            This plugin is disabled by default and can be enabled through settings.
-    """
+    Returns
+    -------
+    value : Plugin
+        Result produced by this function."""
     pages = [
         PluginPage(
             id=TEMPLATE_PAGE_ID,

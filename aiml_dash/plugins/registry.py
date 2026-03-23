@@ -20,17 +20,9 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import TypedDict
 
-from aiml_dash.plugins import (
-    basics_plugin,
-    core,
-    data_plugin,
-    design_plugin,
-    example_plugin,
-    model_plugin,
-    multivariate_plugin,
-    template_plugin,
-)
-from aiml_dash.plugins.dependency_manager import resolve_dependencies, validate_plugin
+from aiml_dash.plugins import (basics_plugin, core, data_plugin, design_plugin,
+                               example_plugin, model_plugin,
+                               multivariate_plugin, template_plugin)
 from aiml_dash.plugins.loader import load_plugins_dynamically
 from aiml_dash.plugins.models import Plugin, PluginPage
 
@@ -90,12 +82,10 @@ class NavigationSection(TypedDict, total=False):
 def get_static_plugins() -> Sequence[Plugin]:
     """Return the list of statically registered plugins.
 
-    These are core plugins that are always loaded first, including
-    essential functionality like the home page and settings.
-
-    Returns:
-        Sequence[Plugin]: List of statically registered plugins.
-    """
+    Returns
+    -------
+    value : Sequence[Plugin]
+        Result produced by this function."""
     return [
         core.get_plugin(),
         data_plugin.get_plugin(),
@@ -111,14 +101,15 @@ def get_static_plugins() -> Sequence[Plugin]:
 def get_plugins(enable_dynamic_loading: bool = False) -> Sequence[Plugin]:
     """Return the ordered list of available plugins.
 
-    Args:
-        enable_dynamic_loading: If True, also discover and load plugins
-            dynamically from the plugins directory. Default is False for
-            backward compatibility.
+    Parameters
+    ----------
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Returns:
-        Sequence[Plugin]: Combined list of static and dynamically loaded plugins.
-    """
+    Returns
+    -------
+    value : Sequence[Plugin]
+        Result produced by this function."""
     plugins = list(get_static_plugins())
 
     if enable_dynamic_loading:
@@ -136,24 +127,32 @@ def get_plugins(enable_dynamic_loading: bool = False) -> Sequence[Plugin]:
 def get_plugin_registry(enable_dynamic_loading: bool = False) -> dict[str, Plugin]:
     """Return plugins keyed by their identifier.
 
-    Args:
-        enable_dynamic_loading: If True, include dynamically loaded plugins.
+    Parameters
+    ----------
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Returns:
-        dict[str, Plugin]: Dictionary mapping plugin IDs to Plugin objects.
-    """
+    Returns
+    -------
+    value : dict[str, Plugin]
+        Result produced by this function."""
     return {plugin.id: plugin for plugin in get_plugins(enable_dynamic_loading)}
 
 
-def get_plugin_metadata(enable_dynamic_loading: bool = False) -> list[dict[str, object]]:
+def get_plugin_metadata(
+    enable_dynamic_loading: bool = False,
+) -> list[dict[str, object]]:
     """Return plugin metadata for UI rendering.
 
-    Args:
-        enable_dynamic_loading: If True, include dynamically loaded plugins.
+    Parameters
+    ----------
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Returns:
-        list[dict[str, object]]: List of plugin metadata dictionaries.
-    """
+    Returns
+    -------
+    value : list[dict[str, object]]
+        Result produced by this function."""
     metadata = []
     for plugin in get_plugins(enable_dynamic_loading):
         metadata.append(
@@ -172,15 +171,20 @@ def get_plugin_metadata(enable_dynamic_loading: bool = False) -> list[dict[str, 
 def get_default_enabled_plugins(enable_dynamic_loading: bool = False) -> list[str]:
     """Return the list of plugins enabled by default.
 
-    This includes plugins where default_enabled=True or locked=True.
+    Parameters
+    ----------
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Args:
-        enable_dynamic_loading: If True, include dynamically loaded plugins.
-
-    Returns:
-        list[str]: List of plugin IDs that should be enabled by default.
-    """
-    return [plugin.id for plugin in get_plugins(enable_dynamic_loading) if plugin.default_enabled or plugin.locked]
+    Returns
+    -------
+    value : list[str]
+        Result produced by this function."""
+    return [
+        plugin.id
+        for plugin in get_plugins(enable_dynamic_loading)
+        if plugin.default_enabled or plugin.locked
+    ]
 
 
 def normalize_enabled_plugins(
@@ -188,34 +192,43 @@ def normalize_enabled_plugins(
 ) -> list[str]:
     """Normalize enabled plugins to include locked entries.
 
-    Ensures that locked plugins (like core) are always enabled, even if
-    not explicitly included in the enabled_plugins list.
+    Parameters
+    ----------
+    enabled_plugins : Iterable[str] | None
+        Input value for ``enabled_plugins``.
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Args:
-        enabled_plugins: List of plugin IDs that are enabled, or None to use defaults.
-        enable_dynamic_loading: If True, consider dynamically loaded plugins.
-
-    Returns:
-        list[str]: Normalized list of enabled plugin IDs.
-    """
+    Returns
+    -------
+    value : list[str]
+        Result produced by this function."""
     registry = get_plugin_registry(enable_dynamic_loading)
-    enabled = list(enabled_plugins or get_default_enabled_plugins(enable_dynamic_loading))
+    enabled = list(
+        enabled_plugins or get_default_enabled_plugins(enable_dynamic_loading)
+    )
     for plugin in registry.values():
         if plugin.locked and plugin.id not in enabled:
             enabled.append(plugin.id)
     return [plugin_id for plugin_id in enabled if plugin_id in registry]
 
 
-def get_pages(enabled_plugins: Iterable[str] | None = None, enable_dynamic_loading: bool = False) -> list[PluginPage]:
+def get_pages(
+    enabled_plugins: Iterable[str] | None = None, enable_dynamic_loading: bool = False
+) -> list[PluginPage]:
     """Return pages for enabled plugins.
 
-    Args:
-        enabled_plugins: List of plugin IDs to include, or None for defaults.
-        enable_dynamic_loading: If True, include dynamically loaded plugins.
+    Parameters
+    ----------
+    enabled_plugins : Iterable[str] | None
+        Input value for ``enabled_plugins``.
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Returns:
-        list[PluginPage]: List of pages from enabled plugins.
-    """
+    Returns
+    -------
+    value : list[PluginPage]
+        Result produced by this function."""
     enabled = set(normalize_enabled_plugins(enabled_plugins, enable_dynamic_loading))
     pages: list[PluginPage] = []
     for plugin in get_plugins(enable_dynamic_loading):
@@ -229,28 +242,34 @@ def get_page_registry(
 ) -> dict[str, PluginPage]:
     """Return page registry keyed by page id for enabled plugins.
 
-    Args:
-        enabled_plugins: List of plugin IDs to include, or None for defaults.
-        enable_dynamic_loading: If True, include dynamically loaded plugins.
+    Parameters
+    ----------
+    enabled_plugins : Iterable[str] | None
+        Input value for ``enabled_plugins``.
+    enable_dynamic_loading : bool
+        Input value for ``enable_dynamic_loading``.
 
-    Returns:
-        dict[str, PluginPage]: Dictionary mapping page IDs to PluginPage objects.
-    """
-    return {page.id: page for page in get_pages(enabled_plugins, enable_dynamic_loading)}
+    Returns
+    -------
+    value : dict[str, PluginPage]
+        Result produced by this function."""
+    return {
+        page.id: page for page in get_pages(enabled_plugins, enable_dynamic_loading)
+    }
 
 
 def build_navigation_sections(pages: Sequence[PluginPage]) -> list[NavigationSection]:
     """Build navigation sections from plugin pages.
 
-    Organizes pages into a hierarchical structure with sections, groups,
-    and individual pages.
+    Parameters
+    ----------
+    pages : Sequence[PluginPage]
+        Input value for ``pages``.
 
-    Args:
-        pages: List of plugin pages to organize.
-
-    Returns:
-        list[NavigationSection]: Organized navigation structure.
-    """
+    Returns
+    -------
+    value : list[NavigationSection]
+        Result produced by this function."""
     section_map: dict[str, list[PluginPage]] = {}
     for page in pages:
         section_map.setdefault(page.section, []).append(page)
@@ -281,18 +300,24 @@ def build_navigation_sections(pages: Sequence[PluginPage]) -> list[NavigationSec
                         "pages": sorted_pages,
                     }
                 )
-            section_entry["groups"] = sorted(group_entries, key=lambda item: (item["order"], item["label"]))
+            section_entry["groups"] = sorted(
+                group_entries, key=lambda item: (item["order"], item["label"])
+            )
         sections.append(section_entry)
     return sections
 
 
-def register_plugin_callbacks(app: object, enable_dynamic_loading: bool = False) -> None:
+def register_plugin_callbacks(
+    app: object, enable_dynamic_loading: bool = False
+) -> None:
     """Register callbacks defined by plugins.
 
-    Args:
-        app: The Dash application instance.
-        enable_dynamic_loading: If True, include dynamically loaded plugins.
-    """
+    Parameters
+    ----------
+    app : object
+        Input value for ``app``.
+    enable_dynamic_loading : bool
+        Value provided for this parameter."""
     for plugin in get_plugins(enable_dynamic_loading):
         if plugin.register_callbacks:
             plugin.register_callbacks(app)

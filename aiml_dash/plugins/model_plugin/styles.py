@@ -2,5 +2,6 @@
 
 from aiml_dash.plugins.model_plugin.constants import CONTAINER_SIZE
 
+# Layout configuration
 MODEL_CONTAINER_SIZE = CONTAINER_SIZE
 MODEL_PADDING = "md"

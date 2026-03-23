@@ -6,14 +6,9 @@ This module contains tests for plugin discovery, loading, and validation.
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-import pytest
-
-from aiml_dash.plugins.loader import (
-    discover_plugin_directories,
-    load_plugin,
-    load_plugins_dynamically,
-    validate_plugin_structure,
-)
+from aiml_dash.plugins.loader import (discover_plugin_directories, load_plugin,
+                                      load_plugins_dynamically,
+                                      validate_plugin_structure)
 from aiml_dash.plugins.models import Plugin
 
 
@@ -21,7 +16,12 @@ class TestDiscoverPluginDirectories:
     """Tests for plugin directory discovery."""
 
     def test_discovers_valid_plugin_directories(self, tmp_path):
-        """Test that valid plugin directories are discovered."""
+        """Test that valid plugin directories are discovered.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         # Create valid plugin directories
         plugin1 = tmp_path / "plugin1"
         plugin1.mkdir()
@@ -56,7 +56,12 @@ class TestDiscoverPluginDirectories:
         assert discovered == []
 
     def test_handles_file_instead_of_directory(self, tmp_path):
-        """Test handling when a file is passed instead of directory."""
+        """Test handling when a file is passed instead of directory.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         test_file = tmp_path / "test.txt"
         test_file.touch()
         discovered = discover_plugin_directories(test_file)
@@ -67,12 +72,24 @@ class TestValidatePluginStructure:
     """Tests for plugin structure validation."""
 
     def test_validates_complete_plugin_structure(self, tmp_path):
-        """Test that a complete plugin structure passes validation."""
+        """Test that a complete plugin structure passes validation.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         plugin_dir = tmp_path / "test_plugin"
         plugin_dir.mkdir()
 
         # Create all required files
-        required_files = ["__init__.py", "layout.py", "components.py", "callbacks.py", "styles.py", "constants.py"]
+        required_files = [
+            "__init__.py",
+            "layout.py",
+            "components.py",
+            "callbacks.py",
+            "styles.py",
+            "constants.py",
+        ]
         for filename in required_files:
             (plugin_dir / filename).touch()
 
@@ -81,7 +98,12 @@ class TestValidatePluginStructure:
         assert error_msg == ""
 
     def test_detects_missing_files(self, tmp_path):
-        """Test that missing files are detected."""
+        """Test that missing files are detected.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         plugin_dir = tmp_path / "test_plugin"
         plugin_dir.mkdir()
 
@@ -104,7 +126,12 @@ class TestLoadPlugin:
     def test_loads_valid_plugin(self):
         """Test loading a valid plugin module."""
         # Use the example_plugin as a known valid plugin
-        plugin_path = Path(__file__).parent.parent.parent / "aiml_dash" / "plugins" / "example_plugin"
+        plugin_path = (
+            Path(__file__).parent.parent.parent
+            / "aiml_dash"
+            / "plugins"
+            / "example_plugin"
+        )
 
         plugin = load_plugin(plugin_path, "aiml_dash.plugins")
 
@@ -114,7 +141,12 @@ class TestLoadPlugin:
         assert plugin.name == "Example Plugin"
 
     def test_handles_missing_get_plugin(self, tmp_path):
-        """Test handling of plugin without get_plugin function."""
+        """Test handling of plugin without get_plugin function.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         plugin_dir = tmp_path / "bad_plugin"
         plugin_dir.mkdir()
 
@@ -127,7 +159,12 @@ class TestLoadPlugin:
         assert plugin is None
 
     def test_handles_import_error(self, tmp_path):
-        """Test handling of import errors."""
+        """Test handling of import errors.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         plugin_dir = tmp_path / "error_plugin"
         plugin_dir.mkdir()
         (plugin_dir / "__init__.py").touch()
@@ -157,7 +194,12 @@ class TestLoadPluginsDynamically:
         assert "template" in plugin_ids
 
     def test_handles_empty_directory(self, tmp_path):
-        """Test handling of empty plugins directory."""
+        """Test handling of empty plugins directory.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         empty_dir = tmp_path / "empty_plugins"
         empty_dir.mkdir()
 
@@ -166,7 +208,12 @@ class TestLoadPluginsDynamically:
         assert plugins == []
 
     def test_skips_invalid_plugins(self, tmp_path):
-        """Test that invalid plugins are skipped without crashing."""
+        """Test that invalid plugins are skipped without crashing.
+
+        Parameters
+        ----------
+        tmp_path : Any
+            Value provided for this parameter."""
         plugins_dir = tmp_path / "plugins"
         plugins_dir.mkdir()
 

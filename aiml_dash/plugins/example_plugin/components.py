@@ -14,24 +14,36 @@ from dash_iconify import DashIconify
 def create_example_stat(label: str, value: str, icon: str) -> dmc.Card:
     """Create a statistic card for the example plugin.
 
-    Args:
-        label: The label text displayed above the value (e.g., "Status").
-        value: The main value to display (e.g., "Ready").
-        icon: The Iconify icon identifier (e.g., "carbon:checkmark").
+    Parameters
+    ----------
+    label : str
+        Input value for ``label``.
+    value : str
+        Input value for ``value``.
+    icon : str
+        Input value for ``icon``.
 
-    Returns:
-        dmc.Card: A card component containing the icon, label, and value
-            in a structured layout.
-    """
+    Returns
+    -------
+    value : dmc.Card
+        Result produced by this function."""
     return dmc.Card(
         [
-            dmc.Group([
-                dmc.ThemeIcon(DashIconify(icon=icon, width=18), radius="xl", variant="light"),
-                dmc.Stack([
-                    dmc.Text(label, size="sm", c="dimmed"),
-                    dmc.Text(value, fw=600),
-                ], gap=2),
-            ], gap="sm"),
+            dmc.Group(
+                [
+                    dmc.ThemeIcon(
+                        DashIconify(icon=icon, width=18), radius="xl", variant="light"
+                    ),
+                    dmc.Stack(
+                        [
+                            dmc.Text(label, size="sm", c="dimmed"),
+                            dmc.Text(value, fw=600),
+                        ],
+                        gap=2,
+                    ),
+                ],
+                gap="sm",
+            ),
         ],
         withBorder=True,
         radius="md",

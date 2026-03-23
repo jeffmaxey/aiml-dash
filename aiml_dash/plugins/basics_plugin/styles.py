@@ -26,4 +26,3 @@ TABLE_HEIGHT_LARGE = {"height": "300px"}
 
 # Code element font size
 CODE_FONT_SIZE = {"fontSize": "0.875rem"}
-

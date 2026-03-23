@@ -6,7 +6,6 @@ from a remote marketplace or repository.
 
 from __future__ import annotations
 
-import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -20,26 +19,25 @@ class PluginMarketplace:
     def __init__(self, marketplace_url: str | None = None):
         """Initialize the marketplace client.
 
-        Args:
-            marketplace_url: Base URL for the plugin marketplace.
-                If None, uses a default marketplace URL.
-        """
+        Parameters
+        ----------
+        marketplace_url : str | None
+            Value provided for this parameter."""
         self.marketplace_url = marketplace_url or "https://plugins.aiml-dash.org"
         self._cache: dict[str, Any] = {}
 
     def search_plugins(self, query: str = "") -> list[dict[str, Any]]:
         """Search for plugins in the marketplace.
 
-        Args:
-            query: Search query string.
+        Parameters
+        ----------
+        query : str
+            Input value for ``query``.
 
-        Returns:
-            list[dict[str, Any]]: List of plugin metadata dictionaries.
-
-        Note:
-            This is a placeholder implementation. In a real implementation,
-            this would make HTTP requests to the marketplace API.
-        """
+        Returns
+        -------
+        value : list[dict[str, Any]]
+            Result produced by this function."""
         logger.info(f"Searching marketplace for: '{query}'")
 
         # Placeholder: Return empty list
@@ -49,16 +47,15 @@ class PluginMarketplace:
     def get_plugin_info(self, plugin_id: str) -> dict[str, Any] | None:
         """Get detailed information about a plugin from the marketplace.
 
-        Args:
-            plugin_id: Plugin identifier.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
 
-        Returns:
-            dict[str, Any] | None: Plugin information, or None if not found.
-
-        Note:
-            This is a placeholder implementation. In a real implementation,
-            this would make HTTP requests to the marketplace API.
-        """
+        Returns
+        -------
+        value : dict[str, Any] | None
+            Result produced by this function."""
         logger.info(f"Getting info for plugin: {plugin_id}")
 
         # Placeholder: Return None
@@ -73,18 +70,19 @@ class PluginMarketplace:
     ) -> tuple[bool, str]:
         """Install a plugin from the marketplace.
 
-        Args:
-            plugin_id: Plugin identifier.
-            target_dir: Directory to install the plugin to.
-            version: Specific version to install. If None, installs latest.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        target_dir : Path
+            Input value for ``target_dir``.
+        version : str | None
+            Input value for ``version``.
 
-        Returns:
-            tuple[bool, str]: (success, message).
-
-        Note:
-            This is a placeholder implementation. In a real implementation,
-            this would download and install the plugin from the marketplace.
-        """
+        Returns
+        -------
+        value : tuple[bool, str]
+            Result produced by this function."""
         logger.info(f"Installing plugin '{plugin_id}' to {target_dir}")
 
         # Placeholder: Return error
@@ -103,17 +101,19 @@ class PluginMarketplace:
     ) -> tuple[bool, str]:
         """Update an installed plugin to a newer version.
 
-        Args:
-            plugin_id: Plugin identifier.
-            target_dir: Directory where the plugin is installed.
-            version: Specific version to update to. If None, updates to latest.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        target_dir : Path
+            Input value for ``target_dir``.
+        version : str | None
+            Input value for ``version``.
 
-        Returns:
-            tuple[bool, str]: (success, message).
-
-        Note:
-            This is a placeholder implementation.
-        """
+        Returns
+        -------
+        value : tuple[bool, str]
+            Result produced by this function."""
         logger.info(f"Updating plugin '{plugin_id}'")
 
         # Placeholder: Return error
@@ -122,18 +122,22 @@ class PluginMarketplace:
     def uninstall_plugin(self, plugin_dir: Path) -> tuple[bool, str]:
         """Uninstall a plugin.
 
-        Args:
-            plugin_dir: Directory where the plugin is installed.
+        Parameters
+        ----------
+        plugin_dir : Path
+            Input value for ``plugin_dir``.
 
-        Returns:
-            tuple[bool, str]: (success, message).
-        """
+        Returns
+        -------
+        value : tuple[bool, str]
+            Result produced by this function."""
         logger.info(f"Uninstalling plugin from {plugin_dir}")
 
         try:
             if plugin_dir.exists():
                 # Remove plugin directory
                 import shutil
+
                 shutil.rmtree(plugin_dir)
                 return True, f"Successfully uninstalled plugin from {plugin_dir}"
             return False, f"Plugin directory not found: {plugin_dir}"
@@ -143,12 +147,15 @@ class PluginMarketplace:
     def list_installed_plugins(self, plugins_dir: Path) -> list[dict[str, Any]]:
         """List all installed plugins.
 
-        Args:
-            plugins_dir: Directory containing installed plugins.
+        Parameters
+        ----------
+        plugins_dir : Path
+            Input value for ``plugins_dir``.
 
-        Returns:
-            list[dict[str, Any]]: List of installed plugin information.
-        """
+        Returns
+        -------
+        value : list[dict[str, Any]]
+            Result produced by this function."""
         installed: list[dict[str, Any]] = []
 
         if not plugins_dir.exists():
@@ -158,28 +165,35 @@ class PluginMarketplace:
             if item.is_dir() and not item.name.startswith("_"):
                 init_file = item / "__init__.py"
                 if init_file.exists():
-                    installed.append({
-                        "id": item.name,
-                        "path": str(item),
-                        "name": item.name,
-                    })
+                    installed.append(
+                        {
+                            "id": item.name,
+                            "path": str(item),
+                            "name": item.name,
+                        }
+                    )
 
         return installed
 
-    def check_updates(self, plugin_id: str, current_version: str) -> dict[str, Any] | None:
+    def check_updates(
+        self, plugin_id: str, current_version: str
+    ) -> dict[str, Any] | None:
         """Check if updates are available for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
-            current_version: Current installed version.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        current_version : str
+            Input value for ``current_version``.
 
-        Returns:
-            dict[str, Any] | None: Update information if available, None otherwise.
-
-        Note:
-            This is a placeholder implementation.
-        """
-        logger.info(f"Checking updates for plugin '{plugin_id}' version {current_version}")
+        Returns
+        -------
+        value : dict[str, Any] | None
+            Result produced by this function."""
+        logger.info(
+            f"Checking updates for plugin '{plugin_id}' version {current_version}"
+        )
 
         # Placeholder: Return None
         return None
@@ -188,10 +202,13 @@ class PluginMarketplace:
 def create_marketplace_client(url: str | None = None) -> PluginMarketplace:
     """Create a plugin marketplace client.
 
-    Args:
-        url: Optional marketplace URL. If None, uses default.
+    Parameters
+    ----------
+    url : str | None
+        Input value for ``url``.
 
-    Returns:
-        PluginMarketplace: Marketplace client instance.
-    """
+    Returns
+    -------
+    value : PluginMarketplace
+        Result produced by this function."""
     return PluginMarketplace(url)

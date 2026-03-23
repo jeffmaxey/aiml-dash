@@ -19,10 +19,10 @@ from aiml_dash.plugins.example_plugin.styles import EXAMPLE_CONTAINER_SIZE
 def example_layout() -> dmc.Container:
     """Create the example plugin layout.
 
-    Returns:
-        dmc.Container: A container with the example plugin layout including
-            title, description, feature statistics, and informational content.
-    """
+    Returns
+    -------
+    value : dmc.Container
+        Result produced by this function."""
     return dmc.Container(
         dmc.Stack(
             [
@@ -35,7 +35,9 @@ def example_layout() -> dmc.Container:
                     [
                         create_example_stat("Status", "Ready", "carbon:checkmark"),
                         create_example_stat("Layouts", "Separated", "carbon:layers"),
-                        create_example_stat("Callbacks", "Optional", "carbon:connection-signal"),
+                        create_example_stat(
+                            "Callbacks", "Optional", "carbon:connection-signal"
+                        ),
                     ],
                     cols=1,
                     spacing="md",

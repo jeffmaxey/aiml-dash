@@ -6,11 +6,11 @@ Each layout function creates the UI structure for a specific statistical analysi
 All layouts have been extracted from pages/basics/ and refactored into this plugin module.
 """
 
-import dash_ag_grid as dag
+from typing import Any
+
 import dash_mantine_components as dmc
 from components.common import create_page_header
 from dash import dcc, html
-from dash.development.base_component import Component
 from dash_iconify import DashIconify
 
 
@@ -23,142 +23,154 @@ def single_mean_layout():
                 "One-sample t-test to compare a sample mean against a hypothesized population value.",
                 icon="carbon:chart-average",
             ),
-            dmc.Grid([
-                # Left panel
-                dmc.GridCol(
-                    [
-                        dmc.Card(
-                            [
-                                dmc.Stack(
-                                    [
-                                        dmc.Title("Test Settings", order=4),
-                                        dmc.Select(
-                                            id="smean-dataset",
-                                            label="Dataset",
-                                            placeholder="Select dataset...",
-                                            data=[],
-                                        ),
-                                        dmc.Select(
-                                            id="smean-variable",
-                                            label="Variable",
-                                            placeholder="Select variable...",
-                                            data=[],
-                                        ),
-                                        dmc.NumberInput(
-                                            id="smean-comparison",
-                                            label="Comparison Value",
-                                            description="Hypothesized population mean",
-                                            value=0,
-                                            step=0.1,
-                                        ),
-                                        dmc.Select(
-                                            id="smean-alternative",
-                                            label="Alternative Hypothesis",
-                                            value="two-sided",
-                                            data=[
-                                                {
-                                                    "label": "Two-sided (≠)",
-                                                    "value": "two-sided",
-                                                },
-                                                {
-                                                    "label": "Greater than (>)",
-                                                    "value": "greater",
-                                                },
-                                                {
-                                                    "label": "Less than (<)",
-                                                    "value": "less",
-                                                },
-                                            ],
-                                        ),
-                                        dmc.NumberInput(
-                                            id="smean-confidence",
-                                            label="Confidence Level",
-                                            value=0.95,
-                                            min=0.5,
-                                            max=0.99,
-                                            step=0.01,
-                                            decimalScale=2,
-                                        ),
-                                        dmc.Button(
-                                            "Run Test",
-                                            id="smean-run-btn",
-                                            leftSection=DashIconify(icon="carbon:play", width=20),
-                                            fullWidth=True,
-                                            size="lg",
-                                            color="blue",
-                                        ),
-                                        dmc.Divider(),
-                                        dmc.Button(
-                                            "Export Results (CSV)",
-                                            id="smean-export-btn",
-                                            leftSection=DashIconify(icon="carbon:download", width=20),
-                                            variant="light",
-                                            fullWidth=True,
-                                        ),
-                                    ],
-                                    gap="sm",
-                                )
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
-                        ),
-                    ],
-                    span={"base": 12, "md": 4},
-                ),
-                # Right panel
-                dmc.GridCol(
-                    [
-                        dmc.Tabs(
-                            [
-                                dmc.TabsList([
-                                    dmc.TabsTab(
-                                        "Summary",
+            dmc.Grid(
+                [
+                    # Left panel
+                    dmc.GridCol(
+                        [
+                            dmc.Card(
+                                [
+                                    dmc.Stack(
+                                        [
+                                            dmc.Title("Test Settings", order=4),
+                                            dmc.Select(
+                                                id="smean-dataset",
+                                                label="Dataset",
+                                                placeholder="Select dataset...",
+                                                data=[],
+                                            ),
+                                            dmc.Select(
+                                                id="smean-variable",
+                                                label="Variable",
+                                                placeholder="Select variable...",
+                                                data=[],
+                                            ),
+                                            dmc.NumberInput(
+                                                id="smean-comparison",
+                                                label="Comparison Value",
+                                                description="Hypothesized population mean",
+                                                value=0,
+                                                step=0.1,
+                                            ),
+                                            dmc.Select(
+                                                id="smean-alternative",
+                                                label="Alternative Hypothesis",
+                                                value="two-sided",
+                                                data=[
+                                                    {
+                                                        "label": "Two-sided (≠)",
+                                                        "value": "two-sided",
+                                                    },
+                                                    {
+                                                        "label": "Greater than (>)",
+                                                        "value": "greater",
+                                                    },
+                                                    {
+                                                        "label": "Less than (<)",
+                                                        "value": "less",
+                                                    },
+                                                ],
+                                            ),
+                                            dmc.NumberInput(
+                                                id="smean-confidence",
+                                                label="Confidence Level",
+                                                value=0.95,
+                                                min=0.5,
+                                                max=0.99,
+                                                step=0.01,
+                                                decimalScale=2,
+                                            ),
+                                            dmc.Button(
+                                                "Run Test",
+                                                id="smean-run-btn",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:play", width=20
+                                                ),
+                                                fullWidth=True,
+                                                size="lg",
+                                                color="blue",
+                                            ),
+                                            dmc.Divider(),
+                                            dmc.Button(
+                                                "Export Results (CSV)",
+                                                id="smean-export-btn",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:download", width=20
+                                                ),
+                                                variant="light",
+                                                fullWidth=True,
+                                            ),
+                                        ],
+                                        gap="sm",
+                                    )
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
+                        ],
+                        span={"base": 12, "md": 4},
+                    ),
+                    # Right panel
+                    dmc.GridCol(
+                        [
+                            dmc.Tabs(
+                                [
+                                    dmc.TabsList(
+                                        [
+                                            dmc.TabsTab(
+                                                "Summary",
+                                                value="summary",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:report"
+                                                ),
+                                            ),
+                                            dmc.TabsTab(
+                                                "Plot",
+                                                value="plot",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:chart-histogram"
+                                                ),
+                                            ),
+                                        ]
+                                    ),
+                                    dmc.TabsPanel(
+                                        [
+                                            dmc.Card(
+                                                [
+                                                    html.Div(id="smean-summary"),
+                                                ],
+                                                withBorder=True,
+                                                radius="md",
+                                                p="md",
+                                                mt="md",
+                                            ),
+                                        ],
                                         value="summary",
-                                        leftSection=DashIconify(icon="carbon:report"),
                                     ),
-                                    dmc.TabsTab(
-                                        "Plot",
+                                    dmc.TabsPanel(
+                                        [
+                                            dmc.Card(
+                                                [
+                                                    dcc.Graph(id="smean-plot"),
+                                                ],
+                                                withBorder=True,
+                                                radius="md",
+                                                p="md",
+                                                mt="md",
+                                            ),
+                                        ],
                                         value="plot",
-                                        leftSection=DashIconify(icon="carbon:chart-histogram"),
                                     ),
-                                ]),
-                                dmc.TabsPanel(
-                                    [
-                                        dmc.Card(
-                                            [
-                                                html.Div(id="smean-summary"),
-                                            ],
-                                            withBorder=True,
-                                            radius="md",
-                                            p="md",
-                                            mt="md",
-                                        ),
-                                    ],
-                                    value="summary",
-                                ),
-                                dmc.TabsPanel(
-                                    [
-                                        dmc.Card(
-                                            [
-                                                dcc.Graph(id="smean-plot"),
-                                            ],
-                                            withBorder=True,
-                                            radius="md",
-                                            p="md",
-                                            mt="md",
-                                        ),
-                                    ],
-                                    value="plot",
-                                ),
-                            ],
-                            value="summary",
-                            id="smean-tabs",
-                        ),
-                    ],
-                    span={"base": 12, "md": 8},
-                ),
-            ]),
+                                ],
+                                value="summary",
+                                id="smean-tabs",
+                            ),
+                        ],
+                        span={"base": 12, "md": 8},
+                    ),
+                ]
+            ),
             # Hidden components
             dcc.Store(id="smean-results-store"),
             dcc.Download(id="smean-download"),
@@ -171,8 +183,15 @@ def single_mean_layout():
 
 # Callbacks
 
-def compare_means_layout() -> Component:
-    """Create the compare means test page layout."""
+
+def compare_means_layout() -> Any:
+    """Create the compare means test page layout.
+
+    Returns
+    -------
+    value : Component
+        Dash layout tree for the compare means analysis page.
+    """
     return dmc.Container(
         [
             create_page_header(
@@ -180,139 +199,149 @@ def compare_means_layout() -> Component:
                 "Two-sample t-test to compare means between two independent groups.",
                 icon="carbon:compare",
             ),
-            dmc.Grid([
-                # Left panel
-                dmc.GridCol(
-                    [
-                        dmc.Card(
-                            [
-                                dmc.Stack(
-                                    [
-                                        dmc.Title("Test Settings", order=4),
-                                        dmc.Select(
-                                            id="cmean-dataset",
-                                            label="Dataset",
-                                            placeholder="Select dataset...",
-                                            data=[],
-                                        ),
-                                        dmc.Select(
-                                            id="cmean-variable",
-                                            label="Numeric Variable",
-                                            placeholder="Select variable...",
-                                            data=[],
-                                        ),
-                                        dmc.Select(
-                                            id="cmean-group",
-                                            label="Grouping Variable",
-                                            placeholder="Select group variable...",
-                                            data=[],
-                                        ),
-                                        dmc.Select(
-                                            id="cmean-alternative",
-                                            label="Alternative Hypothesis",
-                                            value="two-sided",
-                                            data=[
-                                                {
-                                                    "label": "Two-sided (≠)",
-                                                    "value": "two-sided",
-                                                },
-                                                {
-                                                    "label": "Greater than (>)",
-                                                    "value": "greater",
-                                                },
-                                                {
-                                                    "label": "Less than (<)",
-                                                    "value": "less",
-                                                },
-                                            ],
-                                        ),
-                                        dmc.Switch(
-                                            id="cmean-equal-var",
-                                            label="Assume Equal Variances",
-                                            description="Use pooled variance estimate",
-                                            checked=True,
-                                        ),
-                                        dmc.NumberInput(
-                                            id="cmean-confidence",
-                                            label="Confidence Level",
-                                            value=0.95,
-                                            min=0.5,
-                                            max=0.99,
-                                            step=0.01,
-                                            decimalScale=2,
-                                        ),
-                                        dmc.Button(
-                                            "Run Test",
-                                            id="cmean-run-btn",
-                                            leftSection=DashIconify(icon="carbon:play", width=20),
-                                            fullWidth=True,
-                                            size="lg",
-                                            color="blue",
-                                        ),
-                                    ],
-                                    gap="sm",
-                                )
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
-                        ),
-                    ],
-                    span={"base": 12, "md": 4},
-                ),
-                # Right panel
-                dmc.GridCol(
-                    [
-                        dmc.Tabs(
-                            [
-                                dmc.TabsList([
-                                    dmc.TabsTab(
-                                        "Summary",
+            dmc.Grid(
+                [
+                    # Left panel
+                    dmc.GridCol(
+                        [
+                            dmc.Card(
+                                [
+                                    dmc.Stack(
+                                        [
+                                            dmc.Title("Test Settings", order=4),
+                                            dmc.Select(
+                                                id="cmean-dataset",
+                                                label="Dataset",
+                                                placeholder="Select dataset...",
+                                                data=[],
+                                            ),
+                                            dmc.Select(
+                                                id="cmean-variable",
+                                                label="Numeric Variable",
+                                                placeholder="Select variable...",
+                                                data=[],
+                                            ),
+                                            dmc.Select(
+                                                id="cmean-group",
+                                                label="Grouping Variable",
+                                                placeholder="Select group variable...",
+                                                data=[],
+                                            ),
+                                            dmc.Select(
+                                                id="cmean-alternative",
+                                                label="Alternative Hypothesis",
+                                                value="two-sided",
+                                                data=[
+                                                    {
+                                                        "label": "Two-sided (≠)",
+                                                        "value": "two-sided",
+                                                    },
+                                                    {
+                                                        "label": "Greater than (>)",
+                                                        "value": "greater",
+                                                    },
+                                                    {
+                                                        "label": "Less than (<)",
+                                                        "value": "less",
+                                                    },
+                                                ],
+                                            ),
+                                            dmc.Switch(
+                                                id="cmean-equal-var",
+                                                label="Assume Equal Variances",
+                                                description="Use pooled variance estimate",
+                                                checked=True,
+                                            ),
+                                            dmc.NumberInput(
+                                                id="cmean-confidence",
+                                                label="Confidence Level",
+                                                value=0.95,
+                                                min=0.5,
+                                                max=0.99,
+                                                step=0.01,
+                                                decimalScale=2,
+                                            ),
+                                            dmc.Button(
+                                                "Run Test",
+                                                id="cmean-run-btn",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:play", width=20
+                                                ),
+                                                fullWidth=True,
+                                                size="lg",
+                                                color="blue",
+                                            ),
+                                        ],
+                                        gap="sm",
+                                    )
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
+                        ],
+                        span={"base": 12, "md": 4},
+                    ),
+                    # Right panel
+                    dmc.GridCol(
+                        [
+                            dmc.Tabs(
+                                [
+                                    dmc.TabsList(
+                                        [
+                                            dmc.TabsTab(
+                                                "Summary",
+                                                value="summary",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:report"
+                                                ),
+                                            ),
+                                            dmc.TabsTab(
+                                                "Plot",
+                                                value="plot",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:chart-box-plot"
+                                                ),
+                                            ),
+                                        ]
+                                    ),
+                                    dmc.TabsPanel(
+                                        [
+                                            dmc.Card(
+                                                [
+                                                    html.Div(id="cmean-summary"),
+                                                ],
+                                                withBorder=True,
+                                                radius="md",
+                                                p="md",
+                                                mt="md",
+                                            ),
+                                        ],
                                         value="summary",
-                                        leftSection=DashIconify(icon="carbon:report"),
                                     ),
-                                    dmc.TabsTab(
-                                        "Plot",
+                                    dmc.TabsPanel(
+                                        [
+                                            dmc.Card(
+                                                [
+                                                    dcc.Graph(id="cmean-plot"),
+                                                ],
+                                                withBorder=True,
+                                                radius="md",
+                                                p="md",
+                                                mt="md",
+                                            ),
+                                        ],
                                         value="plot",
-                                        leftSection=DashIconify(icon="carbon:chart-box-plot"),
                                     ),
-                                ]),
-                                dmc.TabsPanel(
-                                    [
-                                        dmc.Card(
-                                            [
-                                                html.Div(id="cmean-summary"),
-                                            ],
-                                            withBorder=True,
-                                            radius="md",
-                                            p="md",
-                                            mt="md",
-                                        ),
-                                    ],
-                                    value="summary",
-                                ),
-                                dmc.TabsPanel(
-                                    [
-                                        dmc.Card(
-                                            [
-                                                dcc.Graph(id="cmean-plot"),
-                                            ],
-                                            withBorder=True,
-                                            radius="md",
-                                            p="md",
-                                            mt="md",
-                                        ),
-                                    ],
-                                    value="plot",
-                                ),
-                            ],
-                            value="summary",
-                            id="cmean-tabs",
-                        ),
-                    ],
-                    span={"base": 12, "md": 8},
-                ),
-            ]),
+                                ],
+                                value="summary",
+                                id="cmean-tabs",
+                            ),
+                        ],
+                        span={"base": 12, "md": 8},
+                    ),
+                ]
+            ),
             html.Div(id="cmean-notification"),
         ],
         fluid=True,
@@ -321,6 +350,7 @@ def compare_means_layout() -> Component:
 
 
 # Callbacks
+
 
 def single_prop_layout():
     """Create layout for single proportion test page."""
@@ -362,7 +392,9 @@ def single_prop_layout():
                                     dmc.Stack(
                                         gap="md",
                                         children=[
-                                            dmc.Text("Data Selection", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Data Selection", fw=500, size="lg"
+                                            ),
                                             # Dataset selector
                                             dmc.Select(
                                                 id="single-prop-dataset",
@@ -391,7 +423,9 @@ def single_prop_layout():
                                                 searchable=True,
                                             ),
                                             dmc.Divider(),
-                                            dmc.Text("Test Parameters", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Test Parameters", fw=500, size="lg"
+                                            ),
                                             # Comparison proportion
                                             dmc.NumberInput(
                                                 id="single-prop-p0",
@@ -448,7 +482,9 @@ def single_prop_layout():
                                             dmc.Button(
                                                 "Run Test",
                                                 id="single-prop-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
+                                                leftSection=DashIconify(
+                                                    icon="mdi:play"
+                                                ),
                                                 fullWidth=True,
                                                 variant="filled",
                                             ),
@@ -507,7 +543,6 @@ def single_prop_layout():
 # ==============================================================================
 
 
-
 def compare_props_layout():
     """Create layout for compare proportions test page."""
     return dmc.Container(
@@ -548,7 +583,9 @@ def compare_props_layout():
                                     dmc.Stack(
                                         gap="md",
                                         children=[
-                                            dmc.Text("Data Selection", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Data Selection", fw=500, size="lg"
+                                            ),
                                             dmc.Select(
                                                 id="compare-props-dataset",
                                                 label="Select Dataset",
@@ -582,7 +619,9 @@ def compare_props_layout():
                                                 searchable=True,
                                             ),
                                             dmc.Divider(),
-                                            dmc.Text("Test Parameters", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Test Parameters", fw=500, size="lg"
+                                            ),
                                             dmc.Stack(
                                                 gap=5,
                                                 children=[
@@ -625,7 +664,9 @@ def compare_props_layout():
                                             dmc.Button(
                                                 "Run Test",
                                                 id="compare-props-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
+                                                leftSection=DashIconify(
+                                                    icon="mdi:play"
+                                                ),
                                                 fullWidth=True,
                                                 variant="filled",
                                             ),
@@ -682,13 +723,8 @@ def compare_props_layout():
 # ==============================================================================
 
 
-
 def correlation_layout():
-    """Create the correlation analysis page layout.
-
-    Returns:
-        Container with correlation settings and output area.
-    """
+    """Create the correlation analysis page layout."""
     return dmc.Container(
         [
             create_page_header(
@@ -696,82 +732,85 @@ def correlation_layout():
                 "Correlation matrix and significance tests",
                 icon="carbon:connection-signal",
             ),
-            dmc.Grid([
-                dmc.GridCol(
-                    [
-                        dmc.Card(
-                            [
-                                dmc.Stack(
-                                    [
-                                        dmc.Title("Settings", order=4),
-                                        dmc.Select(
-                                            id="corr-dataset",
-                                            label="Dataset",
-                                            placeholder="Select dataset...",
-                                            data=[],
-                                        ),
-                                        dmc.MultiSelect(
-                                            id="corr-variables",
-                                            label="Variables",
-                                            placeholder="Select variables...",
-                                            data=[],
-                                            searchable=True,
-                                        ),
-                                        dmc.Select(
-                                            id="corr-method",
-                                            label="Method",
-                                            value="pearson",
-                                            data=[
-                                                {
-                                                    "label": "Pearson",
-                                                    "value": "pearson",
-                                                },
-                                                {
-                                                    "label": "Spearman",
-                                                    "value": "spearman",
-                                                },
-                                                {
-                                                    "label": "Kendall",
-                                                    "value": "kendall",
-                                                },
-                                            ],
-                                        ),
-                                        dmc.Button(
-                                            "Calculate",
-                                            id="corr-btn",
-                                            leftSection=DashIconify(icon="carbon:play", width=20),
-                                            fullWidth=True,
-                                            color="blue",
-                                        ),
-                                    ],
-                                    gap="sm",
-                                )
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
-                        ),
-                    ],
-                    span={"base": 12, "md": 4},
-                ),
-                dmc.GridCol(
-                    [
-                        dmc.Card(
-                            [html.Div(id="corr-output")],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
-                        ),
-                    ],
-                    span={"base": 12, "md": 8},
-                ),
-            ]),
+            dmc.Grid(
+                [
+                    dmc.GridCol(
+                        [
+                            dmc.Card(
+                                [
+                                    dmc.Stack(
+                                        [
+                                            dmc.Title("Settings", order=4),
+                                            dmc.Select(
+                                                id="corr-dataset",
+                                                label="Dataset",
+                                                placeholder="Select dataset...",
+                                                data=[],
+                                            ),
+                                            dmc.MultiSelect(
+                                                id="corr-variables",
+                                                label="Variables",
+                                                placeholder="Select variables...",
+                                                data=[],
+                                                searchable=True,
+                                            ),
+                                            dmc.Select(
+                                                id="corr-method",
+                                                label="Method",
+                                                value="pearson",
+                                                data=[
+                                                    {
+                                                        "label": "Pearson",
+                                                        "value": "pearson",
+                                                    },
+                                                    {
+                                                        "label": "Spearman",
+                                                        "value": "spearman",
+                                                    },
+                                                    {
+                                                        "label": "Kendall",
+                                                        "value": "kendall",
+                                                    },
+                                                ],
+                                            ),
+                                            dmc.Button(
+                                                "Calculate",
+                                                id="corr-btn",
+                                                leftSection=DashIconify(
+                                                    icon="carbon:play", width=20
+                                                ),
+                                                fullWidth=True,
+                                                color="blue",
+                                            ),
+                                        ],
+                                        gap="sm",
+                                    )
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
+                        ],
+                        span={"base": 12, "md": 4},
+                    ),
+                    dmc.GridCol(
+                        [
+                            dmc.Card(
+                                [html.Div(id="corr-output")],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
+                        ],
+                        span={"base": 12, "md": 8},
+                    ),
+                ]
+            ),
             html.Div(id="corr-notification"),
         ],
         fluid=True,
         style={"maxWidth": "1400px"},
     )
-
 
 
 def cross_tabs_layout():
@@ -814,7 +853,9 @@ def cross_tabs_layout():
                                     dmc.Stack(
                                         gap="md",
                                         children=[
-                                            dmc.Text("Data Selection", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Data Selection", fw=500, size="lg"
+                                            ),
                                             dmc.Select(
                                                 id="crosstabs-dataset",
                                                 label="Select Dataset",
@@ -838,7 +879,9 @@ def cross_tabs_layout():
                                                 searchable=True,
                                             ),
                                             dmc.Divider(),
-                                            dmc.Text("Display Options", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Display Options", fw=500, size="lg"
+                                            ),
                                             dmc.Switch(
                                                 id="crosstabs-show-percentages",
                                                 label="Show percentages",
@@ -861,7 +904,9 @@ def cross_tabs_layout():
                                             dmc.Button(
                                                 "Run Analysis",
                                                 id="crosstabs-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
+                                                leftSection=DashIconify(
+                                                    icon="mdi:play"
+                                                ),
                                                 fullWidth=True,
                                                 variant="filled",
                                             ),
@@ -897,7 +942,9 @@ def cross_tabs_layout():
                                         withBorder=True,
                                         style={"display": "none"},
                                         children=[
-                                            dmc.Text("Contingency Table", fw=500, mb="sm"),
+                                            dmc.Text(
+                                                "Contingency Table", fw=500, mb="sm"
+                                            ),
                                             html.Div(id="crosstabs-table"),
                                         ],
                                     ),
@@ -926,7 +973,6 @@ def cross_tabs_layout():
 # ==============================================================================
 # CALLBACKS
 # ==============================================================================
-
 
 
 def goodness_layout():
@@ -969,7 +1015,9 @@ def goodness_layout():
                                     dmc.Stack(
                                         gap="md",
                                         children=[
-                                            dmc.Text("Data Selection", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Data Selection", fw=500, size="lg"
+                                            ),
                                             dmc.Select(
                                                 id="goodness-dataset",
                                                 label="Select Dataset",
@@ -1036,7 +1084,9 @@ def goodness_layout():
                                             dmc.Button(
                                                 "Run Test",
                                                 id="goodness-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
+                                                leftSection=DashIconify(
+                                                    icon="mdi:play"
+                                                ),
                                                 fullWidth=True,
                                                 variant="filled",
                                             ),
@@ -1105,7 +1155,6 @@ def goodness_layout():
 # ==============================================================================
 # CALLBACKS
 # ==============================================================================
-
 
 
 def prob_calc_layout():
@@ -1185,7 +1234,9 @@ def prob_calc_layout():
                                             dmc.Stack(
                                                 gap=5,
                                                 children=[
-                                                    dmc.Text("Calculate", size="sm", fw=500),
+                                                    dmc.Text(
+                                                        "Calculate", size="sm", fw=500
+                                                    ),
                                                     dmc.SegmentedControl(
                                                         id="prob-calc-type",
                                                         data=[
@@ -1207,7 +1258,9 @@ def prob_calc_layout():
                                             dmc.Button(
                                                 "Calculate",
                                                 id="prob-calculate",
-                                                leftSection=DashIconify(icon="mdi:calculator"),
+                                                leftSection=DashIconify(
+                                                    icon="mdi:calculator"
+                                                ),
                                                 fullWidth=True,
                                                 variant="filled",
                                             ),
@@ -1264,9 +1317,14 @@ def prob_calc_layout():
 # ==============================================================================
 
 
+def clt_layout() -> Any:
+    """Create layout for CLT simulation page.
 
-def clt_layout() -> Component:
-    """Create layout for CLT simulation page."""
+    Returns
+    -------
+    value : Component
+        Dash layout tree for the central limit theorem simulation page.
+    """
     return dmc.Container(
         fluid=True,
         p="md",
@@ -1277,7 +1335,9 @@ def clt_layout() -> Component:
                 children=[
                     dmc.Group(
                         [
-                            DashIconify(icon="mdi:chart-bell-curve-cumulative", width=32),
+                            DashIconify(
+                                icon="mdi:chart-bell-curve-cumulative", width=32
+                            ),
                             dmc.Title("Central Limit Theorem", order=2),
                         ],
                         gap="sm",
@@ -1343,7 +1403,9 @@ def clt_layout() -> Component:
                                                 clearable=False,
                                             ),
                                             dmc.Divider(),
-                                            dmc.Text("Sampling Parameters", fw=500, size="lg"),
+                                            dmc.Text(
+                                                "Sampling Parameters", fw=500, size="lg"
+                                            ),
                                             dmc.NumberInput(
                                                 id="clt-sample-size",
                                                 label="Sample Size (n)",
@@ -1374,7 +1436,9 @@ def clt_layout() -> Component:
                                             dmc.Button(
                                                 "Run Simulation",
                                                 id="clt-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
+                                                leftSection=DashIconify(
+                                                    icon="mdi:play"
+                                                ),
                                                 fullWidth=True,
                                                 variant="filled",
                                             ),
@@ -1382,7 +1446,9 @@ def clt_layout() -> Component:
                                             dmc.Alert(
                                                 title="About CLT",
                                                 color="blue",
-                                                icon=DashIconify(icon="mdi:information"),
+                                                icon=DashIconify(
+                                                    icon="mdi:information"
+                                                ),
                                                 children=dmc.Text(
                                                     "The Central Limit Theorem states that the distribution of "
                                                     "sample means approaches a normal distribution as sample size increases, "
@@ -1443,5 +1509,14 @@ def clt_layout() -> Component:
 # ==============================================================================
 
 
-
-__all__ = ['single_mean_layout', 'compare_means_layout', 'single_prop_layout', 'compare_props_layout', 'correlation_layout', 'cross_tabs_layout', 'goodness_layout', 'prob_calc_layout', 'clt_layout']
+__all__ = [
+    "clt_layout",
+    "compare_means_layout",
+    "compare_props_layout",
+    "correlation_layout",
+    "cross_tabs_layout",
+    "goodness_layout",
+    "prob_calc_layout",
+    "single_mean_layout",
+    "single_prop_layout",
+]

@@ -22,10 +22,10 @@ class PluginConfig:
     def __init__(self, config_dir: Path | None = None):
         """Initialize the plugin config manager.
 
-        Args:
-            config_dir: Directory to store plugin configuration files.
-                If None, uses a default location.
-        """
+        Parameters
+        ----------
+        config_dir : Path | None
+            Value provided for this parameter."""
         if config_dir is None:
             config_dir = Path.home() / ".aiml_dash" / "plugins"
 
@@ -36,23 +36,29 @@ class PluginConfig:
     def _get_config_file(self, plugin_id: str) -> Path:
         """Get the configuration file path for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
 
-        Returns:
-            Path: Path to the plugin's config file.
-        """
+        Returns
+        -------
+        value : Path
+            Result produced by this function."""
         return self.config_dir / f"{plugin_id}.json"
 
     def load_config(self, plugin_id: str) -> dict[str, Any]:
         """Load configuration for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
 
-        Returns:
-            dict[str, Any]: Plugin configuration dictionary.
-        """
+        Returns
+        -------
+        value : dict[str, Any]
+            Result produced by this function."""
         if plugin_id in self._configs:
             return self._configs[plugin_id]
 
@@ -66,7 +72,7 @@ class PluginConfig:
                 self._configs[plugin_id] = config
                 return config
             except Exception as e:
-                logger.error(f"Error loading config for plugin '{plugin_id}': {e}")
+                logger.exception(f"Error loading config for plugin '{plugin_id}': {e}")
 
         # Return empty config if file doesn't exist or error occurred
         empty_config: dict[str, Any] = {}
@@ -76,13 +82,17 @@ class PluginConfig:
     def save_config(self, plugin_id: str, config: dict[str, Any]) -> bool:
         """Save configuration for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
-            config: Configuration dictionary to save.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        config : dict[str, Any]
+            Input value for ``config``.
 
-        Returns:
-            bool: True if save was successful, False otherwise.
-        """
+        Returns
+        -------
+        value : bool
+            Result produced by this function."""
         config_file = self._get_config_file(plugin_id)
 
         try:
@@ -92,19 +102,23 @@ class PluginConfig:
             logger.info(f"Saved config for plugin '{plugin_id}'")
             return True
         except Exception as e:
-            logger.error(f"Error saving config for plugin '{plugin_id}': {e}")
+            logger.exception(f"Error saving config for plugin '{plugin_id}': {e}")
             return False
 
     def update_config(self, plugin_id: str, updates: dict[str, Any]) -> bool:
         """Update configuration for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
-            updates: Dictionary of configuration updates.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        updates : dict[str, Any]
+            Input value for ``updates``.
 
-        Returns:
-            bool: True if update was successful, False otherwise.
-        """
+        Returns
+        -------
+        value : bool
+            Result produced by this function."""
         config = self.load_config(plugin_id)
         config.update(updates)
         return self.save_config(plugin_id, config)
@@ -112,40 +126,56 @@ class PluginConfig:
     def get_setting(self, plugin_id: str, key: str, default: Any = None) -> Any:
         """Get a specific setting for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
-            key: Configuration key.
-            default: Default value if key doesn't exist.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        key : str
+            Input value for ``key``.
+        default : Any
+            Input value for ``default``.
 
-        Returns:
-            Any: Configuration value.
-        """
+        Returns
+        -------
+        value : Any
+            Result produced by this function."""
         config = self.load_config(plugin_id)
         return config.get(key, default)
 
     def set_setting(self, plugin_id: str, key: str, value: Any) -> bool:
         """Set a specific setting for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
-            key: Configuration key.
-            value: Configuration value.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
+        key : str
+            Input value for ``key``.
+        value : Any
+            Input value for ``value``.
 
-        Returns:
-            bool: True if setting was successful, False otherwise.
-        """
+        Returns
+        -------
+        value : bool
+            Result produced by this function."""
         return self.update_config(plugin_id, {key: value})
 
-    def validate_config(self, plugin: Plugin, config: dict[str, Any]) -> tuple[bool, list[str]]:
+    def validate_config(
+        self, plugin: Plugin, config: dict[str, Any]
+    ) -> tuple[bool, list[str]]:
         """Validate plugin configuration against schema.
 
-        Args:
-            plugin: Plugin to validate configuration for.
-            config: Configuration to validate.
+        Parameters
+        ----------
+        plugin : Plugin
+            Input value for ``plugin``.
+        config : dict[str, Any]
+            Input value for ``config``.
 
-        Returns:
-            tuple[bool, list[str]]: (is_valid, errors).
-        """
+        Returns
+        -------
+        value : tuple[bool, list[str]]
+            Result produced by this function."""
         if not plugin.config_schema:
             return True, []
 
@@ -184,12 +214,15 @@ class PluginConfig:
     def delete_config(self, plugin_id: str) -> bool:
         """Delete configuration for a plugin.
 
-        Args:
-            plugin_id: Plugin identifier.
+        Parameters
+        ----------
+        plugin_id : str
+            Input value for ``plugin_id``.
 
-        Returns:
-            bool: True if deletion was successful, False otherwise.
-        """
+        Returns
+        -------
+        value : bool
+            Result produced by this function."""
         config_file = self._get_config_file(plugin_id)
 
         try:
@@ -200,5 +233,5 @@ class PluginConfig:
             logger.info(f"Deleted config for plugin '{plugin_id}'")
             return True
         except Exception as e:
-            logger.error(f"Error deleting config for plugin '{plugin_id}': {e}")
+            logger.exception(f"Error deleting config for plugin '{plugin_id}': {e}")
             return False

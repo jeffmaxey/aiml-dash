@@ -9,18 +9,25 @@ from aiml_dash.utils.paginate_df import paginate_df
 @pytest.fixture
 def sample_dataframe():
     """Create a sample dataframe for testing."""
-    return pd.DataFrame({
-        "A": list(range(1, 101)),
-        "B": list(range(101, 201)),
-        "C": ["cat"] * 50 + ["dog"] * 50,
-    })
+    return pd.DataFrame(
+        {
+            "A": list(range(1, 101)),
+            "B": list(range(101, 201)),
+            "C": ["cat"] * 50 + ["dog"] * 50,
+        }
+    )
 
 
 class TestPaginateDf:
     """Test paginate_df function."""
 
     def test_paginate_df_first_page(self, sample_dataframe):
-        """Test paginate_df returns first page correctly."""
+        """Test paginate_df returns first page correctly.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=0, page_size=10)
 
         assert len(data) == 10
@@ -29,7 +36,12 @@ class TestPaginateDf:
         assert data[9]["A"] == 10
 
     def test_paginate_df_second_page(self, sample_dataframe):
-        """Test paginate_df returns second page correctly."""
+        """Test paginate_df returns second page correctly.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=1, page_size=10)
 
         assert len(data) == 10
@@ -37,7 +49,12 @@ class TestPaginateDf:
         assert data[9]["A"] == 20
 
     def test_paginate_df_last_page(self, sample_dataframe):
-        """Test paginate_df returns last page correctly."""
+        """Test paginate_df returns last page correctly.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=9, page_size=10)
 
         assert len(data) == 10
@@ -45,7 +62,12 @@ class TestPaginateDf:
         assert data[9]["A"] == 100
 
     def test_paginate_df_partial_page(self, sample_dataframe):
-        """Test paginate_df handles partial last page."""
+        """Test paginate_df handles partial last page.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=0, page_size=30)
 
         assert len(data) == 30
@@ -66,7 +88,12 @@ class TestPaginateDf:
         assert columns == []
 
     def test_paginate_df_columns_structure(self, sample_dataframe):
-        """Test paginate_df returns correct column structure."""
+        """Test paginate_df returns correct column structure.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=0, page_size=10)
 
         assert isinstance(columns, list)
@@ -77,42 +104,78 @@ class TestPaginateDf:
         assert columns[0]["id"] == "A"
 
     def test_paginate_df_with_sorting_asc(self, sample_dataframe):
-        """Test paginate_df with ascending sort."""
+        """Test paginate_df with ascending sort.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         sort_by = [{"column_id": "B", "direction": "asc"}]
-        data, columns = paginate_df(sample_dataframe, page_current=0, page_size=5, sort_by=sort_by)
+        data, columns = paginate_df(
+            sample_dataframe, page_current=0, page_size=5, sort_by=sort_by
+        )
 
         assert len(data) == 5
         assert data[0]["B"] == 101
         assert data[4]["B"] == 105
 
     def test_paginate_df_with_sorting_desc(self, sample_dataframe):
-        """Test paginate_df with descending sort."""
+        """Test paginate_df with descending sort.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         sort_by = [{"column_id": "A", "direction": "desc"}]
-        data, columns = paginate_df(sample_dataframe, page_current=0, page_size=5, sort_by=sort_by)
+        data, columns = paginate_df(
+            sample_dataframe, page_current=0, page_size=5, sort_by=sort_by
+        )
 
         assert len(data) == 5
         assert data[0]["A"] == 100
         assert data[4]["A"] == 96
 
     def test_paginate_df_with_multi_column_sort(self, sample_dataframe):
-        """Test paginate_df with multiple column sort."""
-        sort_by = [{"column_id": "C", "direction": "asc"}, {"column_id": "A", "direction": "desc"}]
-        data, columns = paginate_df(sample_dataframe, page_current=0, page_size=5, sort_by=sort_by)
+        """Test paginate_df with multiple column sort.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
+        sort_by = [
+            {"column_id": "C", "direction": "asc"},
+            {"column_id": "A", "direction": "desc"},
+        ]
+        data, columns = paginate_df(
+            sample_dataframe, page_current=0, page_size=5, sort_by=sort_by
+        )
 
         assert len(data) == 5
         # First should be 'cat' with highest A value among cats
         assert data[0]["C"] == "cat"
 
     def test_paginate_df_with_invalid_sort(self, sample_dataframe):
-        """Test paginate_df handles invalid sort gracefully."""
+        """Test paginate_df handles invalid sort gracefully.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         sort_by = [{"column_id": "nonexistent", "direction": "asc"}]
-        data, columns = paginate_df(sample_dataframe, page_current=0, page_size=5, sort_by=sort_by)
+        data, columns = paginate_df(
+            sample_dataframe, page_current=0, page_size=5, sort_by=sort_by
+        )
 
         # Should return data without sorting
         assert len(data) == 5
 
     def test_paginate_df_page_beyond_data(self, sample_dataframe):
-        """Test paginate_df handles page beyond available data."""
+        """Test paginate_df handles page beyond available data.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=20, page_size=10)
 
         # Should return empty page
@@ -120,14 +183,24 @@ class TestPaginateDf:
         assert len(columns) == 3
 
     def test_paginate_df_large_page_size(self, sample_dataframe):
-        """Test paginate_df with page size larger than dataframe."""
+        """Test paginate_df with page size larger than dataframe.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=0, page_size=200)
 
         # Should return all 100 rows
         assert len(data) == 100
 
     def test_paginate_df_data_is_dict(self, sample_dataframe):
-        """Test paginate_df returns data as list of dicts."""
+        """Test paginate_df returns data as list of dicts.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         data, columns = paginate_df(sample_dataframe, page_current=0, page_size=5)
 
         assert isinstance(data, list)
@@ -135,9 +208,16 @@ class TestPaginateDf:
         assert all("A" in row and "B" in row and "C" in row for row in data)
 
     def test_paginate_df_sort_direction_default(self, sample_dataframe):
-        """Test paginate_df uses default sort direction when not specified."""
+        """Test paginate_df uses default sort direction when not specified.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         sort_by = [{"column_id": "A"}]
-        data, columns = paginate_df(sample_dataframe, page_current=0, page_size=5, sort_by=sort_by)
+        data, columns = paginate_df(
+            sample_dataframe, page_current=0, page_size=5, sort_by=sort_by
+        )
 
         # Default should be ascending
         assert data[0]["A"] == 1

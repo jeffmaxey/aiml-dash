@@ -17,19 +17,16 @@ def setup_logging(
     log_file: Path | None = None,
     format_string: str | None = None,
 ) -> None:
-    """
-    Configure application logging.
+    """Configure application logging.
 
     Parameters
     ----------
-    level : str, optional
-        Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-        Defaults to settings.log_level
-    log_file : Path, optional
-        Path to log file. If None, logs only to console
-    format_string : str, optional
-        Custom log format string. Defaults to settings.log_format
-    """
+    level : str | None
+        Input value for ``level``.
+    log_file : Path | None
+        Input value for ``log_file``.
+    format_string : str | None
+        Value provided for this parameter."""
     log_level = level or settings.log_level
     log_format = format_string or settings.log_format
 
@@ -63,17 +60,15 @@ def setup_logging(
 
 
 def get_logger(name: str) -> logging.Logger:
-    """
-    Get a logger instance for a module.
+    """Get a logger instance for a module.
 
     Parameters
     ----------
     name : str
-        Logger name (typically __name__)
+        Input value for ``name``.
 
     Returns
     -------
-    logging.Logger
-        Logger instance
-    """
+    value : logging.Logger
+        Result produced by this function."""
     return logging.getLogger(name)

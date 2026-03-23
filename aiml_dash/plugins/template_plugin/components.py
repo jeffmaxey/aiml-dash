@@ -14,21 +14,30 @@ from dash_iconify import DashIconify
 def create_template_card(title: str, description: str, icon: str) -> dmc.Card:
     """Create a template instruction card.
 
-    Args:
-        title: The card title text (e.g., "Layout").
-        description: The description text explaining the component's purpose.
-        icon: The Iconify icon identifier (e.g., "carbon:layout").
+    Parameters
+    ----------
+    title : str
+        Input value for ``title``.
+    description : str
+        Input value for ``description``.
+    icon : str
+        Input value for ``icon``.
 
-    Returns:
-        dmc.Card: A card component containing the icon, title, and description
-            in a structured layout suitable for instructional content.
-    """
+    Returns
+    -------
+    value : dmc.Card
+        Result produced by this function."""
     return dmc.Card(
         [
-            dmc.Group([
-                dmc.ThemeIcon(DashIconify(icon=icon, width=18), radius="xl", variant="light"),
-                dmc.Text(title, fw=600),
-            ], gap="sm"),
+            dmc.Group(
+                [
+                    dmc.ThemeIcon(
+                        DashIconify(icon=icon, width=18), radius="xl", variant="light"
+                    ),
+                    dmc.Text(title, fw=600),
+                ],
+                gap="sm",
+            ),
             dmc.Text(description, size="sm", c="dimmed", mt="xs"),
         ],
         withBorder=True,

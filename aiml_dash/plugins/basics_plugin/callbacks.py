@@ -13,7 +13,7 @@ import numpy.typing as npt
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, dcc
+from dash import Input, Output, State, callback, dcc, html
 from dash.development.base_component import Component
 from dash_iconify import DashIconify
 from plotly.graph_objects import Figure
@@ -27,16 +27,27 @@ from utils.data_manager import data_manager
     Input("smean-dataset", "id"),
 )
 def update_datasets(_):
-    """Update available datasets."""
+    """Update available datasets.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
+
 
 @callback(
     Output("smean-variable", "data"),
     Input("smean-dataset", "value"),
 )
 def update_variables(dataset_name):
-    """Update available variables when dataset changes."""
+    """Update available variables when dataset changes.
+
+    Parameters
+    ----------
+    dataset_name : Any
+        Value provided for this parameter."""
     if not dataset_name:
         return []
 
@@ -46,6 +57,7 @@ def update_variables(dataset_name):
         return [{"label": col, "value": col} for col in numeric_cols]
     except Exception:
         return []
+
 
 @callback(
     [
@@ -64,8 +76,25 @@ def update_variables(dataset_name):
     ],
     prevent_initial_call=True,
 )
-def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternative, confidence):
-    """Run single mean t-test."""
+def run_single_mean_test(
+    n_clicks, dataset_name, variable, comparison, alternative, confidence
+):
+    """Run single mean t-test.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset_name : Any
+        Input value for ``dataset_name``.
+    variable : Any
+        Input value for ``variable``.
+    comparison : Any
+        Input value for ``comparison``.
+    alternative : Any
+        Input value for ``alternative``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset_name, variable]):
         return (
             dmc.Text("Please select dataset and variable.", c="red"),
@@ -222,9 +251,13 @@ def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternati
 
         # Confidence interval (dashed black lines)
         if ci_lower != -np.inf:
-            fig.add_vline(x=ci_lower, line_dash="dash", line_color="black", line_width=1)
+            fig.add_vline(
+                x=ci_lower, line_dash="dash", line_color="black", line_width=1
+            )
         if ci_upper != np.inf:
-            fig.add_vline(x=ci_upper, line_dash="dash", line_color="black", line_width=1)
+            fig.add_vline(
+                x=ci_upper, line_dash="dash", line_color="black", line_width=1
+            )
 
         # Comparison value (red line)
         fig.add_vline(
@@ -268,6 +301,7 @@ def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternati
             ),
         )
 
+
 @callback(
     Output("smean-download", "data"),
     Input("smean-export-btn", "n_clicks"),
@@ -275,42 +309,81 @@ def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternati
     prevent_initial_call=True,
 )
 def export_results(n_clicks, dataset_name, variable):
-    """Export test results."""
+    """Export test results.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset_name : Any
+        Input value for ``dataset_name``.
+    variable : Any
+        Value provided for this parameter."""
     if not all([dataset_name, variable]):
         return None
 
     try:
         df = data_manager.get_dataset(dataset_name)
         data = df[[variable]].dropna()
-        return dcc.send_data_frame(data.to_csv, f"single_mean_{variable}.csv", index=False)
+        return dcc.send_data_frame(
+            data.to_csv, f"single_mean_{variable}.csv", index=False
+        )
     except Exception:
         return None
+
 
 @callback(
     Output("cmean-dataset", "data"),
     Input("cmean-dataset", "id"),
 )
-def update_datasets(_: str) -> list[dict[str, str]]:
-    """Update available datasets."""
+def update_compare_means_datasets(_: str) -> list[dict[str, str]]:
+    """Update available datasets.
+
+    Parameters
+    ----------
+    _ : str
+        Input value for ``_``.
+
+    Returns
+    -------
+    value : list[dict[str, str]]
+        Result produced by this function."""
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
+
 
 @callback(
     [Output("cmean-variable", "data"), Output("cmean-group", "data")],
     Input("cmean-dataset", "value"),
 )
-def update_variables(dataset_name: str | None) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
-    """Update available variables when dataset changes."""
+def update_compare_means_variables(
+    dataset_name: str | None,
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    """Update available variables when dataset changes.
+
+    Parameters
+    ----------
+    dataset_name : str | None
+        Input value for ``dataset_name``.
+
+    Returns
+    -------
+    value : tuple[list[dict[str, str]], list[dict[str, str]]]
+        Result produced by this function."""
     if not dataset_name:
         return [], []
 
     try:
         df = data_manager.get_dataset(dataset_name)
-        numeric_cols = [{"label": col, "value": col} for col in df.select_dtypes(include=[np.number]).columns]
+        numeric_cols = [
+            {"label": col, "value": col}
+            for col in df.select_dtypes(include=[np.number]).columns
+        ]
         all_cols = [{"label": col, "value": col} for col in df.columns]
         return numeric_cols, all_cols
     except Exception:
         return [], []
+
 
 @callback(
     [
@@ -338,7 +411,29 @@ def run_compare_means_test(
     equal_var: bool | None,
     confidence: float | None,
 ) -> tuple[Component, Figure | dict[str, object], Component]:
-    """Run two-sample t-test."""
+    """Run two-sample t-test.
+
+    Parameters
+    ----------
+    n_clicks : int | None
+        Input value for ``n_clicks``.
+    dataset_name : str | None
+        Input value for ``dataset_name``.
+    variable : str | None
+        Input value for ``variable``.
+    group : str | None
+        Input value for ``group``.
+    alternative : str | None
+        Input value for ``alternative``.
+    equal_var : bool | None
+        Input value for ``equal_var``.
+    confidence : float | None
+        Input value for ``confidence``.
+
+    Returns
+    -------
+    value : tuple[Component, Figure | dict[str, object], Component]
+        Result produced by this function."""
     if not all([dataset_name, variable, group]):
         return (
             dmc.Text("Please select dataset, variable, and group.", c="red"),
@@ -364,13 +459,17 @@ def run_compare_means_test(
 
         groups = df_clean[group].unique()
         if len(groups) != 2:
-            raise ValueError(f"Grouping variable must have exactly 2 levels, found {len(groups)}")
+            raise ValueError(
+                f"Grouping variable must have exactly 2 levels, found {len(groups)}"
+            )
 
         group1_data = df_clean[df_clean[group] == groups[0]][variable]
         group2_data = df_clean[df_clean[group] == groups[1]][variable]
 
         # Run t-test
-        result = stats.ttest_ind(group1_data, group2_data, equal_var=equal_var, alternative=alternative)
+        result = stats.ttest_ind(
+            group1_data, group2_data, equal_var=equal_var, alternative=alternative
+        )
 
         # Calculate statistics
         n1, n2 = len(group1_data), len(group2_data)
@@ -488,17 +587,24 @@ def run_compare_means_test(
         )
 
         # Plot - box plot
-        plot_df = pd.DataFrame({
-            variable: pd.concat([group1_data, group2_data]),
-            group: [str(groups[0])] * len(group1_data) + [str(groups[1])] * len(group2_data),
-        })
+        plot_df = pd.DataFrame(
+            {
+                variable: pd.concat([group1_data, group2_data]),
+                group: [str(groups[0])] * len(group1_data)
+                + [str(groups[1])] * len(group2_data),
+            }
+        )
 
-        fig = px.box(plot_df, x=group, y=variable, points="all", title=f"{variable} by {group}")
+        fig = px.box(
+            plot_df, x=group, y=variable, points="all", title=f"{variable} by {group}"
+        )
 
         return (
             summary,
             fig,
-            dmc.Notification(title="Success", message="Test completed", color="green", action="show"),
+            dmc.Notification(
+                title="Success", message="Test completed", color="green", action="show"
+            ),
         )
 
     except Exception as e:
@@ -508,21 +614,33 @@ def run_compare_means_test(
             dmc.Notification(title="Error", message=str(e), color="red", action="show"),
         )
 
+
 @callback(
     Output("single-prop-dataset", "data"),
     Input("single-prop-dataset", "id"),
 )
-def update_datasets(_):
-    """Populate dataset dropdown."""
+def update_single_prop_datasets(_):
+    """Populate dataset dropdown.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": ds, "value": ds} for ds in datasets]
+
 
 @callback(
     [Output("single-prop-variable", "data"), Output("single-prop-variable", "value")],
     Input("single-prop-dataset", "value"),
 )
-def update_variables(dataset):
-    """Populate variable dropdown with all columns."""
+def update_single_prop_variables(dataset):
+    """Populate variable dropdown with all columns.
+
+    Parameters
+    ----------
+    dataset : Any
+        Value provided for this parameter."""
     if not dataset:
         return [], None
 
@@ -531,12 +649,20 @@ def update_variables(dataset):
 
     return [{"label": col, "value": col} for col in columns], None
 
+
 @callback(
     [Output("single-prop-success", "data"), Output("single-prop-success", "value")],
     [Input("single-prop-dataset", "value"), Input("single-prop-variable", "value")],
 )
-def update_success_levels(dataset, variable):
-    """Populate success level dropdown with unique values from selected variable."""
+def update_single_prop_success_levels(dataset, variable):
+    """Populate success level dropdown with unique values from selected variable.
+
+    Parameters
+    ----------
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Value provided for this parameter."""
     if not dataset or not variable:
         return [], None
 
@@ -549,7 +675,10 @@ def update_success_levels(dataset, variable):
     unique_vals = df[variable].dropna().unique()
     unique_vals = sorted([str(v) for v in unique_vals])
 
-    return [{"label": val, "value": val} for val in unique_vals], None if len(unique_vals) == 0 else unique_vals[0]
+    return [{"label": val, "value": val} for val in unique_vals], (
+        None if len(unique_vals) == 0 else unique_vals[0]
+    )
+
 
 @callback(
     [
@@ -568,8 +697,27 @@ def update_success_levels(dataset, variable):
     ],
     prevent_initial_call=True,
 )
-def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alternative, confidence):
-    """Run single proportion test and display results."""
+def run_single_prop_test(
+    n_clicks, dataset, variable, success_level, p0, alternative, confidence
+):
+    """Run single proportion test and display results.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Input value for ``variable``.
+    success_level : Any
+        Input value for ``success_level``.
+    p0 : Any
+        Input value for ``p0``.
+    alternative : Any
+        Input value for ``alternative``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset, variable, success_level]):
         return (
             [
@@ -621,7 +769,9 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
         z = stats.norm.ppf(1 - alpha / 2)
         denominator = 1 + z**2 / n
         center = (p_hat + z**2 / (2 * n)) / denominator
-        margin = z * np.sqrt(p_hat * (1 - p_hat) / n + z**2 / (4 * n**2)) / denominator
+        margin = (
+            z * np.sqrt(p_hat * (1 - p_hat) / n + z**2 / (4 * n**2)) / denominator
+        )
         ci_lower = center - margin
         ci_upper = center + margin
 
@@ -672,7 +822,9 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
                             dmc.Stack(
                                 gap=4,
                                 children=[
-                                    dmc.Text("Sample Proportion", size="xs", c="dimmed"),
+                                    dmc.Text(
+                                        "Sample Proportion", size="xs", c="dimmed"
+                                    ),
                                     dmc.Text(f"{p_hat:.4f}", fw=600, size="xl"),
                                 ],
                             ),
@@ -696,35 +848,51 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
                         gap="xs",
                         children=[
                             dmc.Text("Test Details", fw=500, size="sm"),
-                            dmc.Group([
-                                dmc.Text("Null hypothesis:", size="sm"),
-                                dmc.Code(f"p = {p0}", style={"fontSize": "0.875rem"}),
-                            ]),
-                            dmc.Group([
-                                dmc.Text("Alternative hypothesis:", size="sm"),
-                                dmc.Code(
-                                    f"p ≠ {p0}"
-                                    if alternative == "two-sided"
-                                    else f"p > {p0}"
-                                    if alternative == "greater"
-                                    else f"p < {p0}",
-                                    style={"fontSize": "0.875rem"},
-                                ),
-                            ]),
-                            dmc.Group([
-                                dmc.Text("Z-statistic:", size="sm"),
-                                dmc.Code(f"{z_stat:.4f}", style={"fontSize": "0.875rem"}),
-                            ]),
-                            dmc.Group([
-                                dmc.Text(
-                                    f"{int(confidence * 100)}% Confidence Interval:",
-                                    size="sm",
-                                ),
-                                dmc.Code(
-                                    f"[{ci_lower:.4f}, {ci_upper:.4f}]",
-                                    style={"fontSize": "0.875rem"},
-                                ),
-                            ]),
+                            dmc.Group(
+                                [
+                                    dmc.Text("Null hypothesis:", size="sm"),
+                                    dmc.Code(
+                                        f"p = {p0}", style={"fontSize": "0.875rem"}
+                                    ),
+                                ]
+                            ),
+                            dmc.Group(
+                                [
+                                    dmc.Text("Alternative hypothesis:", size="sm"),
+                                    dmc.Code(
+                                        (
+                                            f"p ≠ {p0}"
+                                            if alternative == "two-sided"
+                                            else (
+                                                f"p > {p0}"
+                                                if alternative == "greater"
+                                                else f"p < {p0}"
+                                            )
+                                        ),
+                                        style={"fontSize": "0.875rem"},
+                                    ),
+                                ]
+                            ),
+                            dmc.Group(
+                                [
+                                    dmc.Text("Z-statistic:", size="sm"),
+                                    dmc.Code(
+                                        f"{z_stat:.4f}", style={"fontSize": "0.875rem"}
+                                    ),
+                                ]
+                            ),
+                            dmc.Group(
+                                [
+                                    dmc.Text(
+                                        f"{int(confidence * 100)}% Confidence Interval:",
+                                        size="sm",
+                                    ),
+                                    dmc.Code(
+                                        f"[{ci_lower:.4f}, {ci_upper:.4f}]",
+                                        style={"fontSize": "0.875rem"},
+                                    ),
+                                ]
+                            ),
                         ],
                     ),
                     # Interpretation
@@ -808,14 +976,21 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
             {},
         )
 
+
 @callback(
     Output("compare-props-dataset", "data"),
     Input("compare-props-dataset", "id"),
 )
-def update_datasets(_):
-    """Populate dataset dropdown."""
+def update_compare_props_datasets(_):
+    """Populate dataset dropdown.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": ds, "value": ds} for ds in datasets]
+
 
 @callback(
     [
@@ -826,8 +1001,13 @@ def update_datasets(_):
     ],
     Input("compare-props-dataset", "value"),
 )
-def update_variables(dataset):
-    """Populate variable dropdowns."""
+def update_compare_props_variables(dataset):
+    """Populate variable dropdowns.
+
+    Parameters
+    ----------
+    dataset : Any
+        Value provided for this parameter."""
     if not dataset:
         return [], None, [], None
 
@@ -837,12 +1017,20 @@ def update_variables(dataset):
 
     return options, None, options, None
 
+
 @callback(
     [Output("compare-props-success", "data"), Output("compare-props-success", "value")],
     [Input("compare-props-dataset", "value"), Input("compare-props-variable", "value")],
 )
-def update_success_levels(dataset, variable):
-    """Populate success level dropdown."""
+def update_compare_props_success_levels(dataset, variable):
+    """Populate success level dropdown.
+
+    Parameters
+    ----------
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Value provided for this parameter."""
     if not dataset or not variable:
         return [], None
 
@@ -854,7 +1042,10 @@ def update_success_levels(dataset, variable):
     unique_vals = df[variable].dropna().unique()
     unique_vals = sorted([str(v) for v in unique_vals])
 
-    return [{"label": val, "value": val} for val in unique_vals], None if len(unique_vals) == 0 else unique_vals[0]
+    return [{"label": val, "value": val} for val in unique_vals], (
+        None if len(unique_vals) == 0 else unique_vals[0]
+    )
+
 
 @callback(
     [
@@ -873,8 +1064,27 @@ def update_success_levels(dataset, variable):
     ],
     prevent_initial_call=True,
 )
-def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var, alternative, confidence):
-    """Run two-sample proportion test."""
+def run_compare_props_test(
+    n_clicks, dataset, variable, success_level, group_var, alternative, confidence
+):
+    """Run two-sample proportion test.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Input value for ``variable``.
+    success_level : Any
+        Input value for ``success_level``.
+    group_var : Any
+        Input value for ``group_var``.
+    alternative : Any
+        Input value for ``alternative``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset, variable, success_level, group_var]):
         return (
             [
@@ -994,13 +1204,17 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                 p="sm",
                                 withBorder=True,
                                 children=[
-                                    dmc.Text(f"Group: {group1}", fw=500, size="sm", mb="xs"),
+                                    dmc.Text(
+                                        f"Group: {group1}", fw=500, size="sm", mb="xs"
+                                    ),
                                     dmc.Group(
                                         [
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("n", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "n", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{n1}", fw=600),
                                                 ],
                                             ),
@@ -1023,7 +1237,9 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                                         size="xs",
                                                         c="dimmed",
                                                     ),
-                                                    dmc.Text(f"{p1:.4f}", fw=600, c="blue"),
+                                                    dmc.Text(
+                                                        f"{p1:.4f}", fw=600, c="blue"
+                                                    ),
                                                 ],
                                             ),
                                         ],
@@ -1035,13 +1251,17 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                 p="sm",
                                 withBorder=True,
                                 children=[
-                                    dmc.Text(f"Group: {group2}", fw=500, size="sm", mb="xs"),
+                                    dmc.Text(
+                                        f"Group: {group2}", fw=500, size="sm", mb="xs"
+                                    ),
                                     dmc.Group(
                                         [
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("n", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "n", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{n2}", fw=600),
                                                 ],
                                             ),
@@ -1064,7 +1284,9 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                                         size="xs",
                                                         c="dimmed",
                                                     ),
-                                                    dmc.Text(f"{p2:.4f}", fw=600, c="blue"),
+                                                    dmc.Text(
+                                                        f"{p2:.4f}", fw=600, c="blue"
+                                                    ),
                                                 ],
                                             ),
                                         ],
@@ -1134,9 +1356,15 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                     dmc.Stack(
                                         gap=2,
                                         children=[
-                                            dmc.Text("Relative Risk", size="xs", c="dimmed"),
                                             dmc.Text(
-                                                f"{relative_risk:.4f}" if relative_risk != float("inf") else "∞",
+                                                "Relative Risk", size="xs", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                (
+                                                    f"{relative_risk:.4f}"
+                                                    if relative_risk != float("inf")
+                                                    else "∞"
+                                                ),
                                                 fw=600,
                                             ),
                                         ],
@@ -1144,9 +1372,15 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                     dmc.Stack(
                                         gap=2,
                                         children=[
-                                            dmc.Text("Odds Ratio", size="xs", c="dimmed"),
                                             dmc.Text(
-                                                f"{odds_ratio:.4f}" if odds_ratio != float("inf") else "∞",
+                                                "Odds Ratio", size="xs", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                (
+                                                    f"{odds_ratio:.4f}"
+                                                    if odds_ratio != float("inf")
+                                                    else "∞"
+                                                ),
                                                 fw=600,
                                             ),
                                         ],
@@ -1185,8 +1419,10 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                 error_y={
                     "type": "data",
                     "array": [
-                        stats.norm.ppf(1 - (1 - confidence) / 2) * np.sqrt(p1 * (1 - p1) / n1),
-                        stats.norm.ppf(1 - (1 - confidence) / 2) * np.sqrt(p2 * (1 - p2) / n2),
+                        stats.norm.ppf(1 - (1 - confidence) / 2)
+                        * np.sqrt(p1 * (1 - p1) / n1),
+                        stats.norm.ppf(1 - (1 - confidence) / 2)
+                        * np.sqrt(p2 * (1 - p2) / n2),
                     ],
                     "visible": True,
                     "color": "gray",
@@ -1219,26 +1455,27 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
             {},
         )
 
+
 @callback(Output("corr-dataset", "data"), Input("corr-dataset", "id"))
-def update_datasets(_):
+def update_correlation_datasets(_):
     """Populate dataset dropdown with available datasets.
 
-    Returns:
-        List of dataset options for dropdown.
-    """
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
 
+
 @callback(Output("corr-variables", "data"), Input("corr-dataset", "value"))
-def update_variables(dataset_name):
+def update_correlation_variables(dataset_name):
     """Update variable options based on selected dataset.
 
-    Args:
-        dataset_name: Name of the selected dataset.
-
-    Returns:
-        List of numeric column options for dropdown.
-    """
+    Parameters
+    ----------
+    dataset_name : Any
+        Value provided for this parameter."""
     if not dataset_name:
         return []
     try:
@@ -1247,6 +1484,7 @@ def update_variables(dataset_name):
         return [{"label": col, "value": col} for col in numeric_cols]
     except Exception:
         return []
+
 
 @callback(
     [Output("corr-output", "children"), Output("corr-notification", "children")],
@@ -1261,17 +1499,20 @@ def update_variables(dataset_name):
 def calculate_correlation(n_clicks, dataset_name, variables, method):
     """Calculate and display correlation matrix.
 
-    Args:
-        n_clicks: Number of button clicks.
-        dataset_name: Name of the dataset to analyze.
-        variables: List of variables to correlate.
-        method: Correlation method (pearson, spearman, or kendall).
-
-    Returns:
-        Tuple of (output_children, notification_children).
-    """
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset_name : Any
+        Input value for ``dataset_name``.
+    variables : Any
+        Input value for ``variables``.
+    method : Any
+        Value provided for this parameter."""
     if not all([dataset_name, variables]) or len(variables) < 2:
-        return dmc.Text("Select dataset and at least 2 variables.", c="red"), dmc.Notification(
+        return dmc.Text(
+            "Select dataset and at least 2 variables.", c="red"
+        ), dmc.Notification(
             title="Error", message="Missing inputs", color="red", action="show"
         )
 
@@ -1297,14 +1538,21 @@ def calculate_correlation(n_clicks, dataset_name, variables, method):
             title="Error", message=str(e), color="red", action="show"
         )
 
+
 @callback(
     Output("crosstabs-dataset", "data"),
     Input("crosstabs-dataset", "id"),
 )
-def update_datasets(_):
-    """Populate dataset dropdown."""
+def update_cross_tabs_datasets(_):
+    """Populate dataset dropdown.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": ds, "value": ds} for ds in datasets]
+
 
 @callback(
     [
@@ -1315,8 +1563,13 @@ def update_datasets(_):
     ],
     Input("crosstabs-dataset", "value"),
 )
-def update_variables(dataset):
-    """Populate variable dropdowns."""
+def update_cross_tabs_variables(dataset):
+    """Populate variable dropdowns.
+
+    Parameters
+    ----------
+    dataset : Any
+        Value provided for this parameter."""
     if not dataset:
         return [], None, [], None
 
@@ -1325,6 +1578,7 @@ def update_variables(dataset):
     options = [{"label": col, "value": col} for col in columns]
 
     return options, None, options, None
+
 
 @callback(
     [
@@ -1345,8 +1599,27 @@ def update_variables(dataset):
     ],
     prevent_initial_call=True,
 )
-def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_expected, confidence):
-    """Run chi-square test of independence."""
+def run_crosstabs_analysis(
+    n_clicks, dataset, row_var, col_var, show_pct, show_expected, confidence
+):
+    """Run chi-square test of independence.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset : Any
+        Input value for ``dataset``.
+    row_var : Any
+        Input value for ``row_var``.
+    col_var : Any
+        Input value for ``col_var``.
+    show_pct : Any
+        Input value for ``show_pct``.
+    show_expected : Any
+        Input value for ``show_expected``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset, row_var, col_var]):
         return (
             [
@@ -1402,7 +1675,9 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
                 children=[
                     dmc.Group(
                         [
-                            dmc.Text("Chi-Square Test of Independence", fw=600, size="lg"),
+                            dmc.Text(
+                                "Chi-Square Test of Independence", fw=600, size="lg"
+                            ),
                             dmc.Badge(
                                 "Significant" if is_significant else "Not Significant",
                                 color="green" if is_significant else "gray",
@@ -1483,7 +1758,9 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
             index=list(display_df.columns),
             name="Total",
         )
-        display_df = pd.concat([display_df, pd.DataFrame([totals_row])], ignore_index=False)
+        display_df = pd.concat(
+            [display_df, pd.DataFrame([totals_row])], ignore_index=False
+        )
 
         # Create AG Grid
         display_df = display_df.reset_index()
@@ -1491,7 +1768,9 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
 
         table_component = dag.AgGrid(
             rowData=display_df.to_dict("records"),
-            columnDefs=[{"field": col, "headerName": col} for col in display_df.columns],
+            columnDefs=[
+                {"field": col, "headerName": col} for col in display_df.columns
+            ],
             defaultColDef={"resizable": True, "sortable": True, "filter": False},
             style={"height": "300px"},
         )
@@ -1544,21 +1823,33 @@ def run_crosstabs_analysis(n_clicks, dataset, row_var, col_var, show_pct, show_e
             {},
         )
 
+
 @callback(
     Output("goodness-dataset", "data"),
     Input("goodness-dataset", "id"),
 )
-def update_datasets(_):
-    """Populate dataset dropdown."""
+def update_prob_calc_datasets(_):
+    """Populate dataset dropdown.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": ds, "value": ds} for ds in datasets]
+
 
 @callback(
     [Output("goodness-variable", "data"), Output("goodness-variable", "value")],
     Input("goodness-dataset", "value"),
 )
-def update_variables(dataset):
-    """Populate variable dropdown."""
+def update_prob_calc_variables(dataset):
+    """Populate variable dropdown.
+
+    Parameters
+    ----------
+    dataset : Any
+        Value provided for this parameter."""
     if not dataset:
         return [], None
 
@@ -1567,15 +1858,22 @@ def update_variables(dataset):
 
     return [{"label": col, "value": col} for col in columns], None
 
+
 @callback(
     Output("goodness-expected-input", "style"),
     Input("goodness-dist-type", "value"),
 )
 def toggle_custom_input(dist_type):
-    """Show/hide custom expected input based on distribution type."""
+    """Show/hide custom expected input based on distribution type.
+
+    Parameters
+    ----------
+    dist_type : Any
+        Value provided for this parameter."""
     if dist_type == "custom":
         return {"display": "block"}
     return {"display": "none"}
+
 
 @callback(
     [
@@ -1595,8 +1893,25 @@ def toggle_custom_input(dist_type):
     ],
     prevent_initial_call=True,
 )
-def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, confidence):
-    """Run chi-square goodness of fit test."""
+def run_goodness_test(
+    n_clicks, dataset, variable, dist_type, custom_expected, confidence
+):
+    """Run chi-square goodness of fit test.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Input value for ``variable``.
+    dist_type : Any
+        Input value for ``dist_type``.
+    custom_expected : Any
+        Input value for ``custom_expected``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset, variable]):
         return (
             [
@@ -1727,7 +2042,9 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
                 children=[
                     dmc.Group(
                         [
-                            dmc.Text("Chi-Square Goodness of Fit Test", fw=600, size="lg"),
+                            dmc.Text(
+                                "Chi-Square Goodness of Fit Test", fw=600, size="lg"
+                            ),
                             dmc.Badge(
                                 "Significant" if is_significant else "Not Significant",
                                 color="green" if is_significant else "gray",
@@ -1784,13 +2101,15 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
         ]
 
         # Create frequency table
-        freq_df = pd.DataFrame({
-            "Category": [str(cat) for cat in categories],
-            "Observed": observed,
-            "Expected": expected.round(2),
-            "Residual": residuals.round(2),
-            "Std. Residual": std_residuals.round(2),
-        })
+        freq_df = pd.DataFrame(
+            {
+                "Category": [str(cat) for cat in categories],
+                "Observed": observed,
+                "Expected": expected.round(2),
+                "Residual": residuals.round(2),
+                "Std. Residual": std_residuals.round(2),
+            }
+        )
 
         table_component = dag.AgGrid(
             rowData=freq_df.to_dict("records"),
@@ -1837,7 +2156,13 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
             barmode="group",
             template="plotly_white",
             height=400,
-            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
+            legend={
+                "orientation": "h",
+                "yanchor": "bottom",
+                "y": 1.02,
+                "xanchor": "right",
+                "x": 1,
+            },
         )
 
         return (
@@ -1864,12 +2189,18 @@ def run_goodness_test(n_clicks, dataset, variable, dist_type, custom_expected, c
             {},
         )
 
+
 @callback(
     Output("prob-params-container", "children"),
     Input("prob-distribution", "value"),
 )
 def update_params(distribution):
-    """Update parameter inputs based on distribution."""
+    """Update parameter inputs based on distribution.
+
+    Parameters
+    ----------
+    distribution : Any
+        Value provided for this parameter."""
     if distribution == "normal":
         return [
             dmc.NumberInput(
@@ -1881,7 +2212,7 @@ def update_params(distribution):
             ),
             dmc.NumberInput(
                 id="prob-param2",
-                label="Standard Deviation (σ)",  # noqa: RUF001
+                label="Standard Deviation (σ)",
                 value=1,
                 min=0.01,
                 step=0.1,
@@ -1956,12 +2287,18 @@ def update_params(distribution):
             ),
         ]
 
+
 @callback(
     Output("prob-input-container", "children"),
     Input("prob-calc-type", "value"),
 )
 def update_input_type(calc_type):
-    """Update input fields based on calculation type."""
+    """Update input fields based on calculation type.
+
+    Parameters
+    ----------
+    calc_type : Any
+        Value provided for this parameter."""
     if calc_type == "probability":
         return [
             dmc.Stack(
@@ -2005,7 +2342,7 @@ def update_input_type(calc_type):
         return [
             dmc.NumberInput(
                 id="prob-alpha",
-                label="Significance Level (α)",  # noqa: RUF001
+                label="Significance Level (α)",
                 description="For two-tailed test, α is split between tails",
                 value=0.05,
                 min=0.001,
@@ -2031,16 +2368,23 @@ def update_input_type(calc_type):
             ),
         ]
 
+
 @callback(
     Output("prob-value2-container", "style"),
     Input("prob-tail", "value"),
     prevent_initial_call=True,
 )
 def toggle_value2(tail):
-    """Show/hide second value input for 'between' probability."""
+    """Show/hide second value input for 'between' probability.
+
+    Parameters
+    ----------
+    tail : Any
+        Value provided for this parameter."""
     if tail == "between":
         return {"display": "block"}
     return {"display": "none"}
+
 
 @callback(
     [
@@ -2058,7 +2402,20 @@ def toggle_value2(tail):
     prevent_initial_call=True,
 )
 def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
-    """Calculate probability or critical value."""
+    """Calculate probability or critical value.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    distribution : Any
+        Input value for ``distribution``.
+    calc_type : Any
+        Input value for ``calc_type``.
+    param1 : Any
+        Input value for ``param1``.
+    param2 : Any
+        Value provided for this parameter."""
     try:
         # Get additional parameters from context
 
@@ -2163,7 +2520,11 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
             fig.update_layout(
                 title=f"{distribution.title()} Distribution",
                 xaxis_title="x",
-                yaxis_title="Density" if distribution not in ["binomial", "poisson"] else "Probability",
+                yaxis_title=(
+                    "Density"
+                    if distribution not in ["binomial", "poisson"]
+                    else "Probability"
+                ),
                 template="plotly_white",
                 height=400,
             )
@@ -2221,7 +2582,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                             color="blue",
                             icon=DashIconify(icon="mdi:information"),
                             children=dmc.Text(
-                                f"For a two-tailed test with α = {alpha}, the critical values are {critical_lower:.4f} and {critical_upper:.4f}.",  # noqa: RUF001
+                                f"For a two-tailed test with α = {alpha}, the critical values are {critical_lower:.4f} and {critical_upper:.4f}.",
                                 size="sm",
                             ),
                         ),
@@ -2287,9 +2648,13 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                 )
 
             fig.update_layout(
-                title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",  # noqa: RUF001
+                title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",
                 xaxis_title="x",
-                yaxis_title="Density" if distribution not in ["binomial", "poisson"] else "Probability",
+                yaxis_title=(
+                    "Density"
+                    if distribution not in ["binomial", "poisson"]
+                    else "Probability"
+                ),
                 template="plotly_white",
                 height=400,
             )
@@ -2309,6 +2674,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
             {"display": "none"},
             {},
         )
+
 
 @callback(
     [
@@ -2332,7 +2698,25 @@ def run_clt_simulation(
     num_samples: int | float | None,
     seed: int | None,
 ) -> tuple[list[Component], dict[str, str], go.Figure | dict[str, object]]:
-    """Run CLT simulation."""
+    """Run CLT simulation.
+
+    Parameters
+    ----------
+    n_clicks : int | None
+        Input value for ``n_clicks``.
+    distribution : str | None
+        Input value for ``distribution``.
+    sample_size : int | float | None
+        Input value for ``sample_size``.
+    num_samples : int | float | None
+        Input value for ``num_samples``.
+    seed : int | None
+        Input value for ``seed``.
+
+    Returns
+    -------
+    value : tuple[list[Component], dict[str, str], go.Figure | dict[str, object]]
+        Result produced by this function."""
     try:
         if sample_size is None or num_samples is None:
             raise ValueError("Sample size and number of samples are required.")
@@ -2390,7 +2774,9 @@ def run_clt_simulation(
             shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
         else:
             # Use Kolmogorov-Smirnov for large samples
-            _shapiro_stat, shapiro_p = stats.kstest((sample_means_array - mean_of_means) / std_of_means, "norm")
+            _shapiro_stat, shapiro_p = stats.kstest(
+                (sample_means_array - mean_of_means) / std_of_means, "norm"
+            )
 
         # Create statistics display
         stats_content = [
@@ -2418,14 +2804,18 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Mean", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Mean", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{pop_mean:.3f}", fw=600),
                                                 ],
                                             ),
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Std Dev", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Std Dev", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{pop_std:.3f}", fw=600),
                                                 ],
                                             ),
@@ -2450,7 +2840,9 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Mean", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Mean", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{mean_of_means:.3f}",
                                                         fw=600,
@@ -2461,7 +2853,9 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Std Dev", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Std Dev", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{std_of_means:.3f}",
                                                         fw=600,
@@ -2478,13 +2872,17 @@ def run_clt_simulation(
                                 p="sm",
                                 withBorder=True,
                                 children=[
-                                    dmc.Text("Theory", fw=500, size="sm", mb="xs", c="dimmed"),
+                                    dmc.Text(
+                                        "Theory", fw=500, size="sm", mb="xs", c="dimmed"
+                                    ),
                                     dmc.Group(
                                         [
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("SE(x̄)", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "SE(x̄)", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{theoretical_std:.3f}",
                                                         fw=600,
@@ -2495,7 +2893,9 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Error", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Error", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{abs(std_of_means - theoretical_std):.3f}",
                                                         fw=600,
@@ -2538,7 +2938,9 @@ def run_clt_simulation(
         )
 
         # Population histogram (sample for display)
-        pop_sample = np.random.choice(population, size=min(10000, len(population)), replace=False)
+        pop_sample = np.random.choice(
+            population, size=min(10000, len(population)), replace=False
+        )
         fig.add_trace(
             go.Histogram(
                 x=pop_sample,
@@ -2611,7 +3013,13 @@ def run_clt_simulation(
             height=700,
             template="plotly_white",
             showlegend=True,
-            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
+            legend={
+                "orientation": "h",
+                "yanchor": "bottom",
+                "y": 1.02,
+                "xanchor": "right",
+                "x": 1,
+            },
         )
 
         return stats_content, {"display": "block"}, fig
@@ -2630,16 +3038,13 @@ def run_clt_simulation(
             {},
         )
 
+
 def register_callbacks(app: object) -> None:
     """Register all callbacks for the basics plugin.
 
-    Args:
-        app: The Dash application instance.
-
-    Note:
-        All callbacks in this module are automatically registered when imported
-        due to the @callback decorator. This function exists for compatibility
-        with the plugin system but does not need to do anything explicitly.
-    """
+    Parameters
+    ----------
+    app : object
+        Value provided for this parameter."""
     # Callbacks are auto-registered via @callback decorators
     pass

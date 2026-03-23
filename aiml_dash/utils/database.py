@@ -49,32 +49,30 @@ class DatabaseManager:
         dialect: str = "mssql",
         use_sqlalchemy: bool = True,
     ) -> None:
-        """
-        Add a database connection configuration.
+        """Add a database connection configuration.
 
         Parameters
         ----------
         name : str
-            Connection name
-        connection_string : str, optional
-            Full connection string
-        driver : str, optional
-            Database driver (e.g., 'ODBC Driver 17 for SQL Server')
-        server : str, optional
-            Server hostname or IP
-        database : str, optional
-            Database name
-        username : str, optional
-            Username for authentication
-        password : str, optional
-            Password for authentication
-        port : int, optional
-            Port number
+            Input value for ``name``.
+        connection_string : str | None
+            Input value for ``connection_string``.
+        driver : str | None
+            Input value for ``driver``.
+        server : str | None
+            Input value for ``server``.
+        database : str | None
+            Input value for ``database``.
+        username : str | None
+            Input value for ``username``.
+        password : str | None
+            Input value for ``password``.
+        port : int | None
+            Input value for ``port``.
         dialect : str
-            SQLAlchemy dialect (mssql, postgresql, mysql, sqlite)
+            Input value for ``dialect``.
         use_sqlalchemy : bool
-            Whether to use SQLAlchemy engine
-        """
+            Value provided for this parameter."""
         if connection_string is None:
             # Build connection string
             if dialect == "mssql":
@@ -98,12 +96,16 @@ class DatabaseManager:
             elif dialect == "postgresql":
                 driver = driver or "postgresql+psycopg2"
                 port = port or 5432
-                connection_string = f"{driver}://{username}:{password}@{server}:{port}/{database}"
+                connection_string = (
+                    f"{driver}://{username}:{password}@{server}:{port}/{database}"
+                )
 
             elif dialect == "mysql":
                 driver = driver or "mysql+pymysql"
                 port = port or 3306
-                connection_string = f"{driver}://{username}:{password}@{server}:{port}/{database}"
+                connection_string = (
+                    f"{driver}://{username}:{password}@{server}:{port}/{database}"
+                )
 
             elif dialect == "sqlite":
                 connection_string = f"sqlite:///{database}"
@@ -120,19 +122,17 @@ class DatabaseManager:
         logger.info(f"Added database connection: {name} ({dialect})")
 
     def get_connection(self, name: str) -> pyodbc.Connection:
-        """
-        Get a raw pyodbc connection.
+        """Get a raw pyodbc connection.
 
         Parameters
         ----------
         name : str
-            Connection name
+            Input value for ``name``.
 
         Returns
         -------
-        pyodbc.Connection
-            Database connection
-        """
+        value : pyodbc.Connection
+            Result produced by this function."""
         try:
             import pyodbc
         except ImportError as e:
@@ -149,19 +149,17 @@ class DatabaseManager:
         return conn
 
     def get_engine(self, name: str) -> sqlalchemy.Engine:
-        """
-        Get or create a SQLAlchemy engine with connection pooling.
+        """Get or create a SQLAlchemy engine with connection pooling.
 
         Parameters
         ----------
         name : str
-            Connection name
+            Input value for ``name``.
 
         Returns
         -------
-        sqlalchemy.Engine
-            SQLAlchemy engine
-        """
+        value : sqlalchemy.Engine
+            Result produced by this function."""
         try:
             from sqlalchemy import create_engine
         except ImportError as e:
@@ -199,19 +197,12 @@ class DatabaseManager:
 
     @contextmanager
     def connection_context(self, name: str):
-        """
-        Context manager for database connections.
+        """Context manager for database connections.
 
         Parameters
         ----------
         name : str
-            Connection name
-
-        Yields
-        ------
-        pyodbc.Connection
-            Database connection
-        """
+            Value provided for this parameter."""
         conn = self.get_connection(name)
         try:
             yield conn
@@ -226,25 +217,23 @@ class DatabaseManager:
         params: dict | None = None,
         use_engine: bool = True,
     ) -> pd.DataFrame:
-        """
-        Execute a query and return results as a DataFrame.
+        """Execute a query and return results as a DataFrame.
 
         Parameters
         ----------
         name : str
-            Connection name
+            Input value for ``name``.
         query : str
-            SQL query
-        params : dict, optional
-            Query parameters
+            Input value for ``query``.
+        params : dict | None
+            Input value for ``params``.
         use_engine : bool
-            Use SQLAlchemy engine if available
+            Input value for ``use_engine``.
 
         Returns
         -------
-        pd.DataFrame
-            Query results
-        """
+        value : pd.DataFrame
+            Result produced by this function."""
         logger.debug(f"Executing query on {name}: {query[:100]}...")
 
         if use_engine and self._connections[name].get("use_sqlalchemy", True):
@@ -264,25 +253,23 @@ class DatabaseManager:
         params: dict | None = None,
         commit: bool = True,
     ) -> int:
-        """
-        Execute a non-SELECT query (INSERT, UPDATE, DELETE, etc.).
+        """Execute a non-SELECT query (INSERT, UPDATE, DELETE, etc.).
 
         Parameters
         ----------
         name : str
-            Connection name
+            Input value for ``name``.
         query : str
-            SQL query
-        params : dict, optional
-            Query parameters
+            Input value for ``query``.
+        params : dict | None
+            Input value for ``params``.
         commit : bool
-            Whether to commit the transaction
+            Input value for ``commit``.
 
         Returns
         -------
-        int
-            Number of affected rows
-        """
+        value : int
+            Result produced by this function."""
         logger.debug(f"Executing non-SELECT query on {name}")
 
         with self.connection_context(name) as conn:
@@ -304,21 +291,19 @@ class DatabaseManager:
         return rowcount
 
     def get_tables(self, name: str, schema: str | None = None) -> list[str]:
-        """
-        Get list of tables in the database.
+        """Get list of tables in the database.
 
         Parameters
         ----------
         name : str
-            Connection name
-        schema : str, optional
-            Schema name (database-specific)
+            Input value for ``name``.
+        schema : str | None
+            Input value for ``schema``.
 
         Returns
         -------
-        list of str
-            Table names
-        """
+        value : list[str]
+            Result produced by this function."""
         config = self._connections[name]
         dialect = config["dialect"]
 
@@ -350,24 +335,24 @@ class DatabaseManager:
         df = self.query_dataframe(name, query)
         return df.iloc[:, 0].tolist()
 
-    def get_columns(self, name: str, table: str, schema: str | None = None) -> pd.DataFrame:
-        """
-        Get column information for a table.
+    def get_columns(
+        self, name: str, table: str, schema: str | None = None
+    ) -> pd.DataFrame:
+        """Get column information for a table.
 
         Parameters
         ----------
         name : str
-            Connection name
+            Input value for ``name``.
         table : str
-            Table name
-        schema : str, optional
-            Schema name
+            Input value for ``table``.
+        schema : str | None
+            Input value for ``schema``.
 
         Returns
         -------
-        pd.DataFrame
-            Column information (name, type, nullable, etc.)
-        """
+        value : pd.DataFrame
+            Result produced by this function."""
         config = self._connections[name]
         dialect = config["dialect"]
 
@@ -406,11 +391,21 @@ class DatabaseManager:
         return self.query_dataframe(name, query)
 
     def list_connections(self) -> list[str]:
-        """Get list of configured connection names."""
+        """Get list of configured connection names.
+
+        Returns
+        -------
+        value : list[str]
+            Result produced by this function."""
         return list(self._connections.keys())
 
     def remove_connection(self, name: str) -> None:
-        """Remove a connection configuration."""
+        """Remove a connection configuration.
+
+        Parameters
+        ----------
+        name : str
+            Value provided for this parameter."""
         if name in self._connections:
             del self._connections[name]
 

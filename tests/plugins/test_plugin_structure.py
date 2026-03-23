@@ -22,20 +22,32 @@ class TestPluginStructure:
         ["core", "example_plugin", "template_plugin", "legacy"],
     )
     def test_plugin_has_all_required_modules(self, plugin_id):
-        """Test that each plugin has all required module files."""
+        """Test that each plugin has all required module files.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         plugins_path = Path(__file__).parent.parent.parent / "aiml_dash" / "plugins"
         plugin_path = plugins_path / plugin_id
 
         is_valid, error_msg = validate_plugin_structure(plugin_path)
 
-        assert is_valid, f"Plugin '{plugin_id}' structure validation failed: {error_msg}"
+        assert (
+            is_valid
+        ), f"Plugin '{plugin_id}' structure validation failed: {error_msg}"
 
     @pytest.mark.parametrize(
         "plugin_id",
         ["core", "example_plugin", "template_plugin", "legacy"],
     )
     def test_plugin_modules_are_importable(self, plugin_id):
-        """Test that all plugin modules can be imported."""
+        """Test that all plugin modules can be imported.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         base_module = f"aiml_dash.plugins.{plugin_id}"
 
         modules = ["layout", "components", "callbacks", "styles", "constants"]
@@ -53,7 +65,12 @@ class TestPluginStructure:
         ["core", "example_plugin", "template_plugin"],
     )
     def test_plugin_constants_module_has_required_constants(self, plugin_id):
-        """Test that constants module defines required constants."""
+        """Test that constants module defines required constants.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         module = importlib.import_module(f"aiml_dash.plugins.{plugin_id}.constants")
 
         # Required constants
@@ -66,35 +83,55 @@ class TestPluginStructure:
         ]
 
         for const_name in required:
-            assert hasattr(module, const_name), f"Plugin '{plugin_id}' missing constant: {const_name}"
+            assert hasattr(
+                module, const_name
+            ), f"Plugin '{plugin_id}' missing constant: {const_name}"
             value = getattr(module, const_name)
-            assert value is not None and value != "", f"Constant {const_name} is empty in {plugin_id}"
+            assert (
+                value is not None and value != ""
+            ), f"Constant {const_name} is empty in {plugin_id}"
 
     @pytest.mark.parametrize(
         "plugin_id",
         ["core", "example_plugin", "template_plugin"],
     )
     def test_plugin_layout_module_has_layout_function(self, plugin_id):
-        """Test that layout module defines layout functions."""
+        """Test that layout module defines layout functions.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         module = importlib.import_module(f"aiml_dash.plugins.{plugin_id}.layout")
 
         # Find all functions that return layouts
-        functions = [name for name, obj in inspect.getmembers(module) if inspect.isfunction(obj)]
+        functions = [
+            name for name, obj in inspect.getmembers(module) if inspect.isfunction(obj)
+        ]
         layout_functions = [f for f in functions if "layout" in f.lower()]
 
-        assert len(layout_functions) > 0, f"Plugin '{plugin_id}' has no layout functions"
+        assert (
+            len(layout_functions) > 0
+        ), f"Plugin '{plugin_id}' has no layout functions"
 
     @pytest.mark.parametrize(
         "plugin_id",
         ["core", "example_plugin", "template_plugin"],
     )
     def test_plugin_callbacks_has_register_function(self, plugin_id):
-        """Test that callbacks module has register_callbacks function."""
+        """Test that callbacks module has register_callbacks function.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         module = importlib.import_module(f"aiml_dash.plugins.{plugin_id}.callbacks")
 
-        assert hasattr(module, "register_callbacks"), f"Plugin '{plugin_id}' missing register_callbacks function"
+        assert hasattr(
+            module, "register_callbacks"
+        ), f"Plugin '{plugin_id}' missing register_callbacks function"
 
-        func = getattr(module, "register_callbacks")
+        func = module.register_callbacks
         assert callable(func), f"register_callbacks in '{plugin_id}' is not callable"
 
 
@@ -106,11 +143,20 @@ class TestPluginDocumentation:
         ["core", "example_plugin", "template_plugin"],
     )
     def test_plugin_init_has_docstring(self, plugin_id):
-        """Test that plugin __init__ module has a docstring."""
+        """Test that plugin __init__ module has a docstring.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         module = importlib.import_module(f"aiml_dash.plugins.{plugin_id}")
 
-        assert module.__doc__ is not None, f"Plugin '{plugin_id}' __init__.py missing module docstring"
-        assert len(module.__doc__.strip()) > 0, f"Plugin '{plugin_id}' __init__.py has empty docstring"
+        assert (
+            module.__doc__ is not None
+        ), f"Plugin '{plugin_id}' __init__.py missing module docstring"
+        assert (
+            len(module.__doc__.strip()) > 0
+        ), f"Plugin '{plugin_id}' __init__.py has empty docstring"
 
     @pytest.mark.parametrize(
         "plugin_id,module_name",
@@ -127,23 +173,43 @@ class TestPluginDocumentation:
         ],
     )
     def test_plugin_modules_have_docstrings(self, plugin_id, module_name):
-        """Test that plugin modules have docstrings."""
+        """Test that plugin modules have docstrings.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Input value for ``plugin_id``.
+        module_name : Any
+            Value provided for this parameter."""
         module = importlib.import_module(f"aiml_dash.plugins.{plugin_id}.{module_name}")
 
-        assert module.__doc__ is not None, f"Plugin '{plugin_id}.{module_name}' missing module docstring"
-        assert len(module.__doc__.strip()) > 0, f"Plugin '{plugin_id}.{module_name}' has empty docstring"
+        assert (
+            module.__doc__ is not None
+        ), f"Plugin '{plugin_id}.{module_name}' missing module docstring"
+        assert (
+            len(module.__doc__.strip()) > 0
+        ), f"Plugin '{plugin_id}.{module_name}' has empty docstring"
 
     @pytest.mark.parametrize(
         "plugin_id",
         ["core", "example_plugin", "template_plugin"],
     )
     def test_plugin_get_plugin_has_docstring(self, plugin_id):
-        """Test that get_plugin function has a docstring."""
+        """Test that get_plugin function has a docstring.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         module = importlib.import_module(f"aiml_dash.plugins.{plugin_id}")
 
-        func = getattr(module, "get_plugin")
-        assert func.__doc__ is not None, f"Plugin '{plugin_id}' get_plugin() missing docstring"
-        assert len(func.__doc__.strip()) > 0, f"Plugin '{plugin_id}' get_plugin() has empty docstring"
+        func = module.get_plugin
+        assert (
+            func.__doc__ is not None
+        ), f"Plugin '{plugin_id}' get_plugin() missing docstring"
+        assert (
+            len(func.__doc__.strip()) > 0
+        ), f"Plugin '{plugin_id}' get_plugin() has empty docstring"
 
 
 class TestPluginPages:
@@ -197,7 +263,12 @@ class TestPluginIndependence:
         ["example", "template"],
     )
     def test_plugin_can_be_disabled(self, plugin_id):
-        """Test that non-locked plugins can be disabled."""
+        """Test that non-locked plugins can be disabled.
+
+        Parameters
+        ----------
+        plugin_id : Any
+            Value provided for this parameter."""
         from aiml_dash.plugins.registry import get_pages
 
         # Get pages with only this plugin enabled
@@ -218,7 +289,8 @@ class TestPluginIndependence:
 
     def test_disabling_plugin_does_not_affect_others(self):
         """Test that disabling one plugin doesn't affect others."""
-        from aiml_dash.plugins.registry import get_default_enabled_plugins, get_pages
+        from aiml_dash.plugins.registry import (get_default_enabled_plugins,
+                                                get_pages)
 
         # Get all enabled by default
         all_enabled = get_default_enabled_plugins()
@@ -234,4 +306,6 @@ class TestPluginIndependence:
         pages_without_ids = {p.id for p in pages_without}
 
         for core_id in core_page_ids:
-            assert core_id in pages_without_ids, f"Core page '{core_id}' missing after disabling example plugin"
+            assert (
+                core_id in pages_without_ids
+            ), f"Core page '{core_id}' missing after disabling example plugin"

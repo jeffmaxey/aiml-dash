@@ -5,74 +5,165 @@ Transform Functions
 Data transformation functions mirroring aiml.data R package.
 """
 
-
 import numpy as np
 import pandas as pd
 
 
 def center(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Center variable by subtracting the mean."""
+    """Center variable by subtracting the mean.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return x - x.mean()
 
 
 def standardize(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Standardize variable to mean=0, sd=1."""
+    """Standardize variable to mean=0, sd=1.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return (x - x.mean()) / x.std()
 
 
 def square(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Square the variable."""
+    """Square the variable.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return x**2
 
 
 def inverse(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Calculate 1/x."""
+    """Calculate 1/x.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return 1 / x
 
 
-def normalize(x: pd.Series | np.ndarray, y: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Normalize x by y (x/y)."""
+def normalize(
+    x: pd.Series | np.ndarray, y: pd.Series | np.ndarray
+) -> pd.Series | np.ndarray:
+    """Normalize x by y (x/y).
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+    y : pd.Series | np.ndarray
+        Input value for ``y``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return x / y
 
 
 def ln(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Natural logarithm."""
+    """Natural logarithm.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return np.log(x)
 
 
 def log10(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Base-10 logarithm."""
+    """Base-10 logarithm.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return np.log10(x)
 
 
 def exp(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Exponential function."""
+    """Exponential function.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return np.exp(x)
 
 
 def sqrt(x: pd.Series | np.ndarray) -> pd.Series | np.ndarray:
-    """Square root."""
+    """Square root.
+
+    Parameters
+    ----------
+    x : pd.Series | np.ndarray
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series | np.ndarray
+        Result produced by this function."""
     return np.sqrt(x)
 
 
 def xtile(x: pd.Series, n: int = 5, rev: bool = False) -> pd.Series:
-    """
-    Create quantile bins.
+    """Create quantile bins.
 
     Parameters
     ----------
     x : pd.Series
-        Input variable
+        Input value for ``x``.
     n : int
-        Number of quantiles
+        Input value for ``n``.
     rev : bool
-        Reverse order
+        Input value for ``rev``.
 
     Returns
     -------
-    pd.Series
-        Quantile bin labels
-    """
+    value : pd.Series
+        Result produced by this function."""
     bins = pd.qcut(x, q=n, labels=False, duplicates="drop") + 1
     if rev:
         bins = bins.max() - bins + 1
@@ -80,7 +171,17 @@ def xtile(x: pd.Series, n: int = 5, rev: bool = False) -> pd.Series:
 
 
 def as_integer(x: pd.Series) -> pd.Series:
-    """Convert to integer type."""
+    """Convert to integer type.
+
+    Parameters
+    ----------
+    x : pd.Series
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series
+        Result produced by this function."""
     try:
         return pd.to_numeric(x, errors="coerce").astype("Int64")
     except (ValueError, TypeError):
@@ -88,38 +189,68 @@ def as_integer(x: pd.Series) -> pd.Series:
 
 
 def as_numeric(x: pd.Series) -> pd.Series:
-    """Convert to numeric type."""
+    """Convert to numeric type.
+
+    Parameters
+    ----------
+    x : pd.Series
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series
+        Result produced by this function."""
     return pd.to_numeric(x, errors="coerce")
 
 
 def as_factor(x: pd.Series, ordered: bool = False) -> pd.Categorical:
-    """Convert to categorical/factor."""
+    """Convert to categorical/factor.
+
+    Parameters
+    ----------
+    x : pd.Series
+        Input value for ``x``.
+    ordered : bool
+        Input value for ``ordered``.
+
+    Returns
+    -------
+    value : pd.Categorical
+        Result produced by this function."""
     return pd.Categorical(x, ordered=ordered)
 
 
 def as_character(x: pd.Series) -> pd.Series:
-    """Convert to string type."""
+    """Convert to string type.
+
+    Parameters
+    ----------
+    x : pd.Series
+        Input value for ``x``.
+
+    Returns
+    -------
+    value : pd.Series
+        Result produced by this function."""
     return x.astype(str)
 
 
 def make_train(p: float = 0.7, n: int = 100, seed: int | None = None) -> np.ndarray:
-    """
-    Create train/test split indicator.
+    """Create train/test split indicator.
 
     Parameters
     ----------
     p : float
-        Proportion for training set
+        Input value for ``p``.
     n : int
-        Total number of observations
-    seed : int, optional
-        Random seed
+        Input value for ``n``.
+    seed : int | None
+        Input value for ``seed``.
 
     Returns
     -------
-    np.ndarray
-        Boolean array indicating training samples
-    """
+    value : np.ndarray
+        Result produced by this function."""
     if seed is not None:
         np.random.seed(seed)
 
@@ -127,47 +258,45 @@ def make_train(p: float = 0.7, n: int = 100, seed: int | None = None) -> np.ndar
 
 
 def refactor(x: pd.Series, levs: list[str] | None = None) -> pd.Categorical:
-    """
-    Refactor categorical variable.
+    """Refactor categorical variable.
 
     Parameters
     ----------
     x : pd.Series
-        Categorical variable
-    levs : list of str, optional
-        New category order
+        Input value for ``x``.
+    levs : list[str] | None
+        Input value for ``levs``.
 
     Returns
     -------
-    pd.Categorical
-        Refactored categorical
-    """
+    value : pd.Categorical
+        Result produced by this function."""
     if levs is None:
         levs = sorted(x.unique())
 
     return pd.Categorical(x, categories=levs, ordered=False)
 
 
-def mutate_ext(df: pd.DataFrame, var: str, function: str, args: dict | None = None) -> pd.DataFrame:
-    """
-    Extended mutate - apply transformation and add as new column.
+def mutate_ext(
+    df: pd.DataFrame, var: str, function: str, args: dict | None = None
+) -> pd.DataFrame:
+    """Extended mutate - apply transformation and add as new column.
 
     Parameters
     ----------
     df : pd.DataFrame
-        Input dataframe
+        Input value for ``df``.
     var : str
-        Variable name to transform
+        Input value for ``var``.
     function : str
-        Function name to apply
-    args : dict, optional
-        Additional arguments
+        Input value for ``function``.
+    args : dict | None
+        Input value for ``args``.
 
     Returns
     -------
-    pd.DataFrame
-        DataFrame with new column
-    """
+    value : pd.DataFrame
+        Result produced by this function."""
     result = df.copy()
 
     # Get the transform function
@@ -208,23 +337,21 @@ TRANSFORM_FUNCTIONS = {
 
 
 def type_convert(df: pd.DataFrame, var: str, to_type: str) -> pd.DataFrame:
-    """
-    Convert variable type.
+    """Convert variable type.
 
     Parameters
     ----------
     df : pd.DataFrame
-        Input dataframe
+        Input value for ``df``.
     var : str
-        Variable to convert
+        Input value for ``var``.
     to_type : str
-        Target type ('integer', 'numeric', 'factor', 'character')
+        Input value for ``to_type``.
 
     Returns
     -------
-    pd.DataFrame
-        DataFrame with converted variable
-    """
+    value : pd.DataFrame
+        Result produced by this function."""
     result = df.copy()
 
     if to_type == "integer":
@@ -240,23 +367,21 @@ def type_convert(df: pd.DataFrame, var: str, to_type: str) -> pd.DataFrame:
 
 
 def create_variable(df: pd.DataFrame, var_name: str, expression: str) -> pd.DataFrame:
-    """
-    Create new variable from expression.
+    """Create new variable from expression.
 
     Parameters
     ----------
     df : pd.DataFrame
-        Input dataframe
+        Input value for ``df``.
     var_name : str
-        Name for new variable
+        Input value for ``var_name``.
     expression : str
-        Python expression using column names
+        Input value for ``expression``.
 
     Returns
     -------
-    pd.DataFrame
-        DataFrame with new variable
-    """
+    value : pd.DataFrame
+        Result produced by this function."""
     result = df.copy()
 
     try:

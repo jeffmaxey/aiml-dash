@@ -13,35 +13,27 @@ The plugin follows the standard AIML Dash plugin structure:
 """
 
 from aiml_dash.plugins.core import callbacks
-from aiml_dash.plugins.core.constants import (
-    HELP_ICON,
-    HELP_PAGE_ID,
-    HELP_PAGE_ORDER,
-    HOME_ICON,
-    HOME_PAGE_ORDER,
-    LOGS_ICON,
-    LOGS_PAGE_ID,
-    LOGS_PAGE_ORDER,
-    PLUGIN_DESCRIPTION,
-    PLUGIN_ID,
-    PLUGIN_NAME,
-    PLUGIN_VERSION,
-    SECTION_NAME,
-    SETTINGS_ICON,
-    SETTINGS_PAGE_ID,
-    SETTINGS_PAGE_ORDER,
-)
-from aiml_dash.plugins.core.layout import help_layout, home_layout, logs_layout, settings_layout
+from aiml_dash.plugins.core.constants import (HELP_ICON, HELP_PAGE_ID,
+                                              HELP_PAGE_ORDER, HOME_ICON,
+                                              HOME_PAGE_ORDER, LOGS_ICON,
+                                              LOGS_PAGE_ID, LOGS_PAGE_ORDER,
+                                              PLUGIN_DESCRIPTION, PLUGIN_ID,
+                                              PLUGIN_NAME, PLUGIN_VERSION,
+                                              SECTION_NAME, SETTINGS_ICON,
+                                              SETTINGS_PAGE_ID,
+                                              SETTINGS_PAGE_ORDER)
+from aiml_dash.plugins.core.layout import (help_layout, home_layout,
+                                           logs_layout, settings_layout)
 from aiml_dash.plugins.models import HOME_PAGE_ID, Plugin, PluginPage
 
 
 def get_plugin() -> Plugin:
     """Return the core plugin definition.
 
-    Returns:
-        Plugin: The core plugin containing home, settings, and help pages.
-            This plugin is locked and cannot be disabled.
-    """
+    Returns
+    -------
+    value : Plugin
+        Result produced by this function."""
     pages = [
         PluginPage(
             id=HOME_PAGE_ID,

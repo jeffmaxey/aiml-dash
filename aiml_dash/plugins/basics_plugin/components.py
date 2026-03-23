@@ -17,4 +17,3 @@ Future Extensions:
 
 # This module intentionally left minimal as components are best kept local to layouts
 # for maintainability and clarity. Common cross-plugin components are in components.common
-

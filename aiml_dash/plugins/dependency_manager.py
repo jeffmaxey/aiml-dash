@@ -7,7 +7,7 @@ and dependency resolution for the plugin framework.
 from __future__ import annotations
 
 import logging
-from typing import Sequence
+from collections.abc import Sequence
 
 from aiml_dash.plugins.models import Plugin
 
@@ -17,16 +17,15 @@ logger = logging.getLogger(__name__)
 def parse_version(version_str: str) -> tuple[int, ...]:
     """Parse a version string into a tuple of integers.
 
-    Args:
-        version_str: Version string (e.g., "1.2.3").
+    Parameters
+    ----------
+    version_str : str
+        Input value for ``version_str``.
 
-    Returns:
-        tuple[int, ...]: Tuple of version components.
-
-    Example:
-        >>> parse_version("1.2.3")
-        (1, 2, 3)
-    """
+    Returns
+    -------
+    value : tuple[int, ...]
+        Result produced by this function."""
     try:
         return tuple(int(x) for x in version_str.split("."))
     except (ValueError, AttributeError):
@@ -39,27 +38,36 @@ def check_version_compatibility(
 ) -> tuple[bool, str]:
     """Check if a plugin is compatible with the application version.
 
-    Args:
-        plugin: Plugin to check compatibility for.
-        app_version: Current application version.
+    Parameters
+    ----------
+    plugin : Plugin
+        Input value for ``plugin``.
+    app_version : str
+        Input value for ``app_version``.
 
-    Returns:
-        tuple[bool, str]: (is_compatible, error_message).
-            If compatible, error_message is empty.
-    """
+    Returns
+    -------
+    value : tuple[bool, str]
+        Result produced by this function."""
     app_ver = parse_version(app_version)
 
     # Check minimum version
     if plugin.min_app_version:
         min_ver = parse_version(plugin.min_app_version)
         if app_ver < min_ver:
-            return False, f"Plugin '{plugin.name}' requires app version >= {plugin.min_app_version}"
+            return (
+                False,
+                f"Plugin '{plugin.name}' requires app version >= {plugin.min_app_version}",
+            )
 
     # Check maximum version
     if plugin.max_app_version:
         max_ver = parse_version(plugin.max_app_version)
         if app_ver > max_ver:
-            return False, f"Plugin '{plugin.name}' requires app version <= {plugin.max_app_version}"
+            return (
+                False,
+                f"Plugin '{plugin.name}' requires app version <= {plugin.max_app_version}",
+            )
 
     return True, ""
 
@@ -69,14 +77,17 @@ def check_dependencies(
 ) -> tuple[bool, str]:
     """Check if all plugin dependencies are available.
 
-    Args:
-        plugin: Plugin to check dependencies for.
-        available_plugins: Dictionary of available plugins by ID.
+    Parameters
+    ----------
+    plugin : Plugin
+        Input value for ``plugin``.
+    available_plugins : dict[str, Plugin]
+        Input value for ``available_plugins``.
 
-    Returns:
-        tuple[bool, str]: (dependencies_met, error_message).
-            If dependencies are met, error_message is empty.
-    """
+    Returns
+    -------
+    value : tuple[bool, str]
+        Result produced by this function."""
     if not plugin.dependencies:
         return True, ""
 
@@ -86,7 +97,10 @@ def check_dependencies(
             missing.append(dep_id)
 
     if missing:
-        return False, f"Plugin '{plugin.name}' missing dependencies: {', '.join(missing)}"
+        return (
+            False,
+            f"Plugin '{plugin.name}' missing dependencies: {', '.join(missing)}",
+        )
 
     return True, ""
 
@@ -96,21 +110,18 @@ def resolve_dependencies(
 ) -> tuple[list[Plugin], list[str]]:
     """Resolve plugin dependencies and return plugins in load order.
 
-    Uses topological sort to determine the correct loading order based on
-    dependencies. Plugins with no dependencies are loaded first, followed
-    by plugins whose dependencies have been loaded.
+    Parameters
+    ----------
+    plugins : Sequence[Plugin]
+        Input value for ``plugins``.
 
-    Args:
-        plugins: List of plugins to resolve dependencies for.
-
-    Returns:
-        tuple[list[Plugin], list[str]]: (sorted_plugins, errors).
-            sorted_plugins contains plugins in load order.
-            errors contains any dependency resolution errors.
-    """
+    Returns
+    -------
+    value : tuple[list[Plugin], list[str]]
+        Result produced by this function."""
     plugin_map = {p.id: p for p in plugins}
     resolved = []
-    unresolved = set(p.id for p in plugins)
+    unresolved = {p.id for p in plugins}
     errors = []
 
     # Detect circular dependencies
@@ -129,7 +140,9 @@ def resolve_dependencies(
     # Check for circular dependencies
     for plugin_id in plugin_map:
         if has_circular_dependency(plugin_id, set()):
-            errors.append(f"Circular dependency detected involving plugin '{plugin_id}'")
+            errors.append(
+                f"Circular dependency detected involving plugin '{plugin_id}'"
+            )
             return [], errors
 
     # Resolve dependencies using topological sort
@@ -165,16 +178,19 @@ def validate_plugin(
 ) -> tuple[bool, list[str]]:
     """Validate a plugin's compatibility and dependencies.
 
-    Args:
-        plugin: Plugin to validate.
-        available_plugins: Dictionary of available plugins by ID.
-        app_version: Current application version.
+    Parameters
+    ----------
+    plugin : Plugin
+        Input value for ``plugin``.
+    available_plugins : dict[str, Plugin]
+        Input value for ``available_plugins``.
+    app_version : str
+        Input value for ``app_version``.
 
-    Returns:
-        tuple[bool, list[str]]: (is_valid, errors).
-            is_valid is True if all checks pass.
-            errors contains any validation error messages.
-    """
+    Returns
+    -------
+    value : tuple[bool, list[str]]
+        Result produced by this function."""
     errors = []
 
     # Check version compatibility

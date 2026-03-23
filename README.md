@@ -248,17 +248,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
 
-## 🎨 UI Framework - Dash Mantine Components
-
-AIML Dash uses [dash-mantine-components](https://www.dash-mantine-components.com/) (DMC) as its primary UI component library, providing:
-
-- **Modern Design**: Professional, consistent look and feel
-- **Rich Components**: 120+ customizable components
-- **Theme Support**: Extensive theming with light/dark mode
-- **Responsive Layout**: Mobile-first responsive design
-- **AppShell Pattern**: Complete application shell structure
-- **Accessibility**: WCAG accessibility standards
-
 ### Layout Structure
 
 ```

@@ -1,10 +1,9 @@
 """Tests for data_manager module."""
 
-import pandas as pd
-import numpy as np
-import pytest
 import base64
-import io
+
+import pandas as pd
+import pytest
 
 from aiml_dash.utils.data_manager import DataManager, data_manager
 
@@ -20,11 +19,13 @@ def dm():
 @pytest.fixture
 def sample_dataframe():
     """Create a sample dataframe for testing."""
-    return pd.DataFrame({
-        "A": [1, 2, 3, 4, 5],
-        "B": [10, 20, 30, 40, 50],
-        "C": ["cat", "dog", "cat", "dog", "cat"],
-    })
+    return pd.DataFrame(
+        {
+            "A": [1, 2, 3, 4, 5],
+            "B": [10, 20, 30, 40, 50],
+            "C": ["cat", "dog", "cat", "dog", "cat"],
+        }
+    )
 
 
 class TestDataManagerSingleton:
@@ -50,14 +51,28 @@ class TestAddDataset:
     """Test add_dataset method."""
 
     def test_add_dataset_basic(self, dm, sample_dataframe):
-        """Test adding a dataset."""
+        """Test adding a dataset.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe, description="Test dataset")
 
         assert "test_data" in dm.datasets
         assert dm.descriptions["test_data"] == "Test dataset"
 
     def test_add_dataset_with_metadata(self, dm, sample_dataframe):
-        """Test dataset metadata is created."""
+        """Test dataset metadata is created.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
 
         assert "test_data" in dm.metadata
@@ -65,7 +80,14 @@ class TestAddDataset:
         assert dm.metadata["test_data"]["columns"] == 3
 
     def test_add_dataset_with_load_command(self, dm, sample_dataframe):
-        """Test adding dataset with load command."""
+        """Test adding dataset with load command.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         load_cmd = 'df = pd.read_csv("data.csv")'
         dm.add_dataset("test_data", sample_dataframe, load_command=load_cmd)
 
@@ -76,7 +98,14 @@ class TestGetDataset:
     """Test get_dataset method."""
 
     def test_get_dataset_by_name(self, dm, sample_dataframe):
-        """Test getting dataset by name."""
+        """Test getting dataset by name.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.get_dataset("test_data")
 
@@ -84,7 +113,14 @@ class TestGetDataset:
         assert len(result) == 5
 
     def test_get_dataset_returns_copy(self, dm, sample_dataframe):
-        """Test get_dataset returns a copy, not reference."""
+        """Test get_dataset returns a copy, not reference.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.get_dataset("test_data")
         result["A"] = 999
@@ -94,12 +130,24 @@ class TestGetDataset:
         assert original["A"].iloc[0] != 999
 
     def test_get_dataset_none(self, dm):
-        """Test getting nonexistent dataset returns None."""
+        """Test getting nonexistent dataset returns None.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         result = dm.get_dataset("nonexistent")
         assert result is None
 
     def test_get_dataset_active(self, dm, sample_dataframe):
-        """Test getting active dataset when name is None."""
+        """Test getting active dataset when name is None.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         dm.set_active_dataset("test_data")
         result = dm.get_dataset(None)
@@ -111,7 +159,14 @@ class TestGetDatasetNames:
     """Test get_dataset_names method."""
 
     def test_get_dataset_names(self, dm, sample_dataframe):
-        """Test getting list of dataset names."""
+        """Test getting list of dataset names.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("data1", sample_dataframe)
         dm.add_dataset("data2", sample_dataframe)
 
@@ -125,7 +180,14 @@ class TestRemoveDataset:
     """Test remove_dataset method."""
 
     def test_remove_dataset(self, dm, sample_dataframe):
-        """Test removing a dataset."""
+        """Test removing a dataset.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         dm.remove_dataset("test_data")
 
@@ -133,7 +195,14 @@ class TestRemoveDataset:
         assert "test_data" not in dm.metadata
 
     def test_remove_active_dataset(self, dm, sample_dataframe):
-        """Test removing active dataset updates active_dataset."""
+        """Test removing active dataset updates active_dataset.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("data1", sample_dataframe)
         dm.add_dataset("data2", sample_dataframe)
         dm.set_active_dataset("data1")
@@ -146,25 +215,46 @@ class TestSetActiveDataset:
     """Test set_active_dataset method."""
 
     def test_set_active_dataset(self, dm, sample_dataframe):
-        """Test setting active dataset."""
+        """Test setting active dataset.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         dm.set_active_dataset("test_data")
 
         assert dm.active_dataset == "test_data"
 
     def test_set_active_dataset_nonexistent(self, dm):
-        """Test setting nonexistent dataset as active does nothing."""
+        """Test setting nonexistent dataset as active does nothing.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         original_active = dm.active_dataset
         dm.set_active_dataset("nonexistent")
         # Should not change if dataset doesn't exist
-        assert dm.active_dataset == original_active or dm.active_dataset != "nonexistent"
+        assert (
+            dm.active_dataset == original_active or dm.active_dataset != "nonexistent"
+        )
 
 
 class TestGetDatasetInfo:
     """Test get_dataset_info method."""
 
     def test_get_dataset_info(self, dm, sample_dataframe):
-        """Test getting dataset info."""
+        """Test getting dataset info.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe, description="Test")
         info = dm.get_dataset_info("test_data")
 
@@ -175,7 +265,12 @@ class TestGetDatasetInfo:
         assert "column_types" in info
 
     def test_get_dataset_info_none(self, dm):
-        """Test getting info for nonexistent dataset."""
+        """Test getting info for nonexistent dataset.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         info = dm.get_dataset_info("nonexistent")
         assert info == {}
 
@@ -184,7 +279,12 @@ class TestLoadFromFile:
     """Test load_from_file method."""
 
     def test_load_from_csv(self, dm):
-        """Test loading CSV file."""
+        """Test loading CSV file.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         csv_data = "A,B,C\n1,10,cat\n2,20,dog\n3,30,cat"
         encoded = base64.b64encode(csv_data.encode()).decode()
         contents = f"data:text/csv;base64,{encoded}"
@@ -195,7 +295,14 @@ class TestLoadFromFile:
         assert "test" in dm.datasets
 
     def test_load_from_file_duplicate_name(self, dm, sample_dataframe):
-        """Test loading file with duplicate name creates unique name."""
+        """Test loading file with duplicate name creates unique name.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test", sample_dataframe)
 
         csv_data = "A,B\n1,10\n2,20"
@@ -208,7 +315,12 @@ class TestLoadFromFile:
         assert "test_1" in dm.datasets or len(dm.datasets) > 1
 
     def test_load_from_file_unsupported(self, dm):
-        """Test loading unsupported file type."""
+        """Test loading unsupported file type.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         contents = "data:text/plain;base64,dGVzdA=="
         success, message = dm.load_from_file(contents, "test.txt")
 
@@ -220,7 +332,14 @@ class TestExportDataset:
     """Test export_dataset method."""
 
     def test_export_dataset_csv(self, dm, sample_dataframe):
-        """Test exporting dataset to CSV."""
+        """Test exporting dataset to CSV.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.export_dataset("test_data", format="csv")
 
@@ -228,7 +347,14 @@ class TestExportDataset:
         assert "A,B,C" in result
 
     def test_export_dataset_json(self, dm, sample_dataframe):
-        """Test exporting dataset to JSON."""
+        """Test exporting dataset to JSON.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.export_dataset("test_data", format="json")
 
@@ -236,7 +362,12 @@ class TestExportDataset:
         assert isinstance(result, str)
 
     def test_export_nonexistent_dataset(self, dm):
-        """Test exporting nonexistent dataset returns None."""
+        """Test exporting nonexistent dataset returns None.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         result = dm.export_dataset("nonexistent", format="csv")
         assert result is None
 
@@ -245,7 +376,14 @@ class TestApplyFilter:
     """Test apply_filter method."""
 
     def test_apply_filter_basic(self, dm, sample_dataframe):
-        """Test applying basic filter."""
+        """Test applying basic filter.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.apply_filter("test_data", filter_expr="A > 2")
 
@@ -253,7 +391,14 @@ class TestApplyFilter:
         assert result["A"].min() > 2
 
     def test_apply_sort(self, dm, sample_dataframe):
-        """Test applying sort."""
+        """Test applying sort.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.apply_filter("test_data", sort_by=["A"], ascending=[False])
 
@@ -261,21 +406,42 @@ class TestApplyFilter:
         assert result["A"].iloc[-1] == 1
 
     def test_apply_row_selection_range(self, dm, sample_dataframe):
-        """Test applying row selection with range."""
+        """Test applying row selection with range.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.apply_filter("test_data", rows="1:3")
 
         assert len(result) == 2
 
     def test_apply_row_selection_individual(self, dm, sample_dataframe):
-        """Test applying row selection with individual rows."""
+        """Test applying row selection with individual rows.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.apply_filter("test_data", rows="0,2,4")
 
         assert len(result) == 3
 
     def test_apply_filter_invalid_expr(self, dm, sample_dataframe):
-        """Test applying invalid filter expression."""
+        """Test applying invalid filter expression.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         result = dm.apply_filter("test_data", filter_expr="invalid_expr")
 
@@ -287,7 +453,14 @@ class TestExportImportState:
     """Test export_all_state and import_all_state methods."""
 
     def test_export_state(self, dm, sample_dataframe):
-        """Test exporting application state."""
+        """Test exporting application state.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         state = dm.export_all_state()
 
@@ -297,7 +470,14 @@ class TestExportImportState:
         assert "test_data" in state["datasets"]
 
     def test_import_state(self, dm, sample_dataframe):
-        """Test importing application state."""
+        """Test importing application state.
+
+        Parameters
+        ----------
+        dm : Any
+            Input value for ``dm``.
+        sample_dataframe : Any
+            Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
         state = dm.export_all_state()
 
@@ -309,7 +489,12 @@ class TestExportImportState:
         assert "test_data" in dm.datasets
 
     def test_import_state_invalid_version(self, dm):
-        """Test importing state with invalid version."""
+        """Test importing state with invalid version.
+
+        Parameters
+        ----------
+        dm : Any
+            Value provided for this parameter."""
         state = {"version": "0.1"}
         success, message = dm.import_all_state(state)
 

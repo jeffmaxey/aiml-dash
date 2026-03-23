@@ -12,24 +12,24 @@ from dash import dcc, html
 from dash_iconify import DashIconify
 
 
-def create_page_header(title: str, description: str, icon: str = "carbon:data-table") -> dmc.Stack:
-    """
-    Create a consistent page header.
+def create_page_header(
+    title: str, description: str, icon: str = "carbon:data-table"
+) -> dmc.Stack:
+    """Create a consistent page header.
 
     Parameters
     ----------
     title : str
-        Page title
+        Input value for ``title``.
     description : str
-        Page description
+        Input value for ``description``.
     icon : str
-        Iconify icon name
+        Input value for ``icon``.
 
     Returns
     -------
-    dmc.Stack
-        Header component
-    """
+    value : dmc.Stack
+        Result produced by this function."""
     return dmc.Stack(
         [
             dmc.Group(
@@ -47,46 +47,46 @@ def create_page_header(title: str, description: str, icon: str = "carbon:data-ta
 
 
 def create_filter_section() -> dmc.Accordion:
-    """
-    Create data filter section with filter, sort, and slice controls.
+    """Create data filter section with filter, sort, and slice controls.
 
     Returns
     -------
-    dmc.Accordion
-        Filter section component
-    """
+    value : dmc.Accordion
+        Result produced by this function."""
     return dmc.Accordion(
         children=[
             dmc.AccordionItem(
                 children=[
                     dmc.AccordionControl("Data Filter & Sort"),
-                    dmc.AccordionPanel([
-                        dmc.Stack(
-                            [
-                                dmc.Textarea(
-                                    id="data-filter-input",
-                                    label="Filter (pandas query syntax)",
-                                    placeholder="e.g., price > 5000 & cut == 'Ideal'",
-                                    description="Enter a pandas query expression",
-                                    minRows=2,
-                                    autosize=True,
-                                ),
-                                dmc.TextInput(
-                                    id="data-sort-input",
-                                    label="Sort by (comma-separated columns)",
-                                    placeholder="e.g., price, carat",
-                                    description="Prefix with '-' for descending (e.g., -price)",
-                                ),
-                                dmc.TextInput(
-                                    id="data-slice-input",
-                                    label="Rows (slice)",
-                                    placeholder="e.g., 1:100 or 0,5,10",
-                                    description="Python slice notation or comma-separated indices",
-                                ),
-                            ],
-                            gap="sm",
-                        )
-                    ]),
+                    dmc.AccordionPanel(
+                        [
+                            dmc.Stack(
+                                [
+                                    dmc.Textarea(
+                                        id="data-filter-input",
+                                        label="Filter (pandas query syntax)",
+                                        placeholder="e.g., price > 5000 & cut == 'Ideal'",
+                                        description="Enter a pandas query expression",
+                                        minRows=2,
+                                        autosize=True,
+                                    ),
+                                    dmc.TextInput(
+                                        id="data-sort-input",
+                                        label="Sort by (comma-separated columns)",
+                                        placeholder="e.g., price, carat",
+                                        description="Prefix with '-' for descending (e.g., -price)",
+                                    ),
+                                    dmc.TextInput(
+                                        id="data-slice-input",
+                                        label="Rows (slice)",
+                                        placeholder="e.g., 1:100 or 0,5,10",
+                                        description="Python slice notation or comma-separated indices",
+                                    ),
+                                ],
+                                gap="sm",
+                            )
+                        ]
+                    ),
                 ],
                 value="filter",
             ),
@@ -102,27 +102,25 @@ def create_variable_selector(
     required: bool = False,
     description: str | None = None,
 ) -> dmc.Select | dmc.MultiSelect:
-    """
-    Create a variable selector component.
+    """Create a variable selector component.
 
     Parameters
     ----------
     var_id : str
-        Component ID
+        Input value for ``var_id``.
     label : str
-        Label text
+        Input value for ``label``.
     multiple : bool
-        Allow multiple selection
+        Input value for ``multiple``.
     required : bool
-        Mark as required
-    description : str, optional
-        Help text
+        Input value for ``required``.
+    description : str | None
+        Input value for ``description``.
 
     Returns
     -------
-    dmc.Select or dmc.MultiSelect
-        Variable selector
-    """
+    value : dmc.Select | dmc.MultiSelect
+        Result produced by this function."""
     common_props = {
         "id": var_id,
         "label": label,
@@ -151,27 +149,26 @@ def create_function_selector(
     default: list[str] | None = None,
     label: str = "Functions",
 ) -> dmc.MultiSelect:
-    """
-    Create function selector for statistical functions.
+    """Create function selector for statistical functions.
 
     Parameters
     ----------
     func_id : str
-        Component ID
-    functions : dict
-        Dictionary of function names to (display_name, description) tuples
-    default : list of str, optional
-        Default selected functions
+        Input value for ``func_id``.
+    functions : dict[str, tuple]
+        Input value for ``functions``.
+    default : list[str] | None
+        Input value for ``default``.
     label : str
-        Label text
+        Input value for ``label``.
 
     Returns
     -------
-    dmc.MultiSelect
-        Function selector
-    """
+    value : dmc.MultiSelect
+        Result produced by this function."""
     data: list[dict[str, Any]] = [
-        {"value": k, "label": v[1] if isinstance(v, tuple) else k} for k, v in functions.items()
+        {"value": k, "label": v[1] if isinstance(v, tuple) else k}
+        for k, v in functions.items()
     ]
 
     return dmc.MultiSelect(
@@ -185,68 +182,66 @@ def create_function_selector(
     )
 
 
-def create_download_button(button_id: str, label: str = "Download Data", icon: str = "carbon:download") -> dmc.Group:
-    """
-    Create download button with icon.
+def create_download_button(
+    button_id: str, label: str = "Download Data", icon: str = "carbon:download"
+) -> dmc.Group:
+    """Create download button with icon.
 
     Parameters
     ----------
     button_id : str
-        Component ID
+        Input value for ``button_id``.
     label : str
-        Button label
+        Input value for ``label``.
     icon : str
-        Icon name
+        Input value for ``icon``.
 
     Returns
     -------
-    dmc.Group
-        Download button group
-    """
-    return dmc.Group([
-        dmc.Button(
-            label,
-            id=button_id,
-            leftSection=DashIconify(icon=icon),
-            variant="light",
-        ),
-        dcc.Download(id=f"{button_id}-download"),
-    ])
+    value : dmc.Group
+        Result produced by this function."""
+    return dmc.Group(
+        [
+            dmc.Button(
+                label,
+                id=button_id,
+                leftSection=DashIconify(icon=icon),
+                variant="light",
+            ),
+            dcc.Download(id=f"{button_id}-download"),
+        ]
+    )
 
 
 def create_notification(notif_id: str) -> html.Div:
-    """
-    Create notification container.
+    """Create notification container.
 
     Parameters
     ----------
     notif_id : str
-        Component ID
+        Input value for ``notif_id``.
 
     Returns
     -------
-    html.Div
-        Notification container
-    """
+    value : html.Div
+        Result produced by this function."""
     return html.Div(id=notif_id)
 
 
 def create_code_display(code_id: str, language: str = "python") -> dmc.Code:
-    """
-    Create code display component.
+    """Create code display component.
 
     Parameters
     ----------
     code_id : str
-        Component ID
+        Input value for ``code_id``.
     language : str
-        Programming language
+        Input value for ``language``.
 
     Returns
     -------
-    dmc.Code
-        Code display component
-    """
+    value : dmc.Code
+        Result produced by this function."""
     return dmc.Code(
         id=code_id,
         children="# No code generated yet",
@@ -265,21 +260,19 @@ def create_code_display(code_id: str, language: str = "python") -> dmc.Code:
 
 
 def create_tabs(tabs_id: str, tabs_data: list[dict[str, Any]]) -> dmc.Tabs:
-    """
-    Create tabs component.
+    """Create tabs component.
 
     Parameters
     ----------
     tabs_id : str
-        Component ID
-    tabs_data : list of dict
-        List of tab specifications with 'value', 'label', 'icon', 'children'
+        Input value for ``tabs_id``.
+    tabs_data : list[dict[str, Any]]
+        Input value for ``tabs_data``.
 
     Returns
     -------
-    dmc.Tabs
-        Tabs component
-    """
+    value : dmc.Tabs
+        Result produced by this function."""
     tab_list = []
     tab_panels = []
 
@@ -293,7 +286,9 @@ def create_tabs(tabs_id: str, tabs_data: list[dict[str, Any]]) -> dmc.Tabs:
             dmc.TabsTab(
                 tab["label"],
                 value=tab["value"],
-                leftSection=DashIconify(icon=tab.get("icon", "carbon:document"), width=16, height=16)
+                leftSection=DashIconify(
+                    icon=tab.get("icon", "carbon:document"), width=16, height=16
+                )
                 if "icon" in tab
                 else None,
             )
@@ -314,26 +309,26 @@ def create_tabs(tabs_id: str, tabs_data: list[dict[str, Any]]) -> dmc.Tabs:
     )
 
 
-def create_info_card(title: str, value: Any, icon: str, color: str = "blue") -> dmc.Card:
-    """
-    Create information card for displaying stats.
+def create_info_card(
+    title: str, value: Any, icon: str, color: str = "blue"
+) -> dmc.Card:
+    """Create information card for displaying stats.
 
     Parameters
     ----------
     title : str
-        Card title
+        Input value for ``title``.
     value : Any
-        Value to display
+        Input value for ``value``.
     icon : str
-        Icon name
+        Input value for ``icon``.
     color : str
-        Color scheme
+        Input value for ``color``.
 
     Returns
     -------
-    dmc.Card
-        Info card component
-    """
+    value : dmc.Card
+        Result produced by this function."""
     return dmc.Card(
         children=[
             dmc.Group(

@@ -20,13 +20,23 @@ class TestPluginConfig:
 
     @pytest.fixture
     def config_manager(self, temp_config_dir):
-        """Create a config manager with temp directory."""
+        """Create a config manager with temp directory.
+
+        Parameters
+        ----------
+        temp_config_dir : Any
+            Value provided for this parameter."""
         return PluginConfig(temp_config_dir)
 
     def test_save_and_load_config(self, config_manager):
-        """Test saving and loading plugin configuration."""
+        """Test saving and loading plugin configuration.
+
+        Parameters
+        ----------
+        config_manager : Any
+            Value provided for this parameter."""
         config = {"setting1": "value1", "setting2": 42}
-        
+
         success = config_manager.save_config("test_plugin", config)
         assert success is True
 
@@ -34,7 +44,12 @@ class TestPluginConfig:
         assert loaded == config
 
     def test_update_config(self, config_manager):
-        """Test updating plugin configuration."""
+        """Test updating plugin configuration.
+
+        Parameters
+        ----------
+        config_manager : Any
+            Value provided for this parameter."""
         initial = {"setting1": "value1"}
         config_manager.save_config("test_plugin", initial)
 
@@ -47,7 +62,12 @@ class TestPluginConfig:
         assert loaded["setting2"] == "value2"
 
     def test_get_setting(self, config_manager):
-        """Test getting a specific setting."""
+        """Test getting a specific setting.
+
+        Parameters
+        ----------
+        config_manager : Any
+            Value provided for this parameter."""
         config = {"key1": "value1"}
         config_manager.save_config("test_plugin", config)
 
@@ -59,7 +79,12 @@ class TestPluginConfig:
         assert default == "default"
 
     def test_set_setting(self, config_manager):
-        """Test setting a specific value."""
+        """Test setting a specific value.
+
+        Parameters
+        ----------
+        config_manager : Any
+            Value provided for this parameter."""
         success = config_manager.set_setting("test_plugin", "key1", "value1")
         assert success is True
 
@@ -67,7 +92,12 @@ class TestPluginConfig:
         assert value == "value1"
 
     def test_validate_config_with_schema(self, config_manager):
-        """Test validating configuration with schema."""
+        """Test validating configuration with schema.
+
+        Parameters
+        ----------
+        config_manager : Any
+            Value provided for this parameter."""
         plugin = Plugin(
             id="test",
             name="Test",
@@ -95,7 +125,12 @@ class TestPluginConfig:
         assert len(errors) > 0
 
     def test_delete_config(self, config_manager):
-        """Test deleting plugin configuration."""
+        """Test deleting plugin configuration.
+
+        Parameters
+        ----------
+        config_manager : Any
+            Value provided for this parameter."""
         config = {"key": "value"}
         config_manager.save_config("test_plugin", config)
 
@@ -117,7 +152,12 @@ class TestPluginConfigIntegration:
             yield Path(tmpdir)
 
     def test_persistence_across_instances(self, temp_config_dir):
-        """Test that config persists across manager instances."""
+        """Test that config persists across manager instances.
+
+        Parameters
+        ----------
+        temp_config_dir : Any
+            Value provided for this parameter."""
         # Save config with first instance
         manager1 = PluginConfig(temp_config_dir)
         config = {"key": "value"}

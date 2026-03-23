@@ -7,7 +7,12 @@ from aiml_dash.plugins.models import Plugin, PluginPage
 
 
 def get_plugin() -> Plugin:
-    """Return the legacy pages plugin definition."""
+    """Return the legacy pages plugin definition.
+
+    Returns
+    -------
+    value : Plugin
+        Result produced by this function."""
 
     pages = [
         PluginPage(

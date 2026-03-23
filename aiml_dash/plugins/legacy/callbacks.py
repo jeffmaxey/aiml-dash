@@ -2,6 +2,11 @@
 
 
 def register_callbacks(_app: object) -> None:
-    """Register callbacks for legacy pages (already registered on import)."""
+    """Register callbacks for legacy pages (already registered on import).
+
+    Parameters
+    ----------
+    _app : object
+        Value provided for this parameter."""
 
     ...

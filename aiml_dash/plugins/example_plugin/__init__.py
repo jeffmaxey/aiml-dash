@@ -17,18 +17,15 @@ Example Usage:
 """
 
 from aiml_dash.plugins.example_plugin import callbacks
-from aiml_dash.plugins.example_plugin.constants import (
-    EXAMPLE_ICON,
-    EXAMPLE_PAGE_ID,
-    GROUP_NAME,
-    GROUP_ORDER,
-    PAGE_ORDER,
-    PLUGIN_DESCRIPTION,
-    PLUGIN_ID,
-    PLUGIN_NAME,
-    PLUGIN_VERSION,
-    SECTION_NAME,
-)
+from aiml_dash.plugins.example_plugin.constants import (EXAMPLE_ICON,
+                                                        EXAMPLE_PAGE_ID,
+                                                        GROUP_NAME,
+                                                        GROUP_ORDER,
+                                                        PAGE_ORDER,
+                                                        PLUGIN_DESCRIPTION,
+                                                        PLUGIN_ID, PLUGIN_NAME,
+                                                        PLUGIN_VERSION,
+                                                        SECTION_NAME)
 from aiml_dash.plugins.example_plugin.layout import example_layout
 from aiml_dash.plugins.models import Plugin, PluginPage
 
@@ -36,10 +33,10 @@ from aiml_dash.plugins.models import Plugin, PluginPage
 def get_plugin() -> Plugin:
     """Return the example plugin definition.
 
-    Returns:
-        Plugin: The example plugin containing a single demonstration page
-            showing how to structure a basic plugin with Dash Mantine Components.
-    """
+    Returns
+    -------
+    value : Plugin
+        Result produced by this function."""
     pages = [
         PluginPage(
             id=EXAMPLE_PAGE_ID,

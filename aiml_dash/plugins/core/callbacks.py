@@ -5,7 +5,6 @@ from __future__ import annotations
 import base64
 import binascii
 import json
-import platform
 import sys
 from datetime import datetime
 
@@ -22,7 +21,17 @@ FALLBACK_PLUGINS_KEY = "plugins"
 
 
 def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
-    """Return a set of locked plugin identifiers."""
+    """Return a set of locked plugin identifiers.
+
+    Parameters
+    ----------
+    metadata : list[dict[str, object]] | None
+        Input value for ``metadata``.
+
+    Returns
+    -------
+    value : set[str]
+        Result produced by this function."""
 
     if not metadata:
         return set()
@@ -39,8 +48,17 @@ def _get_locked_plugins(metadata: list[dict[str, object]] | None) -> set[str]:
     Input("plugin-metadata", "data"),
     Input("enabled-plugins", "data"),
 )
-def render_plugin_toggles(metadata: list[dict[str, object]] | None, enabled_plugins: list[str] | None):
-    """Render the plugin toggle cards."""
+def render_plugin_toggles(
+    metadata: list[dict[str, object]] | None, enabled_plugins: list[str] | None
+):
+    """Render the plugin toggle cards.
+
+    Parameters
+    ----------
+    metadata : list[dict[str, object]] | None
+        Input value for ``metadata``.
+    enabled_plugins : list[str] | None
+        Value provided for this parameter."""
 
     metadata = metadata or []
     enabled = set(enabled_plugins or [])
@@ -64,7 +82,16 @@ def render_plugin_toggles(metadata: list[dict[str, object]] | None, enabled_plug
     prevent_initial_call=True,
 )
 def update_enabled_plugins(checked_values, ids, metadata):
-    """Update enabled plugins based on toggle state."""
+    """Update enabled plugins based on toggle state.
+
+    Parameters
+    ----------
+    checked_values : Any
+        Input value for ``checked_values``.
+    ids : Any
+        Input value for ``ids``.
+    metadata : Any
+        Value provided for this parameter."""
 
     if not ids:
         return dash.no_update
@@ -86,8 +113,17 @@ def update_enabled_plugins(checked_values, ids, metadata):
     State("plugin-metadata", "data"),
     prevent_initial_call=True,
 )
-def import_plugin_configuration(contents: str | None, metadata: list[dict[str, object]] | None):
-    """Import plugin configuration from an uploaded JSON file."""
+def import_plugin_configuration(
+    contents: str | None, metadata: list[dict[str, object]] | None
+):
+    """Import plugin configuration from an uploaded JSON file.
+
+    Parameters
+    ----------
+    contents : str | None
+        Input value for ``contents``.
+    metadata : list[dict[str, object]] | None
+        Value provided for this parameter."""
 
     if not contents:
         return dash.no_update, dash.no_update
@@ -115,7 +151,12 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
             title="Import complete",
         )
         return final_plugins, message
-    except (binascii.Error, json.JSONDecodeError, UnicodeDecodeError, ValueError) as exc:
+    except (
+        binascii.Error,
+        json.JSONDecodeError,
+        UnicodeDecodeError,
+        ValueError,
+    ) as exc:
         message = dmc.Alert(
             f"Import failed: {exc}",
             color="red",
@@ -126,7 +167,12 @@ def import_plugin_configuration(contents: str | None, metadata: list[dict[str, o
 
 
 def register_callbacks(_app: object) -> None:
-    """Register core plugin callbacks."""
+    """Register core plugin callbacks.
+
+    Parameters
+    ----------
+    _app : object
+        Value provided for this parameter."""
 
     ...
 
@@ -140,9 +186,19 @@ _app_start_time = datetime.now()
 
 
 def _create_log_entry_card(log: dict[str, str]) -> dmc.Card:
-    """Create a visual card for a log entry."""
+    """Create a visual card for a log entry.
+
+    Parameters
+    ----------
+    log : dict[str, str]
+        Input value for ``log``.
+
+    Returns
+    -------
+    value : dmc.Card
+        Result produced by this function."""
     level = log.get("level", "info")
-    
+
     # Color and icon mapping
     level_config = {
         "debug": {"color": "gray", "icon": "carbon:debug"},
@@ -150,27 +206,45 @@ def _create_log_entry_card(log: dict[str, str]) -> dmc.Card:
         "warning": {"color": "yellow", "icon": "carbon:warning"},
         "error": {"color": "red", "icon": "carbon:error"},
     }
-    
+
     config = level_config.get(level, level_config["info"])
-    
+
     return dmc.Card(
-        dmc.Group([
-            dmc.ThemeIcon(
-                DashIconify(icon=config["icon"], width=16),
-                size="sm",
-                radius="md",
-                variant="light",
-                color=config["color"],
-            ),
-            dmc.Stack([
-                dmc.Group([
-                    dmc.Badge(level.upper(), color=config["color"], size="sm"),
-                    dmc.Badge(log.get("source", "core").upper(), variant="outline", size="sm"),
-                    dmc.Text(log.get("timestamp", ""), size="xs", c="dimmed"),
-                ], gap="xs"),
-                dmc.Text(log.get("message", ""), size="sm"),
-            ], gap=4),
-        ], align="flex-start", gap="sm"),
+        dmc.Group(
+            [
+                dmc.ThemeIcon(
+                    DashIconify(icon=config["icon"], width=16),
+                    size="sm",
+                    radius="md",
+                    variant="light",
+                    color=config["color"],
+                ),
+                dmc.Stack(
+                    [
+                        dmc.Group(
+                            [
+                                dmc.Badge(
+                                    level.upper(), color=config["color"], size="sm"
+                                ),
+                                dmc.Badge(
+                                    log.get("source", "core").upper(),
+                                    variant="outline",
+                                    size="sm",
+                                ),
+                                dmc.Text(
+                                    log.get("timestamp", ""), size="xs", c="dimmed"
+                                ),
+                            ],
+                            gap="xs",
+                        ),
+                        dmc.Text(log.get("message", ""), size="sm"),
+                    ],
+                    gap=4,
+                ),
+            ],
+            align="flex-start",
+            gap="sm",
+        ),
         withBorder=True,
         radius="sm",
         p="sm",
@@ -190,15 +264,26 @@ def _create_log_entry_card(log: dict[str, str]) -> dmc.Card:
     prevent_initial_call=False,
 )
 def update_log_display(n_intervals, n_clicks, level_filter, source_filter):
-    """Update the log display with filtered logs."""
+    """Update the log display with filtered logs.
+
+    Parameters
+    ----------
+    n_intervals : Any
+        Input value for ``n_intervals``.
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    level_filter : Any
+        Input value for ``level_filter``.
+    source_filter : Any
+        Value provided for this parameter."""
     logs = log_manager.get_logs(
         level_filter=level_filter or "all",
         source_filter=source_filter or "all",
         limit=100,  # Show last 100 logs
     )
-    
+
     counts = log_manager.get_log_counts()
-    
+
     if not logs:
         log_entries = [
             dmc.Text(
@@ -211,7 +296,7 @@ def update_log_display(n_intervals, n_clicks, level_filter, source_filter):
         ]
     else:
         log_entries = [_create_log_entry_card(log) for log in logs]
-    
+
     return (
         log_entries,
         str(counts["info"]),
@@ -231,11 +316,16 @@ def update_log_display(n_intervals, n_clicks, level_filter, source_filter):
     prevent_initial_call=True,
 )
 def clear_logs(n_clicks):
-    """Clear all logs."""
+    """Clear all logs.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Value provided for this parameter."""
     if n_clicks:
         log_manager.clear_logs()
         log_manager.add_log("info", "Logs cleared by user", "core")
-        
+
     return (
         [dmc.Text("Logs cleared.", size="sm", c="dimmed", ta="center", py="xl")],
         "0",
@@ -251,11 +341,16 @@ def clear_logs(n_clicks):
     prevent_initial_call=True,
 )
 def download_logs(n_clicks):
-    """Download logs as a text file."""
+    """Download logs as a text file.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Value provided for this parameter."""
     if n_clicks:
         log_text = log_manager.get_logs_as_text()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return dict(content=log_text, filename=f"aiml_dash_logs_{timestamp}.txt")
+        return {"content": log_text, "filename": f"aiml_dash_logs_{timestamp}.txt"}
     return dash.no_update
 
 
@@ -268,24 +363,34 @@ def download_logs(n_clicks):
     State("enabled-plugins", "data"),
 )
 def update_system_info(n_intervals, enabled_plugins):
-    """Update system information display."""
+    """Update system information display.
+
+    Parameters
+    ----------
+    n_intervals : Any
+        Input value for ``n_intervals``.
+    enabled_plugins : Any
+        Value provided for this parameter."""
     # Python version
-    python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
-    
+    python_version = (
+        f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    )
+
     # Dash version
     try:
         import dash as dash_module
+
         dash_version = dash_module.__version__
     except Exception:
         dash_version = "Unknown"
-    
+
     # Uptime
     uptime_delta = datetime.now() - _app_start_time
     hours, remainder = divmod(int(uptime_delta.total_seconds()), 3600)
     minutes, seconds = divmod(remainder, 60)
     uptime = f"{hours}h {minutes}m {seconds}s"
-    
+
     # Plugin count
     plugin_count = str(len(enabled_plugins or []))
-    
+
     return python_version, dash_version, uptime, plugin_count

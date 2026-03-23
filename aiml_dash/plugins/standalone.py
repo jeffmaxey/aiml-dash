@@ -23,16 +23,21 @@ from aiml_dash.plugins.models import Plugin
 def create_standalone_app(plugin: Plugin) -> dash.Dash:
     """Create a standalone Dash app for a plugin.
 
-    Args:
-        plugin: The plugin to run standalone.
+    Parameters
+    ----------
+    plugin : Plugin
+        Input value for ``plugin``.
 
-    Returns:
-        dash.Dash: A configured Dash application with the plugin's layout.
-    """
+    Returns
+    -------
+    value : dash.Dash
+        Result produced by this function."""
     app = dash.Dash(
         __name__,
         title=f"{plugin.name} - Standalone",
-        external_stylesheets=["https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"],
+        external_stylesheets=[
+            "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        ],
     )
 
     # Create a simple layout with the plugin's first page
@@ -63,7 +68,9 @@ def create_standalone_app(plugin: Plugin) -> dash.Dash:
                         dmc.Container(
                             dmc.Group(
                                 [
-                                    dmc.Title(f"{plugin.name} - Standalone Mode", order=3),
+                                    dmc.Title(
+                                        f"{plugin.name} - Standalone Mode", order=3
+                                    ),
                                     dmc.Badge(f"v{plugin.version}", variant="light"),
                                 ],
                                 justify="space-between",
@@ -104,11 +111,14 @@ def create_standalone_app(plugin: Plugin) -> dash.Dash:
 def run_plugin_standalone(plugin_id: str, debug: bool = True, port: int = 8050):
     """Run a plugin in standalone mode.
 
-    Args:
-        plugin_id: The ID of the plugin to run.
-        debug: Whether to run in debug mode.
-        port: The port to run the server on.
-    """
+    Parameters
+    ----------
+    plugin_id : str
+        Input value for ``plugin_id``.
+    debug : bool
+        Input value for ``debug``.
+    port : int
+        Value provided for this parameter."""
     # Get the plugins directory
     plugins_path = Path(__file__).parent
 
@@ -119,7 +129,11 @@ def run_plugin_standalone(plugin_id: str, debug: bool = True, port: int = 8050):
         print(f"Error: Plugin directory '{plugin_id}' not found at {plugin_dir}")
         print(f"\nAvailable plugins in {plugins_path}:")
         for item in plugins_path.iterdir():
-            if item.is_dir() and not item.name.startswith("_") and (item / "__init__.py").exists():
+            if (
+                item.is_dir()
+                and not item.name.startswith("_")
+                and (item / "__init__.py").exists()
+            ):
                 print(f"  - {item.name}")
         sys.exit(1)
 

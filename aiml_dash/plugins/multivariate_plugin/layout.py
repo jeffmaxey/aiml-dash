@@ -1,40 +1,69 @@
 """Layout module for multivariate plugin.
 
-This module provides lazy-loading layout functions that wrap the pages/multivariate layouts.
+This module provides lazy-loading layout functions that wrap
+plugin-owned multivariate layouts.
 """
 
-from typing import Callable
+from collections.abc import Callable
+from typing import Any
 
-from dash.development.base_component import Component
 
-
-def _create_lazy_layout(module_path: str, function_name: str = "layout") -> Callable[[], Component]:
+def _create_lazy_layout(
+    module_path: str,
+    function_name: str = "layout",
+) -> Callable[[], Any]:
     """Create a lazy-loading wrapper for a layout function.
-    
-    Args:
-        module_path: Import path to the module
-        function_name: Name of the layout function in the module
-        
-    Returns:
-        Callable that imports and calls the layout function when invoked
+
+    Parameters
+    ----------
+    module_path : str
+        Dotted import path for the page module.
+    function_name : str
+        Name of the callable that returns the page layout.
+
+    Returns
+    -------
+    value : Callable[[], Any]
+        Lazily evaluated callable that returns a Dash component tree.
     """
-    def lazy_layout() -> Component:
+
+    def lazy_layout() -> Any:
         import importlib
-        from typing import cast
+
         module = importlib.import_module(module_path)
         layout_func = getattr(module, function_name)
-        return cast(Component, layout_func())
-    
+        return layout_func()
+
     return lazy_layout
 
 
 # Create lazy-loading layout functions
-conjoint_layout = _create_lazy_layout("aiml_dash.pages.multivariate.conjoint")
-fullfactor_layout = _create_lazy_layout("aiml_dash.pages.multivariate.full_factor")
-hierarchicalcluster_layout = _create_lazy_layout("aiml_dash.pages.multivariate.hierarchical_cluster")
-kmeanscluster_layout = _create_lazy_layout("aiml_dash.pages.multivariate.kmeans_cluster")
-mds_layout = _create_lazy_layout("aiml_dash.pages.multivariate.mds")
-perceptualmap_layout = _create_lazy_layout("aiml_dash.pages.multivariate.perceptual_map")
-prefactor_layout = _create_lazy_layout("aiml_dash.pages.multivariate.pre_factor")
+conjoint_layout = _create_lazy_layout(
+    "aiml_dash.plugins.multivariate_plugin.pages.conjoint"
+)
+fullfactor_layout = _create_lazy_layout(
+    "aiml_dash.plugins.multivariate_plugin.pages.full_factor"
+)
+hierarchicalcluster_layout = _create_lazy_layout(
+    "aiml_dash.plugins.multivariate_plugin.pages.hierarchical_cluster"
+)
+kmeanscluster_layout = _create_lazy_layout(
+    "aiml_dash.plugins.multivariate_plugin.pages.kmeans_cluster"
+)
+mds_layout = _create_lazy_layout("aiml_dash.plugins.multivariate_plugin.pages.mds")
+perceptualmap_layout = _create_lazy_layout(
+    "aiml_dash.plugins.multivariate_plugin.pages.perceptual_map"
+)
+prefactor_layout = _create_lazy_layout(
+    "aiml_dash.plugins.multivariate_plugin.pages.pre_factor"
+)
 
-__all__ = ["conjoint_layout", "fullfactor_layout", "hierarchicalcluster_layout", "kmeanscluster_layout", "mds_layout", "perceptualmap_layout", "prefactor_layout"]
+__all__ = [
+    "conjoint_layout",
+    "fullfactor_layout",
+    "hierarchicalcluster_layout",
+    "kmeanscluster_layout",
+    "mds_layout",
+    "perceptualmap_layout",
+    "prefactor_layout",
+]

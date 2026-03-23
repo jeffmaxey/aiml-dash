@@ -13,29 +13,28 @@ import pandas as pd
 
 
 def paginate_df(
-    df: pd.DataFrame, page_current: int, page_size: int, sort_by: list[dict[str, Any]] | None = None
+    df: pd.DataFrame,
+    page_current: int,
+    page_size: int,
+    sort_by: list[dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """
-    Return a page slice of `df` and column definitions suitable for dash DataTable.
+    """Return a page slice of `df` and column definitions suitable for dash DataTable.
 
     Parameters
     ----------
-    df : pandas.DataFrame
-        Source dataframe.
+    df : pd.DataFrame
+        Input value for ``df``.
     page_current : int
-        Zero-based page index.
+        Input value for ``page_current``.
     page_size : int
-        Number of rows per page.
-    sort_by : list of dict, optional
-        Dash-style sort_by metadata: [{"column_id": "col", "direction": "asc"}]
+        Input value for ``page_size``.
+    sort_by : list[dict[str, Any]] | None
+        Input value for ``sort_by``.
 
     Returns
     -------
-    data : list of dict
-        Page rows as list of record dicts.
-    columns : list of dict
-        Column definitions for dash DataTable: [{"name": col, "id": col}, ...]
-    """
+    value : tuple[list[dict[str, Any]], list[dict[str, Any]]]
+        Result produced by this function."""
     if df is None or df.empty:
         return [], []
     dff = df

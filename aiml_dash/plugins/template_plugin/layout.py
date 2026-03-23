@@ -18,10 +18,10 @@ from aiml_dash.plugins.template_plugin.styles import TEMPLATE_CONTAINER_SIZE
 def template_layout() -> dmc.Container:
     """Create the template plugin layout.
 
-    Returns:
-        dmc.Container: A container with the template plugin layout including
-            title, description, and instructional cards for plugin development.
-    """
+    Returns
+    -------
+    value : dmc.Container
+        Result produced by this function."""
     return dmc.Container(
         dmc.Stack(
             [

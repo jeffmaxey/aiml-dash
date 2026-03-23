@@ -1,31 +1,15 @@
 """Tests for transforms module."""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 
-from aiml_dash.utils.transforms import (
-    center,
-    standardize,
-    square,
-    inverse,
-    normalize,
-    ln,
-    log10,
-    exp,
-    sqrt,
-    xtile,
-    as_integer,
-    as_numeric,
-    as_factor,
-    as_character,
-    make_train,
-    refactor,
-    mutate_ext,
-    type_convert,
-    create_variable,
-    TRANSFORM_FUNCTIONS,
-)
+from aiml_dash.utils.transforms import (TRANSFORM_FUNCTIONS, as_character,
+                                        as_factor, as_integer, as_numeric,
+                                        center, create_variable, exp, inverse,
+                                        ln, log10, make_train, mutate_ext,
+                                        normalize, refactor, sqrt, square,
+                                        standardize, type_convert, xtile)
 
 
 @pytest.fixture
@@ -43,30 +27,47 @@ def sample_array():
 @pytest.fixture
 def sample_dataframe():
     """Create a sample dataframe for testing."""
-    return pd.DataFrame({
-        "x": [1, 2, 3, 4, 5],
-        "y": [10, 20, 30, 40, 50],
-        "cat": ["A", "B", "A", "B", "A"],
-    })
+    return pd.DataFrame(
+        {
+            "x": [1, 2, 3, 4, 5],
+            "y": [10, 20, 30, 40, 50],
+            "cat": ["A", "B", "A", "B", "A"],
+        }
+    )
 
 
 class TestBasicTransforms:
     """Test basic transformation functions."""
 
     def test_center(self, sample_series):
-        """Test centering transformation."""
+        """Test centering transformation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = center(sample_series)
         assert result.mean() == pytest.approx(0, abs=1e-10)
         assert len(result) == len(sample_series)
 
     def test_standardize(self, sample_series):
-        """Test standardization transformation."""
+        """Test standardization transformation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = standardize(sample_series)
         assert result.mean() == pytest.approx(0, abs=1e-10)
         assert result.std() == pytest.approx(1, abs=1e-10)
 
     def test_square(self, sample_series):
-        """Test square transformation."""
+        """Test square transformation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = square(sample_series)
         expected = sample_series**2
         pd.testing.assert_series_equal(result, expected)
@@ -233,25 +234,45 @@ class TestMutateExt:
     """Test mutate_ext function."""
 
     def test_mutate_ext_center(self, sample_dataframe):
-        """Test mutate_ext with center function."""
+        """Test mutate_ext with center function.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = mutate_ext(sample_dataframe, "x", "center")
         assert "x_center" in result.columns
         assert len(result.columns) == len(sample_dataframe.columns) + 1
 
     def test_mutate_ext_standardize(self, sample_dataframe):
-        """Test mutate_ext with standardize function."""
+        """Test mutate_ext with standardize function.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = mutate_ext(sample_dataframe, "x", "standardize")
         assert "x_standardize" in result.columns
 
     def test_mutate_ext_square(self, sample_dataframe):
-        """Test mutate_ext with square function."""
+        """Test mutate_ext with square function.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = mutate_ext(sample_dataframe, "x", "square")
         assert "x_square" in result.columns
         expected = sample_dataframe["x"] ** 2
         pd.testing.assert_series_equal(result["x_square"], expected, check_names=False)
 
     def test_mutate_ext_ln(self, sample_dataframe):
-        """Test mutate_ext with ln function."""
+        """Test mutate_ext with ln function.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = mutate_ext(sample_dataframe, "x", "ln")
         assert "x_ln" in result.columns
 
@@ -276,22 +297,42 @@ class TestTypeConvert:
     """Test type_convert function."""
 
     def test_type_convert_to_integer(self, sample_dataframe):
-        """Test type conversion to integer."""
+        """Test type conversion to integer.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = type_convert(sample_dataframe, "x", "integer")
         assert result["x"].dtype == "Int64"
 
     def test_type_convert_to_numeric(self, sample_dataframe):
-        """Test type conversion to numeric."""
+        """Test type conversion to numeric.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = type_convert(sample_dataframe, "x", "numeric")
         assert pd.api.types.is_numeric_dtype(result["x"])
 
     def test_type_convert_to_factor(self, sample_dataframe):
-        """Test type conversion to factor."""
+        """Test type conversion to factor.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = type_convert(sample_dataframe, "cat", "factor")
         assert isinstance(result["cat"].dtype, pd.CategoricalDtype)
 
     def test_type_convert_to_character(self, sample_dataframe):
-        """Test type conversion to character."""
+        """Test type conversion to character.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = type_convert(sample_dataframe, "x", "character")
         assert result["x"].dtype == object
 
@@ -300,21 +341,36 @@ class TestCreateVariable:
     """Test create_variable function."""
 
     def test_create_variable_simple(self, sample_dataframe):
-        """Test create_variable with simple expression."""
+        """Test create_variable with simple expression.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = create_variable(sample_dataframe, "z", "x + y")
         assert "z" in result.columns
         expected = sample_dataframe["x"] + sample_dataframe["y"]
         pd.testing.assert_series_equal(result["z"], expected, check_names=False)
 
     def test_create_variable_complex(self, sample_dataframe):
-        """Test create_variable with complex expression."""
+        """Test create_variable with complex expression.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = create_variable(sample_dataframe, "ratio", "y / x")
         assert "ratio" in result.columns
         expected = sample_dataframe["y"] / sample_dataframe["x"]
         pd.testing.assert_series_equal(result["ratio"], expected, check_names=False)
 
     def test_create_variable_invalid(self, sample_dataframe):
-        """Test create_variable with invalid expression."""
+        """Test create_variable with invalid expression.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         # Should handle error gracefully
         result = create_variable(sample_dataframe, "invalid", "nonexistent_col * 2")
         # Original dataframe should be unchanged or error handled

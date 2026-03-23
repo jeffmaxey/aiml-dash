@@ -13,11 +13,8 @@ Note:
 def register_callbacks(_app: object) -> None:
     """Register callbacks for the example plugin.
 
-    Args:
-        _app: The Dash application instance to register callbacks with.
-
-    Note:
-        This plugin does not require any callbacks. The function is provided
-        as a placeholder for plugins that need interactivity.
-    """
+    Parameters
+    ----------
+    _app : object
+        Value provided for this parameter."""
     ...

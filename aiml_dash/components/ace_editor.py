@@ -45,72 +45,31 @@ except Exception:
 
 
 def get_code_editor(
-    editor_id: str, value: str = "", mode: str = "r", theme: str = "github", height: str = "300px"
+    editor_id: str,
+    value: str = "",
+    mode: str = "r",
+    theme: str = "github",
+    height: str = "300px",
 ) -> Any:
-    """
-    Return a code editor component with automatic fallback support.
-
-    Creates a code editor component using dash_ace if available, otherwise
-    falls back to a basic dcc.Textarea. The editor supports syntax highlighting
-    and basic autocompletion features when dash_ace is available.
+    """Return a code editor component with automatic fallback support.
 
     Parameters
     ----------
     editor_id : str
-        Unique identifier for the Dash component.
-    value : str, optional
-        Initial text content to display in the editor (default is "").
-    mode : str, optional
-        Programming language mode for syntax highlighting. Common values
-        include 'r', 'python', 'sql', 'javascript' (default is 'r').
-    theme : str, optional
-        Visual theme name for the Ace editor (e.g., 'github', 'monokai',
-        'twilight'). Ignored when falling back to textarea (default is 'github').
-    height : str, optional
-        CSS height specification for the editor (e.g., '300px', '50vh')
-        (default is '300px').
+        Input value for ``editor_id``.
+    value : str
+        Input value for ``value``.
+    mode : str
+        Input value for ``mode``.
+    theme : str
+        Input value for ``theme``.
+    height : str
+        Input value for ``height``.
 
     Returns
     -------
-    dash_ace.Ace or dcc.Textarea
-        A Dash component, either dash_ace.Ace if the library is available,
-        or dcc.Textarea as a fallback.
-
-    Examples
-    --------
-    Create a Python code editor:
-
-    >>> editor = get_code_editor(
-    ...     id="python-editor",
-    ...     value="def hello():\\n    print('Hello, World!')",
-    ...     mode="python",
-    ...     theme="monokai",
-    ...     height="500px"
-    ... )
-
-    Create an R code editor with default settings:
-
-    >>> editor = get_code_editor(id="r-editor")
-
-    Notes
-    -----
-    The function automatically detects if dash_ace is available at the module
-    level. If not, it provides a graceful fallback to dcc.Textarea, which has
-    reduced functionality but maintains application stability.
-
-    When dash_ace is available, the following features are enabled:
-
-    - Syntax highlighting for the specified language mode
-    - Basic autocompletion
-    - Configurable themes
-    - 2-space tab size
-    - Print margin hidden
-
-    See Also
-    --------
-    dash_ace.Ace : The underlying Ace editor component when available.
-    dash.dcc.Textarea : The fallback textarea component.
-    """
+    value : Any
+        Result produced by this function."""
     if _HAS_ACE:
         # Use Ace editor for richer editing experience
         return dash_ace.Ace(
@@ -125,4 +84,9 @@ def get_code_editor(
             style={"width": "100%", "height": height},
         )
     # Fallback: plain textarea (works reliably without extra dependencies)
-    return dcc.Textarea(id=editor_id, value=value, style={"width": "100%", "height": height}, spellCheck=False)
+    return dcc.Textarea(
+        id=editor_id,
+        value=value,
+        style={"width": "100%", "height": height},
+        spellCheck=False,
+    )

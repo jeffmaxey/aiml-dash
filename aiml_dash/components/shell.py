@@ -15,8 +15,14 @@ from aiml_dash.plugins.models import HOME_PAGE_ID
 from aiml_dash.utils.constants import APP_TITLE, GITHUB_URL
 
 theme_toggle = dmc.Switch(
-    offLabel=DashIconify(icon="radix-icons:sun", width=15, color=dmc.DEFAULT_THEME["colors"]["yellow"][8]),
-    onLabel=DashIconify(icon="radix-icons:moon", width=15, color=dmc.DEFAULT_THEME["colors"]["yellow"][6]),
+    offLabel=DashIconify(
+        icon="radix-icons:sun", width=15, color=dmc.DEFAULT_THEME["colors"]["yellow"][8]
+    ),
+    onLabel=DashIconify(
+        icon="radix-icons:moon",
+        width=15,
+        color=dmc.DEFAULT_THEME["colors"]["yellow"][6],
+    ),
     id="docs-color-scheme-switch",
     persistence=True,
     color="gray",
@@ -36,14 +42,7 @@ rtl_toggle = dmc.Tooltip(
 
 
 def create_header():
-    """
-    Create application header for AppShellHeader.
-
-    Returns
-    -------
-    dmc.Group
-        Header content with branding, toggle buttons, and status
-    """
+    """Create application header for AppShellHeader."""
     return dmc.Group(
         [
             dmc.Group(
@@ -54,7 +53,9 @@ def create_header():
                         variant="subtle",
                         size="lg",
                     ),
-                    DashIconify(icon="carbon:analytics", width=32, height=32, color="#1971c2"),
+                    DashIconify(
+                        icon="carbon:analytics", width=32, height=32, color="#1971c2"
+                    ),
                     dmc.Title(children=APP_TITLE, order=3),
                 ],
                 gap="xs",
@@ -69,27 +70,35 @@ def create_header():
                         color="blue",
                         variant="light",
                     ),
-                    dmc.Menu([
-                        dmc.MenuTarget(
-                            dmc.ActionIcon(
-                                DashIconify(icon="carbon:save", width=20),
-                                variant="subtle",
-                                size="lg",
-                            )
-                        ),
-                        dmc.MenuDropdown([
-                            dmc.MenuItem(
-                                "Export State",
-                                leftSection=DashIconify(icon="carbon:download", width=16),
-                                id="export-state-btn",
+                    dmc.Menu(
+                        [
+                            dmc.MenuTarget(
+                                dmc.ActionIcon(
+                                    DashIconify(icon="carbon:save", width=20),
+                                    variant="subtle",
+                                    size="lg",
+                                )
                             ),
-                            dmc.MenuItem(
-                                "Import State",
-                                leftSection=DashIconify(icon="carbon:upload", width=16),
-                                id="import-state-btn",
+                            dmc.MenuDropdown(
+                                [
+                                    dmc.MenuItem(
+                                        "Export State",
+                                        leftSection=DashIconify(
+                                            icon="carbon:download", width=16
+                                        ),
+                                        id="export-state-btn",
+                                    ),
+                                    dmc.MenuItem(
+                                        "Import State",
+                                        leftSection=DashIconify(
+                                            icon="carbon:upload", width=16
+                                        ),
+                                        id="import-state-btn",
+                                    ),
+                                ]
                             ),
-                        ]),
-                    ]),
+                        ]
+                    ),
                     dmc.ActionIcon(
                         DashIconify(icon="carbon:side-panel-close", width=20),
                         id="aside-toggle",
@@ -106,22 +115,29 @@ def create_header():
 
 
 def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
-    """
-    Create navigation sidebar for AppShellNavbar.
+    """Create navigation sidebar for AppShellNavbar.
 
     Parameters
     ----------
     sections : list[dict[str, object]]
-        Navigation sections with page metadata
+        Input value for ``sections``.
 
     Returns
     -------
-    dmc.Accordion
-        Navigation links in collapsible sections
-    """
+    value : dmc.Accordion
+        Result produced by this function."""
 
     def get_attr(item, key, fallback=""):
-        """Read a key from a page definition."""
+        """Read a key from a page definition.
+
+        Parameters
+        ----------
+        item : Any
+            Input value for ``item``.
+        key : Any
+            Input value for ``key``.
+        fallback : Any
+            Value provided for this parameter."""
         if hasattr(item, key):
             return getattr(item, key)
         if isinstance(item, dict):
@@ -129,14 +145,26 @@ def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
         return fallback
 
     def create_nav_links(items: list[object]) -> list[dmc.NavLink]:
-        """Helper to create navigation links."""
+        """Helper to create navigation links.
+
+        Parameters
+        ----------
+        items : list[object]
+            Input value for ``items``.
+
+        Returns
+        -------
+        value : list[dmc.NavLink]
+            Result produced by this function."""
         links = []
         for item in items:
             page_id = get_attr(item, "id", get_attr(item, "value"))
             links.append(
                 dmc.NavLink(
                     label=get_attr(item, "label"),
-                    leftSection=DashIconify(icon=get_attr(item, "icon"), width=20, height=20),
+                    leftSection=DashIconify(
+                        icon=get_attr(item, "icon"), width=20, height=20
+                    ),
                     active=False,
                     variant="subtle",
                     id={"type": "nav-link", "index": page_id},
@@ -156,9 +184,13 @@ def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
         for index, group in enumerate(groups):
             label = group.get("label") if isinstance(group, dict) else None
             if label:
-                panel_children.append(dmc.Text(label, size="xs", fw=600, c="dimmed", pl="xs"))
+                panel_children.append(
+                    dmc.Text(label, size="xs", fw=600, c="dimmed", pl="xs")
+                )
             group_pages = group.get("pages") if isinstance(group, dict) else []
-            panel_children.extend(create_nav_links(cast(list[object], group_pages or [])))
+            panel_children.extend(
+                create_nav_links(cast(list[object], group_pages or []))
+            )
             if index < len(groups) - 1:
                 panel_children.append(dmc.Divider(my="xs"))
         accordion_items.append(
@@ -185,14 +217,7 @@ def create_navigation(sections: list[dict[str, object]]) -> dmc.Accordion:
 
 
 def create_aside():
-    """
-    Create aside panel for dataset selector.
-
-    Returns
-    -------
-    dmc.Stack
-        Aside content with dataset selector
-    """
+    """Create aside panel for dataset selector."""
     return dmc.Stack(
         [
             dmc.Card(
@@ -253,20 +278,15 @@ def create_aside():
 
 
 def create_footer():
-    """
-    Create application footer.
-
-    Returns
-    -------
-    dmc.Group
-        Footer content with credits and links
-    """
+    """Create application footer."""
     return dmc.Group(
         [
             dmc.Text(APP_TITLE, size="sm", c="dimmed"),
             dmc.Group(
                 [
-                    dmc.Anchor("Documentation", href=f"#{HOME_PAGE_ID}", size="sm", c="dimmed"),
+                    dmc.Anchor(
+                        "Documentation", href=f"#{HOME_PAGE_ID}", size="sm", c="dimmed"
+                    ),
                     dmc.Text("•", size="sm", c="dimmed"),
                     dmc.Anchor(
                         "GitHub",

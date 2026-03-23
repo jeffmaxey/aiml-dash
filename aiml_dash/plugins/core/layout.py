@@ -4,17 +4,20 @@ import dash_mantine_components as dmc
 from dash import dcc
 from dash_iconify import DashIconify
 
-from aiml_dash.plugins.core.components import (
-    create_feature_card,
-    create_resource_item,
-    create_section_header,
-    create_step_card,
-)
+from aiml_dash.plugins.core.components import (create_feature_card,
+                                               create_resource_item,
+                                               create_section_header,
+                                               create_step_card)
 from aiml_dash.plugins.core.styles import CONTAINER_SIZE, SECTION_GAP
 
 
 def home_layout() -> dmc.Container:
-    """Create the home page layout."""
+    """Create the home page layout.
+
+    Returns
+    -------
+    value : dmc.Container
+        Result produced by this function."""
 
     return dmc.Container(
         dmc.Stack(
@@ -25,7 +28,11 @@ def home_layout() -> dmc.Container:
                         [
                             dmc.Group(
                                 [
-                                    DashIconify(icon="carbon:machine-learning", width=48, color="#339af0"),
+                                    DashIconify(
+                                        icon="carbon:machine-learning",
+                                        width=48,
+                                        color="#339af0",
+                                    ),
                                     dmc.Title("AIML Dash", order=1),
                                 ],
                                 gap="md",
@@ -45,7 +52,9 @@ def home_layout() -> dmc.Container:
                                     ),
                                     dmc.Button(
                                         "View on GitHub",
-                                        leftSection=DashIconify(icon="carbon:logo-github"),
+                                        leftSection=DashIconify(
+                                            icon="carbon:logo-github"
+                                        ),
                                         variant="light",
                                         href="https://github.com/jeffmaxey/aiml-dash",
                                         target="_blank",
@@ -59,9 +68,10 @@ def home_layout() -> dmc.Container:
                     withBorder=True,
                     radius="md",
                     p="xl",
-                    style={"background": "linear-gradient(135deg, rgba(51, 154, 240, 0.1) 0%, rgba(51, 154, 240, 0.05) 100%)"},
+                    style={
+                        "background": "linear-gradient(135deg, rgba(51, 154, 240, 0.1) 0%, rgba(51, 154, 240, 0.05) 100%)"
+                    },
                 ),
-                
                 # Key Features
                 create_section_header(
                     "Key Features",
@@ -104,11 +114,11 @@ def home_layout() -> dmc.Container:
                     spacing="md",
                     verticalSpacing="md",
                 ),
-                
                 dmc.Divider(),
-                
                 # Quick Start
-                create_section_header("Quick Start", "Get AIML Dash running in three simple steps"),
+                create_section_header(
+                    "Quick Start", "Get AIML Dash running in three simple steps"
+                ),
                 dmc.Stack(
                     [
                         create_step_card(
@@ -132,22 +142,40 @@ def home_layout() -> dmc.Container:
                     ],
                     gap="md",
                 ),
-                
                 dmc.Divider(),
-                
                 # Available Sections
-                create_section_header("Explore Features", "Navigate through different analysis sections"),
+                create_section_header(
+                    "Explore Features", "Navigate through different analysis sections"
+                ),
                 dmc.SimpleGrid(
                     [
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(DashIconify(icon="carbon:data-table", width=24), size="xl", radius="md", variant="light", color="blue"),
-                                    dmc.Stack([
-                                        dmc.Text("Data", fw=600, size="lg"),
-                                        dmc.Text("Import, explore, transform, and visualize datasets", size="sm", c="dimmed"),
-                                    ], gap=4),
-                                ], align="flex-start"),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:data-table", width=24
+                                            ),
+                                            size="xl",
+                                            radius="md",
+                                            variant="light",
+                                            color="blue",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Data", fw=600, size="lg"),
+                                                dmc.Text(
+                                                    "Import, explore, transform, and visualize datasets",
+                                                    size="sm",
+                                                    c="dimmed",
+                                                ),
+                                            ],
+                                            gap=4,
+                                        ),
+                                    ],
+                                    align="flex-start",
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -155,13 +183,31 @@ def home_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(DashIconify(icon="carbon:chart-line", width=24), size="xl", radius="md", variant="light", color="green"),
-                                    dmc.Stack([
-                                        dmc.Text("Basics", fw=600, size="lg"),
-                                        dmc.Text("Statistical tests, correlation, and hypothesis testing", size="sm", c="dimmed"),
-                                    ], gap=4),
-                                ], align="flex-start"),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:chart-line", width=24
+                                            ),
+                                            size="xl",
+                                            radius="md",
+                                            variant="light",
+                                            color="green",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Basics", fw=600, size="lg"),
+                                                dmc.Text(
+                                                    "Statistical tests, correlation, and hypothesis testing",
+                                                    size="sm",
+                                                    c="dimmed",
+                                                ),
+                                            ],
+                                            gap=4,
+                                        ),
+                                    ],
+                                    align="flex-start",
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -169,13 +215,31 @@ def home_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(DashIconify(icon="carbon:chemistry", width=24), size="xl", radius="md", variant="light", color="orange"),
-                                    dmc.Stack([
-                                        dmc.Text("Design", fw=600, size="lg"),
-                                        dmc.Text("Experimental design, DOE, and sample size calculations", size="sm", c="dimmed"),
-                                    ], gap=4),
-                                ], align="flex-start"),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:chemistry", width=24
+                                            ),
+                                            size="xl",
+                                            radius="md",
+                                            variant="light",
+                                            color="orange",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Design", fw=600, size="lg"),
+                                                dmc.Text(
+                                                    "Experimental design, DOE, and sample size calculations",
+                                                    size="sm",
+                                                    c="dimmed",
+                                                ),
+                                            ],
+                                            gap=4,
+                                        ),
+                                    ],
+                                    align="flex-start",
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -183,13 +247,32 @@ def home_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(DashIconify(icon="carbon:machine-learning-model", width=24), size="xl", radius="md", variant="light", color="violet"),
-                                    dmc.Stack([
-                                        dmc.Text("Model", fw=600, size="lg"),
-                                        dmc.Text("Machine learning models and predictive analytics", size="sm", c="dimmed"),
-                                    ], gap=4),
-                                ], align="flex-start"),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:machine-learning-model",
+                                                width=24,
+                                            ),
+                                            size="xl",
+                                            radius="md",
+                                            variant="light",
+                                            color="violet",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Model", fw=600, size="lg"),
+                                                dmc.Text(
+                                                    "Machine learning models and predictive analytics",
+                                                    size="sm",
+                                                    c="dimmed",
+                                                ),
+                                            ],
+                                            gap=4,
+                                        ),
+                                    ],
+                                    align="flex-start",
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -197,13 +280,33 @@ def home_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(DashIconify(icon="carbon:chart-3d", width=24), size="xl", radius="md", variant="light", color="pink"),
-                                    dmc.Stack([
-                                        dmc.Text("Multivariate", fw=600, size="lg"),
-                                        dmc.Text("Advanced multivariate analysis and clustering", size="sm", c="dimmed"),
-                                    ], gap=4),
-                                ], align="flex-start"),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:chart-3d", width=24
+                                            ),
+                                            size="xl",
+                                            radius="md",
+                                            variant="light",
+                                            color="pink",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text(
+                                                    "Multivariate", fw=600, size="lg"
+                                                ),
+                                                dmc.Text(
+                                                    "Advanced multivariate analysis and clustering",
+                                                    size="sm",
+                                                    c="dimmed",
+                                                ),
+                                            ],
+                                            gap=4,
+                                        ),
+                                    ],
+                                    align="flex-start",
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -211,13 +314,31 @@ def home_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(DashIconify(icon="carbon:settings", width=24), size="xl", radius="md", variant="light", color="gray"),
-                                    dmc.Stack([
-                                        dmc.Text("Settings", fw=600, size="lg"),
-                                        dmc.Text("Configure plugins and application preferences", size="sm", c="dimmed"),
-                                    ], gap=4),
-                                ], align="flex-start"),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:settings", width=24
+                                            ),
+                                            size="xl",
+                                            radius="md",
+                                            variant="light",
+                                            color="gray",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Settings", fw=600, size="lg"),
+                                                dmc.Text(
+                                                    "Configure plugins and application preferences",
+                                                    size="sm",
+                                                    c="dimmed",
+                                                ),
+                                            ],
+                                            gap=4,
+                                        ),
+                                    ],
+                                    align="flex-start",
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -227,9 +348,7 @@ def home_layout() -> dmc.Container:
                     cols={"base": 1, "sm": 2, "md": 3},
                     spacing="md",
                 ),
-                
                 dmc.Divider(),
-                
                 # Resources
                 create_section_header("Resources", "Learn more about AIML Dash"),
                 dmc.Card(
@@ -266,7 +385,12 @@ def home_layout() -> dmc.Container:
 
 
 def help_layout() -> dmc.Container:
-    """Create the help page layout."""
+    """Create the help page layout.
+
+    Returns
+    -------
+    value : dmc.Container
+        Result produced by this function."""
 
     return dmc.Container(
         dmc.Stack(
@@ -275,7 +399,6 @@ def help_layout() -> dmc.Container:
                     "Help & Documentation",
                     "Comprehensive guides and resources for using AIML Dash",
                 ),
-                
                 # Quick Help
                 dmc.Card(
                     dmc.Stack(
@@ -309,36 +432,38 @@ def help_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # Documentation Links
                 dmc.Card(
                     dmc.Stack(
                         [
                             dmc.Text("Documentation", fw=600, size="lg"),
                             dmc.Divider(),
-                            dmc.Group([
-                                dmc.Button(
-                                    "Installation Guide",
-                                    leftSection=DashIconify(icon="carbon:download"),
-                                    variant="light",
-                                    href="https://jeffmaxey.github.io/aiml-dash/getting-started/installation/",
-                                    target="_blank",
-                                ),
-                                dmc.Button(
-                                    "Quick Start",
-                                    leftSection=DashIconify(icon="carbon:rocket"),
-                                    variant="light",
-                                    href="https://jeffmaxey.github.io/aiml-dash/getting-started/quick-start/",
-                                    target="_blank",
-                                ),
-                                dmc.Button(
-                                    "User Guide",
-                                    leftSection=DashIconify(icon="carbon:book"),
-                                    variant="light",
-                                    href="https://jeffmaxey.github.io/aiml-dash/user-guide/overview/",
-                                    target="_blank",
-                                ),
-                            ], gap="sm"),
+                            dmc.Group(
+                                [
+                                    dmc.Button(
+                                        "Installation Guide",
+                                        leftSection=DashIconify(icon="carbon:download"),
+                                        variant="light",
+                                        href="https://jeffmaxey.github.io/aiml-dash/getting-started/installation/",
+                                        target="_blank",
+                                    ),
+                                    dmc.Button(
+                                        "Quick Start",
+                                        leftSection=DashIconify(icon="carbon:rocket"),
+                                        variant="light",
+                                        href="https://jeffmaxey.github.io/aiml-dash/getting-started/quick-start/",
+                                        target="_blank",
+                                    ),
+                                    dmc.Button(
+                                        "User Guide",
+                                        leftSection=DashIconify(icon="carbon:book"),
+                                        variant="light",
+                                        href="https://jeffmaxey.github.io/aiml-dash/user-guide/overview/",
+                                        target="_blank",
+                                    ),
+                                ],
+                                gap="sm",
+                            ),
                         ],
                         gap="md",
                     ),
@@ -346,7 +471,6 @@ def help_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # Feature Overview
                 dmc.Card(
                     dmc.Stack(
@@ -357,88 +481,181 @@ def help_layout() -> dmc.Container:
                                 [
                                     dmc.AccordionItem(
                                         [
-                                            dmc.AccordionControl("Data Management", icon=DashIconify(icon="carbon:data-table", width=20)),
+                                            dmc.AccordionControl(
+                                                "Data Management",
+                                                icon=DashIconify(
+                                                    icon="carbon:data-table", width=20
+                                                ),
+                                            ),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("Import data from CSV, Excel, JSON, or SQL databases", size="sm"),
-                                                    dmc.Text("Transform and filter datasets with Python expressions", size="sm"),
-                                                    dmc.Text("Create new variables and aggregate data", size="sm"),
-                                                    dmc.Text("Export results in multiple formats", size="sm"),
-                                                    dmc.Button(
-                                                        "Learn More",
-                                                        size="xs",
-                                                        variant="subtle",
-                                                        leftSection=DashIconify(icon="carbon:arrow-right", width=16),
-                                                        href="https://jeffmaxey.github.io/aiml-dash/user-guide/data-management/",
-                                                        target="_blank",
-                                                    ),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "Import data from CSV, Excel, JSON, or SQL databases",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Transform and filter datasets with Python expressions",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Create new variables and aggregate data",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Export results in multiple formats",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Button(
+                                                            "Learn More",
+                                                            size="xs",
+                                                            variant="subtle",
+                                                            leftSection=DashIconify(
+                                                                icon="carbon:arrow-right",
+                                                                width=16,
+                                                            ),
+                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/data-management/",
+                                                            target="_blank",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="data",
                                     ),
                                     dmc.AccordionItem(
                                         [
-                                            dmc.AccordionControl("Statistical Analysis", icon=DashIconify(icon="carbon:chart-line", width=20)),
+                                            dmc.AccordionControl(
+                                                "Statistical Analysis",
+                                                icon=DashIconify(
+                                                    icon="carbon:chart-line", width=20
+                                                ),
+                                            ),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("Hypothesis testing: t-tests, ANOVA, chi-square", size="sm"),
-                                                    dmc.Text("Correlation and regression analysis", size="sm"),
-                                                    dmc.Text("Probability calculations and distributions", size="sm"),
-                                                    dmc.Text("Cross-tabulation and goodness-of-fit tests", size="sm"),
-                                                    dmc.Button(
-                                                        "Learn More",
-                                                        size="xs",
-                                                        variant="subtle",
-                                                        leftSection=DashIconify(icon="carbon:arrow-right", width=16),
-                                                        href="https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
-                                                        target="_blank",
-                                                    ),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "Hypothesis testing: t-tests, ANOVA, chi-square",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Correlation and regression analysis",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Probability calculations and distributions",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Cross-tabulation and goodness-of-fit tests",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Button(
+                                                            "Learn More",
+                                                            size="xs",
+                                                            variant="subtle",
+                                                            leftSection=DashIconify(
+                                                                icon="carbon:arrow-right",
+                                                                width=16,
+                                                            ),
+                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
+                                                            target="_blank",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="basics",
                                     ),
                                     dmc.AccordionItem(
                                         [
-                                            dmc.AccordionControl("Machine Learning", icon=DashIconify(icon="carbon:machine-learning", width=20)),
+                                            dmc.AccordionControl(
+                                                "Machine Learning",
+                                                icon=DashIconify(
+                                                    icon="carbon:machine-learning",
+                                                    width=20,
+                                                ),
+                                            ),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("Linear and logistic regression", size="sm"),
-                                                    dmc.Text("Decision trees and random forests", size="sm"),
-                                                    dmc.Text("Neural networks and gradient boosting", size="sm"),
-                                                    dmc.Text("Model evaluation and comparison", size="sm"),
-                                                    dmc.Button(
-                                                        "Learn More",
-                                                        size="xs",
-                                                        variant="subtle",
-                                                        leftSection=DashIconify(icon="carbon:arrow-right", width=16),
-                                                        href="https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
-                                                        target="_blank",
-                                                    ),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "Linear and logistic regression",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Decision trees and random forests",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Neural networks and gradient boosting",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Model evaluation and comparison",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Button(
+                                                            "Learn More",
+                                                            size="xs",
+                                                            variant="subtle",
+                                                            leftSection=DashIconify(
+                                                                icon="carbon:arrow-right",
+                                                                width=16,
+                                                            ),
+                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
+                                                            target="_blank",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="model",
                                     ),
                                     dmc.AccordionItem(
                                         [
-                                            dmc.AccordionControl("Visualization", icon=DashIconify(icon="carbon:chart-bubble", width=20)),
+                                            dmc.AccordionControl(
+                                                "Visualization",
+                                                icon=DashIconify(
+                                                    icon="carbon:chart-bubble", width=20
+                                                ),
+                                            ),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("Interactive scatter plots, line charts, and bar charts", size="sm"),
-                                                    dmc.Text("Histograms, box plots, and violin plots", size="sm"),
-                                                    dmc.Text("Heatmaps and correlation matrices", size="sm"),
-                                                    dmc.Text("3D visualizations and custom plots", size="sm"),
-                                                    dmc.Button(
-                                                        "Learn More",
-                                                        size="xs",
-                                                        variant="subtle",
-                                                        leftSection=DashIconify(icon="carbon:arrow-right", width=16),
-                                                        href="https://jeffmaxey.github.io/aiml-dash/user-guide/visualization/",
-                                                        target="_blank",
-                                                    ),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "Interactive scatter plots, line charts, and bar charts",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Histograms, box plots, and violin plots",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "Heatmaps and correlation matrices",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "3D visualizations and custom plots",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Button(
+                                                            "Learn More",
+                                                            size="xs",
+                                                            variant="subtle",
+                                                            leftSection=DashIconify(
+                                                                icon="carbon:arrow-right",
+                                                                width=16,
+                                                            ),
+                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/visualization/",
+                                                            target="_blank",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="viz",
@@ -453,7 +670,6 @@ def help_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # Troubleshooting
                 dmc.Card(
                     dmc.Stack(
@@ -466,12 +682,27 @@ def help_layout() -> dmc.Container:
                                         [
                                             dmc.AccordionControl("Data Import Issues"),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("• Check file format matches the extension", size="sm"),
-                                                    dmc.Text("• Try different encoding options (UTF-8, Latin-1)", size="sm"),
-                                                    dmc.Text("• Verify delimiter settings for CSV files", size="sm"),
-                                                    dmc.Text("• Ensure file permissions are correct", size="sm"),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "• Check file format matches the extension",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Try different encoding options (UTF-8, Latin-1)",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Verify delimiter settings for CSV files",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Ensure file permissions are correct",
+                                                            size="sm",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="import",
@@ -480,12 +711,27 @@ def help_layout() -> dmc.Container:
                                         [
                                             dmc.AccordionControl("Performance Issues"),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("• Filter large datasets before visualization", size="sm"),
-                                                    dmc.Text("• Use pagination for tables with many rows", size="sm"),
-                                                    dmc.Text("• Sample data for initial exploration", size="sm"),
-                                                    dmc.Text("• Convert string columns to categories", size="sm"),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "• Filter large datasets before visualization",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Use pagination for tables with many rows",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Sample data for initial exploration",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Convert string columns to categories",
+                                                            size="sm",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="performance",
@@ -494,12 +740,27 @@ def help_layout() -> dmc.Container:
                                         [
                                             dmc.AccordionControl("Plugin Problems"),
                                             dmc.AccordionPanel(
-                                                dmc.Stack([
-                                                    dmc.Text("• Check plugin is enabled in Settings", size="sm"),
-                                                    dmc.Text("• Verify plugin dependencies are installed", size="sm"),
-                                                    dmc.Text("• Review logs for error messages", size="sm"),
-                                                    dmc.Text("• Try disabling and re-enabling the plugin", size="sm"),
-                                                ], gap="xs"),
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Text(
+                                                            "• Check plugin is enabled in Settings",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Verify plugin dependencies are installed",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Review logs for error messages",
+                                                            size="sm",
+                                                        ),
+                                                        dmc.Text(
+                                                            "• Try disabling and re-enabling the plugin",
+                                                            size="sm",
+                                                        ),
+                                                    ],
+                                                    gap="xs",
+                                                ),
                                             ),
                                         ],
                                         value="plugins",
@@ -514,21 +775,26 @@ def help_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # Support
                 dmc.Alert(
-                    dmc.Stack([
-                        dmc.Text("Need additional help?", fw=600),
-                        dmc.Text("File an issue on GitHub with logs, screenshots, and steps to reproduce.", size="sm"),
-                        dmc.Button(
-                            "Report an Issue",
-                            leftSection=DashIconify(icon="carbon:logo-github"),
-                            variant="outline",
-                            href="https://github.com/jeffmaxey/aiml-dash/issues/new",
-                            target="_blank",
-                            mt="xs",
-                        ),
-                    ], gap="xs"),
+                    dmc.Stack(
+                        [
+                            dmc.Text("Need additional help?", fw=600),
+                            dmc.Text(
+                                "File an issue on GitHub with logs, screenshots, and steps to reproduce.",
+                                size="sm",
+                            ),
+                            dmc.Button(
+                                "Report an Issue",
+                                leftSection=DashIconify(icon="carbon:logo-github"),
+                                variant="outline",
+                                href="https://github.com/jeffmaxey/aiml-dash/issues/new",
+                                target="_blank",
+                                mt="xs",
+                            ),
+                        ],
+                        gap="xs",
+                    ),
                     title="Support",
                     color="blue",
                     icon=DashIconify(icon="carbon:chat"),
@@ -542,12 +808,19 @@ def help_layout() -> dmc.Container:
 
 
 def settings_layout() -> dmc.Container:
-    """Create the plugin settings page layout."""
+    """Create the plugin settings page layout.
+
+    Returns
+    -------
+    value : dmc.Container
+        Result produced by this function."""
 
     return dmc.Container(
         dmc.Stack(
             [
-                create_section_header("Settings", "Manage plugins and import configurations."),
+                create_section_header(
+                    "Settings", "Manage plugins and import configurations."
+                ),
                 dmc.Card(
                     dmc.Stack(
                         [
@@ -595,7 +868,12 @@ def settings_layout() -> dmc.Container:
 
 
 def logs_layout() -> dmc.Container:
-    """Create the application logs page layout."""
+    """Create the application logs page layout.
+
+    Returns
+    -------
+    value : dmc.Container
+        Result produced by this function."""
 
     return dmc.Container(
         dmc.Stack(
@@ -604,7 +882,6 @@ def logs_layout() -> dmc.Container:
                     "Application Logs",
                     "View system logs, errors, and diagnostic information",
                 ),
-                
                 # Log Controls
                 dmc.Card(
                     dmc.Group(
@@ -662,25 +939,36 @@ def logs_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # Log Statistics
                 dmc.SimpleGrid(
                     [
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(
-                                        DashIconify(icon="carbon:information", width=20),
-                                        size="lg",
-                                        radius="md",
-                                        variant="light",
-                                        color="blue",
-                                    ),
-                                    dmc.Stack([
-                                        dmc.Text("Info", size="sm", c="dimmed"),
-                                        dmc.Text(id="log-count-info", children="0", fw=700, size="xl"),
-                                    ], gap=0),
-                                ]),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:information", width=20
+                                            ),
+                                            size="lg",
+                                            radius="md",
+                                            variant="light",
+                                            color="blue",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Info", size="sm", c="dimmed"),
+                                                dmc.Text(
+                                                    id="log-count-info",
+                                                    children="0",
+                                                    fw=700,
+                                                    size="xl",
+                                                ),
+                                            ],
+                                            gap=0,
+                                        ),
+                                    ]
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -688,19 +976,33 @@ def logs_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(
-                                        DashIconify(icon="carbon:warning", width=20),
-                                        size="lg",
-                                        radius="md",
-                                        variant="light",
-                                        color="yellow",
-                                    ),
-                                    dmc.Stack([
-                                        dmc.Text("Warnings", size="sm", c="dimmed"),
-                                        dmc.Text(id="log-count-warning", children="0", fw=700, size="xl"),
-                                    ], gap=0),
-                                ]),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(
+                                                icon="carbon:warning", width=20
+                                            ),
+                                            size="lg",
+                                            radius="md",
+                                            variant="light",
+                                            color="yellow",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text(
+                                                    "Warnings", size="sm", c="dimmed"
+                                                ),
+                                                dmc.Text(
+                                                    id="log-count-warning",
+                                                    children="0",
+                                                    fw=700,
+                                                    size="xl",
+                                                ),
+                                            ],
+                                            gap=0,
+                                        ),
+                                    ]
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -708,19 +1010,31 @@ def logs_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(
-                                        DashIconify(icon="carbon:error", width=20),
-                                        size="lg",
-                                        radius="md",
-                                        variant="light",
-                                        color="red",
-                                    ),
-                                    dmc.Stack([
-                                        dmc.Text("Errors", size="sm", c="dimmed"),
-                                        dmc.Text(id="log-count-error", children="0", fw=700, size="xl"),
-                                    ], gap=0),
-                                ]),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(icon="carbon:error", width=20),
+                                            size="lg",
+                                            radius="md",
+                                            variant="light",
+                                            color="red",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text(
+                                                    "Errors", size="sm", c="dimmed"
+                                                ),
+                                                dmc.Text(
+                                                    id="log-count-error",
+                                                    children="0",
+                                                    fw=700,
+                                                    size="xl",
+                                                ),
+                                            ],
+                                            gap=0,
+                                        ),
+                                    ]
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -728,19 +1042,31 @@ def logs_layout() -> dmc.Container:
                         ),
                         dmc.Card(
                             [
-                                dmc.Group([
-                                    dmc.ThemeIcon(
-                                        DashIconify(icon="carbon:debug", width=20),
-                                        size="lg",
-                                        radius="md",
-                                        variant="light",
-                                        color="gray",
-                                    ),
-                                    dmc.Stack([
-                                        dmc.Text("Total Logs", size="sm", c="dimmed"),
-                                        dmc.Text(id="log-count-total", children="0", fw=700, size="xl"),
-                                    ], gap=0),
-                                ]),
+                                dmc.Group(
+                                    [
+                                        dmc.ThemeIcon(
+                                            DashIconify(icon="carbon:debug", width=20),
+                                            size="lg",
+                                            radius="md",
+                                            variant="light",
+                                            color="gray",
+                                        ),
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text(
+                                                    "Total Logs", size="sm", c="dimmed"
+                                                ),
+                                                dmc.Text(
+                                                    id="log-count-total",
+                                                    children="0",
+                                                    fw=700,
+                                                    size="xl",
+                                                ),
+                                            ],
+                                            gap=0,
+                                        ),
+                                    ]
+                                ),
                             ],
                             withBorder=True,
                             radius="md",
@@ -750,20 +1076,33 @@ def logs_layout() -> dmc.Container:
                     cols={"base": 2, "sm": 4},
                     spacing="md",
                 ),
-                
                 # Log Display
                 dmc.Card(
                     dmc.Stack(
                         [
-                            dmc.Group([
-                                dmc.Text("Recent Logs", fw=600, size="lg"),
-                                dmc.Badge(id="log-status-badge", children="Live", color="green", variant="light"),
-                            ], justify="space-between"),
+                            dmc.Group(
+                                [
+                                    dmc.Text("Recent Logs", fw=600, size="lg"),
+                                    dmc.Badge(
+                                        id="log-status-badge",
+                                        children="Live",
+                                        color="green",
+                                        variant="light",
+                                    ),
+                                ],
+                                justify="space-between",
+                            ),
                             dmc.Divider(),
                             dmc.Stack(
                                 id="log-entries-container",
                                 children=[
-                                    dmc.Text("No logs available yet. Logs will appear here as the application runs.", size="sm", c="dimmed", ta="center", py="xl"),
+                                    dmc.Text(
+                                        "No logs available yet. Logs will appear here as the application runs.",
+                                        size="sm",
+                                        c="dimmed",
+                                        ta="center",
+                                        py="xl",
+                                    ),
                                 ],
                                 gap="xs",
                                 style={"maxHeight": "600px", "overflowY": "auto"},
@@ -775,7 +1114,6 @@ def logs_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # System Information
                 dmc.Card(
                     dmc.Stack(
@@ -784,22 +1122,60 @@ def logs_layout() -> dmc.Container:
                             dmc.Divider(),
                             dmc.SimpleGrid(
                                 [
-                                    dmc.Stack([
-                                        dmc.Text("Python Version", size="sm", c="dimmed"),
-                                        dmc.Text(id="sys-python-version", children="—", size="sm", fw=500),
-                                    ], gap=4),
-                                    dmc.Stack([
-                                        dmc.Text("Dash Version", size="sm", c="dimmed"),
-                                        dmc.Text(id="sys-dash-version", children="—", size="sm", fw=500),
-                                    ], gap=4),
-                                    dmc.Stack([
-                                        dmc.Text("Uptime", size="sm", c="dimmed"),
-                                        dmc.Text(id="sys-uptime", children="—", size="sm", fw=500),
-                                    ], gap=4),
-                                    dmc.Stack([
-                                        dmc.Text("Active Plugins", size="sm", c="dimmed"),
-                                        dmc.Text(id="sys-plugin-count", children="—", size="sm", fw=500),
-                                    ], gap=4),
+                                    dmc.Stack(
+                                        [
+                                            dmc.Text(
+                                                "Python Version", size="sm", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                id="sys-python-version",
+                                                children="—",
+                                                size="sm",
+                                                fw=500,
+                                            ),
+                                        ],
+                                        gap=4,
+                                    ),
+                                    dmc.Stack(
+                                        [
+                                            dmc.Text(
+                                                "Dash Version", size="sm", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                id="sys-dash-version",
+                                                children="—",
+                                                size="sm",
+                                                fw=500,
+                                            ),
+                                        ],
+                                        gap=4,
+                                    ),
+                                    dmc.Stack(
+                                        [
+                                            dmc.Text("Uptime", size="sm", c="dimmed"),
+                                            dmc.Text(
+                                                id="sys-uptime",
+                                                children="—",
+                                                size="sm",
+                                                fw=500,
+                                            ),
+                                        ],
+                                        gap=4,
+                                    ),
+                                    dmc.Stack(
+                                        [
+                                            dmc.Text(
+                                                "Active Plugins", size="sm", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                id="sys-plugin-count",
+                                                children="—",
+                                                size="sm",
+                                                fw=500,
+                                            ),
+                                        ],
+                                        gap=4,
+                                    ),
                                 ],
                                 cols={"base": 2, "sm": 4},
                                 spacing="md",
@@ -811,17 +1187,14 @@ def logs_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
-                
                 # Download Component
                 dcc.Download(id="log-download"),
-                
                 # Refresh Interval
                 dcc.Interval(
                     id="log-refresh-interval",
                     interval=5000,  # 5 seconds
                     n_intervals=0,
                 ),
-                
                 dmc.Alert(
                     "Logs are stored in memory and will be cleared when the application restarts. Use the Download button to save logs permanently.",
                     title="Note",

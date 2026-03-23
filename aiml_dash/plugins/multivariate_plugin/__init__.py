@@ -1,57 +1,101 @@
-"""Multivariate plugin for AIML Dash."""
+"""Multivariate plugin definition.
 
-from aiml_dash.plugins.multivariate_plugin import callbacks
-from aiml_dash.plugins.multivariate_plugin.layout import *
+This module defines the multivariate plugin for AIML Dash and its page registry.
+"""
+
 from aiml_dash.plugins.models import Plugin, PluginPage
+from aiml_dash.plugins.multivariate_plugin import callbacks
+from aiml_dash.plugins.multivariate_plugin.constants import (
+    CONJOINT_ICON, CONJOINT_ID, FULL_FACTOR_ICON, FULL_FACTOR_ID,
+    HIERARCHICAL_CLUSTER_ICON, HIERARCHICAL_CLUSTER_ID, KMEANS_CLUSTER_ICON,
+    KMEANS_CLUSTER_ID, MDS_ICON, MDS_ID, PERCEPTUAL_MAP_ICON,
+    PERCEPTUAL_MAP_ID, PLUGIN_DESCRIPTION, PLUGIN_ID, PLUGIN_NAME,
+    PLUGIN_VERSION, PRE_FACTOR_ICON, PRE_FACTOR_ID, SECTION_NAME)
+from aiml_dash.plugins.multivariate_plugin.layout import (
+    conjoint_layout, fullfactor_layout, hierarchicalcluster_layout,
+    kmeanscluster_layout, mds_layout, perceptualmap_layout, prefactor_layout)
 
 
 def get_plugin() -> Plugin:
-    """Return the multivariate plugin definition."""
-    
+    """Return the multivariate plugin definition.
+
+    Returns
+    -------
+    value : Plugin
+        Result produced by this function."""
+
     pages = [
         PluginPage(
-            id="conjoint", label="Conjoint", icon="carbon:chart-multitype",
-            section="Multivariate", order=1, layout=conjoint_layout,
-            description="Conjoint analysis"
+            id=CONJOINT_ID,
+            label="Conjoint",
+            icon=CONJOINT_ICON,
+            section=SECTION_NAME,
+            order=1,
+            layout=conjoint_layout,
+            description="Conjoint analysis",
         ),
         PluginPage(
-            id="full-factor", label="Full Factor", icon="carbon:chart-3d",
-            section="Multivariate", order=2, layout=fullfactor_layout,
-            description="Full factorial analysis"
+            id=FULL_FACTOR_ID,
+            label="Full Factor",
+            icon=FULL_FACTOR_ICON,
+            section=SECTION_NAME,
+            order=2,
+            layout=fullfactor_layout,
+            description="Full factorial analysis",
         ),
         PluginPage(
-            id="hierarchical-cluster", label="Hierarchical Cluster", icon="carbon:network-3",
-            section="Multivariate", order=3, layout=hierarchicalcluster_layout,
-            description="Hierarchical clustering"
+            id=HIERARCHICAL_CLUSTER_ID,
+            label="Hierarchical Cluster",
+            icon=HIERARCHICAL_CLUSTER_ICON,
+            section=SECTION_NAME,
+            order=3,
+            layout=hierarchicalcluster_layout,
+            description="Hierarchical clustering",
         ),
         PluginPage(
-            id="kmeans-cluster", label="K-Means Cluster", icon="carbon:network-4",
-            section="Multivariate", order=4, layout=kmeanscluster_layout,
-            description="K-means clustering"
+            id=KMEANS_CLUSTER_ID,
+            label="K-Means Cluster",
+            icon=KMEANS_CLUSTER_ICON,
+            section=SECTION_NAME,
+            order=4,
+            layout=kmeanscluster_layout,
+            description="K-means clustering",
         ),
         PluginPage(
-            id="mds", label="MDS", icon="carbon:chart-scatter",
-            section="Multivariate", order=5, layout=mds_layout,
-            description="Multidimensional scaling"
+            id=MDS_ID,
+            label="MDS",
+            icon=MDS_ICON,
+            section=SECTION_NAME,
+            order=5,
+            layout=mds_layout,
+            description="Multidimensional scaling",
         ),
         PluginPage(
-            id="perceptual-map", label="Perceptual Map", icon="carbon:map",
-            section="Multivariate", order=6, layout=perceptualmap_layout,
-            description="Perceptual mapping"
+            id=PERCEPTUAL_MAP_ID,
+            label="Perceptual Map",
+            icon=PERCEPTUAL_MAP_ICON,
+            section=SECTION_NAME,
+            order=6,
+            layout=perceptualmap_layout,
+            description="Perceptual mapping",
         ),
         PluginPage(
-            id="pre-factor", label="Pre-Factor", icon="carbon:chart-area",
-            section="Multivariate", order=7, layout=prefactor_layout,
-            description="Factor analysis"
+            id=PRE_FACTOR_ID,
+            label="Pre-Factor",
+            icon=PRE_FACTOR_ICON,
+            section=SECTION_NAME,
+            order=7,
+            layout=prefactor_layout,
+            description="Factor analysis",
         ),
     ]
-    
+
     return Plugin(
-        id="multivariate",
-        name="Multivariate",
-        description="Multivariate analysis tools",
+        id=PLUGIN_ID,
+        name=PLUGIN_NAME,
+        description=PLUGIN_DESCRIPTION,
         pages=pages,
-        version="1.0.0",
+        version=PLUGIN_VERSION,
         default_enabled=True,
         locked=False,
         register_callbacks=callbacks.register_callbacks,

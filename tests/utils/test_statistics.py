@@ -1,42 +1,17 @@
 """Tests for statistics module."""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 from scipy import stats
 
-from aiml_dash.utils.statistics import (
-    n_obs,
-    n_missing,
-    percentile,
-    p01,
-    p025,
-    p05,
-    p10,
-    p25,
-    p75,
-    p90,
-    p95,
-    p975,
-    p99,
-    cv,
-    se,
-    me,
-    prop,
-    varprop,
-    sdprop,
-    seprop,
-    meprop,
-    varpop,
-    sdpop,
-    modal,
-    does_vary,
-    skew,
-    kurtosi,
-    explore,
-    chi_square_test,
-    STAT_FUNCTIONS,
-)
+from aiml_dash.utils.statistics import (STAT_FUNCTIONS, chi_square_test, cv,
+                                        does_vary, explore, kurtosi, me,
+                                        meprop, modal, n_missing, n_obs, p01,
+                                        p05, p10, p025, p25, p75, p90, p95,
+                                        p99, p975, percentile, prop, sdpop,
+                                        sdprop, se, seprop, skew, varpop,
+                                        varprop)
 
 
 @pytest.fixture
@@ -60,23 +35,39 @@ def sample_proportion():
 @pytest.fixture
 def sample_dataframe():
     """Create a sample dataframe for testing."""
-    return pd.DataFrame({
-        "A": [1, 2, 3, 4, 5],
-        "B": [10, 20, 30, 40, 50],
-        "C": ["cat1", "cat2", "cat1", "cat2", "cat1"],
-    })
+    return pd.DataFrame(
+        {
+            "A": [1, 2, 3, 4, 5],
+            "B": [10, 20, 30, 40, 50],
+            "C": ["cat1", "cat2", "cat1", "cat2", "cat1"],
+        }
+    )
 
 
 class TestBasicStats:
     """Test basic statistical functions."""
 
     def test_n_obs(self, sample_series, sample_series_with_nan):
-        """Test n_obs function."""
+        """Test n_obs function.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Input value for ``sample_series``.
+        sample_series_with_nan : Any
+            Value provided for this parameter."""
         assert n_obs(sample_series) == 10
         assert n_obs(sample_series_with_nan) == 10
 
     def test_n_missing(self, sample_series, sample_series_with_nan):
-        """Test n_missing function."""
+        """Test n_missing function.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Input value for ``sample_series``.
+        sample_series_with_nan : Any
+            Value provided for this parameter."""
         assert n_missing(sample_series) == 0
         assert n_missing(sample_series_with_nan) == 2
 
@@ -85,55 +76,110 @@ class TestPercentiles:
     """Test percentile functions."""
 
     def test_percentile(self, sample_series):
-        """Test percentile function."""
+        """Test percentile function.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         assert percentile(sample_series, 0.5) == 5.5
         assert percentile(sample_series, 0.25) == 3.25
 
     def test_p01(self, sample_series):
-        """Test 1st percentile."""
+        """Test 1st percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p01(sample_series)
         assert result == pytest.approx(1.09, abs=0.01)
 
     def test_p025(self, sample_series):
-        """Test 2.5th percentile."""
+        """Test 2.5th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p025(sample_series)
         assert result == pytest.approx(1.225, abs=0.01)
 
     def test_p05(self, sample_series):
-        """Test 5th percentile."""
+        """Test 5th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p05(sample_series)
         assert result == pytest.approx(1.45, abs=0.01)
 
     def test_p10(self, sample_series):
-        """Test 10th percentile."""
+        """Test 10th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p10(sample_series)
         assert result == pytest.approx(1.9, abs=0.01)
 
     def test_p25(self, sample_series):
-        """Test 25th percentile."""
+        """Test 25th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         assert p25(sample_series) == 3.25
 
     def test_p75(self, sample_series):
-        """Test 75th percentile."""
+        """Test 75th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         assert p75(sample_series) == 7.75
 
     def test_p90(self, sample_series):
-        """Test 90th percentile."""
+        """Test 90th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p90(sample_series)
         assert result == pytest.approx(9.1, abs=0.01)
 
     def test_p95(self, sample_series):
-        """Test 95th percentile."""
+        """Test 95th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p95(sample_series)
         assert result == pytest.approx(9.55, abs=0.01)
 
     def test_p975(self, sample_series):
-        """Test 97.5th percentile."""
+        """Test 97.5th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p975(sample_series)
         assert result == pytest.approx(9.775, abs=0.01)
 
     def test_p99(self, sample_series):
-        """Test 99th percentile."""
+        """Test 99th percentile.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = p99(sample_series)
         assert result == pytest.approx(9.91, abs=0.01)
 
@@ -142,7 +188,12 @@ class TestVariability:
     """Test variability measures."""
 
     def test_cv(self, sample_series):
-        """Test coefficient of variation."""
+        """Test coefficient of variation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = cv(sample_series)
         expected = sample_series.std() / sample_series.mean()
         assert result == pytest.approx(expected)
@@ -154,25 +205,45 @@ class TestVariability:
         assert np.isnan(result)
 
     def test_se(self, sample_series):
-        """Test standard error."""
+        """Test standard error.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = se(sample_series)
         expected = sample_series.std() / np.sqrt(10)
         assert result == pytest.approx(expected)
 
     def test_me(self, sample_series):
-        """Test margin of error."""
+        """Test margin of error.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = me(sample_series, conf=0.95)
         assert result > 0
         assert isinstance(result, float)
 
     def test_varpop(self, sample_series):
-        """Test population variance."""
+        """Test population variance.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = varpop(sample_series)
         expected = sample_series.var(ddof=0)
         assert result == pytest.approx(expected)
 
     def test_sdpop(self, sample_series):
-        """Test population standard deviation."""
+        """Test population standard deviation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = sdpop(sample_series)
         expected = sample_series.std(ddof=0)
         assert result == pytest.approx(expected)
@@ -182,33 +253,58 @@ class TestProportions:
     """Test proportion functions."""
 
     def test_prop(self, sample_proportion):
-        """Test proportion calculation."""
+        """Test proportion calculation.
+
+        Parameters
+        ----------
+        sample_proportion : Any
+            Value provided for this parameter."""
         result = prop(sample_proportion)
         assert result == 0.7  # 7 out of 10 are 1
 
     def test_varprop(self, sample_proportion):
-        """Test variance of proportion."""
+        """Test variance of proportion.
+
+        Parameters
+        ----------
+        sample_proportion : Any
+            Value provided for this parameter."""
         result = varprop(sample_proportion)
         p = 0.7
         expected = p * (1 - p)
         assert result == pytest.approx(expected)
 
     def test_sdprop(self, sample_proportion):
-        """Test standard deviation of proportion."""
+        """Test standard deviation of proportion.
+
+        Parameters
+        ----------
+        sample_proportion : Any
+            Value provided for this parameter."""
         result = sdprop(sample_proportion)
         p = 0.7
         expected = np.sqrt(p * (1 - p))
         assert result == pytest.approx(expected)
 
     def test_seprop(self, sample_proportion):
-        """Test standard error of proportion."""
+        """Test standard error of proportion.
+
+        Parameters
+        ----------
+        sample_proportion : Any
+            Value provided for this parameter."""
         result = seprop(sample_proportion)
         p = 0.7
         expected = np.sqrt(p * (1 - p) / 10)
         assert result == pytest.approx(expected)
 
     def test_meprop(self, sample_proportion):
-        """Test margin of error for proportion."""
+        """Test margin of error for proportion.
+
+        Parameters
+        ----------
+        sample_proportion : Any
+            Value provided for this parameter."""
         result = meprop(sample_proportion, conf=0.95)
         assert result > 0
         assert isinstance(result, float)
@@ -218,7 +314,12 @@ class TestDistribution:
     """Test distribution functions."""
 
     def test_modal(self, sample_series):
-        """Test mode calculation."""
+        """Test mode calculation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         series = pd.Series([1, 2, 2, 3, 3, 3])
         result = modal(series)
         assert result == 3
@@ -230,7 +331,12 @@ class TestDistribution:
         assert np.isnan(result)
 
     def test_does_vary_true(self, sample_series):
-        """Test does_vary returns True for varying data."""
+        """Test does_vary returns True for varying data.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         assert does_vary(sample_series) is True
 
     def test_does_vary_false(self):
@@ -239,13 +345,23 @@ class TestDistribution:
         assert does_vary(series) is False
 
     def test_skew(self, sample_series):
-        """Test skewness calculation."""
+        """Test skewness calculation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = skew(sample_series)
         expected = stats.skew(sample_series.dropna())
         assert result == pytest.approx(expected)
 
     def test_kurtosi(self, sample_series):
-        """Test kurtosis calculation."""
+        """Test kurtosis calculation.
+
+        Parameters
+        ----------
+        sample_series : Any
+            Value provided for this parameter."""
         result = kurtosi(sample_series)
         expected = stats.kurtosis(sample_series.dropna())
         assert result == pytest.approx(expected)
@@ -271,7 +387,12 @@ class TestExplore:
     """Test explore function."""
 
     def test_explore_basic(self, sample_dataframe):
-        """Test basic explore functionality."""
+        """Test basic explore functionality.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = explore(sample_dataframe, vars=["A", "B"], fun=["mean", "min", "max"])
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 1
@@ -279,15 +400,27 @@ class TestExplore:
         assert "B_mean" in result.columns
 
     def test_explore_with_groupby(self, sample_dataframe):
-        """Test explore with groupby."""
+        """Test explore with groupby.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
         result = explore(sample_dataframe, vars=["A"], byvar=["C"], fun=["mean"])
         assert isinstance(result, pd.DataFrame)
         assert "C" in result.columns
         assert len(result) == 2  # Two categories
 
     def test_explore_with_filter(self, sample_dataframe):
-        """Test explore with data filter."""
-        result = explore(sample_dataframe, vars=["A"], fun=["mean"], data_filter="A > 2")
+        """Test explore with data filter.
+
+        Parameters
+        ----------
+        sample_dataframe : Any
+            Value provided for this parameter."""
+        result = explore(
+            sample_dataframe, vars=["A"], fun=["mean"], data_filter="A > 2"
+        )
         assert isinstance(result, pd.DataFrame)
         # Should only include rows where A > 2
 

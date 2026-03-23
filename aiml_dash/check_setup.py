@@ -30,10 +30,11 @@ def _ensure_project_on_path() -> None:
 
 def check_imports() -> bool:
     """Verify required third-party packages can be imported.
-    
-    Returns:
-        bool: True if all required packages are importable, False otherwise.
-    """
+
+    Returns
+    -------
+    value : bool
+        Result produced by this function."""
     required_packages = [
         ("dash", "Dash"),
         ("dash_mantine_components", "Dash Mantine Components"),
@@ -69,10 +70,11 @@ def check_imports() -> bool:
 
 def _discover_project_modules() -> list[str]:
     """Discover all project modules including packages and standalone modules.
-    
-    Returns:
-        list[str]: Ordered list of unique module names discovered in the project.
-    """
+
+    Returns
+    -------
+    value : list[str]
+        Result produced by this function."""
     root_packages = ("components", "pages", "plugins", "utils")
     discovered: list[str] = []
 
@@ -89,7 +91,9 @@ def _discover_project_modules() -> list[str]:
             continue
 
         if hasattr(package, "__path__"):
-            for _, module_name, _ in pkgutil.walk_packages(package.__path__, f"{package_name}."):
+            for _, module_name, _ in pkgutil.walk_packages(
+                package.__path__, f"{package_name}."
+            ):
                 discovered.append(module_name)
 
     seen: set[str] = set()
@@ -103,10 +107,11 @@ def _discover_project_modules() -> list[str]:
 
 def check_modules() -> bool:
     """Verify local modules can be imported.
-    
-    Returns:
-        bool: True if all discovered modules are importable, False otherwise.
-    """
+
+    Returns
+    -------
+    value : bool
+        Result produced by this function."""
     print("\n\nChecking application modules...\n")
     all_ok = True
 
@@ -123,10 +128,11 @@ def check_modules() -> bool:
 
 def main() -> int:
     """Run all dependency and module checks.
-    
-    Returns:
-        int: Exit code (0 for success, 1 for failure).
-    """
+
+    Returns
+    -------
+    value : int
+        Result produced by this function."""
     _ensure_project_on_path()
 
     print("=" * 60)
@@ -145,7 +151,7 @@ def main() -> int:
 
     print("✗ Some checks failed.")
     print("\nPlease install missing dependencies:")
-    print("  pip install -r requirements.txt")
+    print("  uv sync")
     return 1
 
 

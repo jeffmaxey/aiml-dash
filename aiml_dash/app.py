@@ -15,41 +15,33 @@ from datetime import datetime
 
 import dash
 import dash_mantine_components as dmc
-
 # Import shell components
-from components.shell import (
-    create_aside,
-    create_footer,
-    create_header,
-    create_navigation,
-)
+from components.shell import (create_aside, create_footer, create_header,
+                              create_navigation)
 from dash import ALL, Dash, Input, Output, State, callback, ctx, dcc, html
 from dash_iconify import DashIconify
-
 # Import constants
 from utils.constants import APP_TITLE
-
 # Import utilities
 from utils.data_manager import data_manager
 
 # Import all pages
 from aiml_dash.plugins.models import HOME_PAGE_ID
-from aiml_dash.plugins.registry import (
-    build_navigation_sections,
-    get_default_enabled_plugins,
-    get_page_registry,
-    get_pages,
-    get_plugin_metadata,
-    normalize_enabled_plugins,
-    register_plugin_callbacks,
-)
+from aiml_dash.plugins.registry import (build_navigation_sections,
+                                        get_default_enabled_plugins,
+                                        get_page_registry, get_pages,
+                                        get_plugin_metadata,
+                                        normalize_enabled_plugins,
+                                        register_plugin_callbacks)
 
 # Initialize app
 app = Dash(
     __name__,
     title=APP_TITLE,
     suppress_callback_exceptions=True,
-    external_stylesheets=["https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"],
+    external_stylesheets=[
+        "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    ],
 )
 
 server = app.server
@@ -130,7 +122,9 @@ app.layout = dmc.MantineProvider(
             dmc.NotificationContainer(id="notification-container"),
             dcc.Store(id="color-scheme-storage", storage_type="local"),
             dcc.Store(id="plugin-metadata", data=get_plugin_metadata()),
-            dcc.Store(id="enabled-plugins", storage_type="local", data=DEFAULT_ENABLED_PLUGINS),
+            dcc.Store(
+                id="enabled-plugins", storage_type="local", data=DEFAULT_ENABLED_PLUGINS
+            ),
             # Store for application state
             dcc.Store(id="app-state", storage_type="session"),
             # Store for active page
@@ -169,7 +163,10 @@ app.layout = dmc.MantineProvider(
                                                             height=48,
                                                             color="gray",
                                                         ),
-                                                        dmc.Text("Click or Drag & Drop", fw=500),
+                                                        dmc.Text(
+                                                            "Click or Drag & Drop",
+                                                            fw=500,
+                                                        ),
                                                         dmc.Text(
                                                             "Upload .json state file",
                                                             size="sm",
@@ -213,7 +210,14 @@ app.layout = dmc.MantineProvider(
     prevent_initial_call=True,
 )
 def toggle_navbar(n_clicks, collapsed):
-    """Toggle navbar collapsed state."""
+    """Toggle navbar collapsed state.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    collapsed : Any
+        Value provided for this parameter."""
     if n_clicks:
         return not collapsed
     return collapsed
@@ -226,7 +230,14 @@ def toggle_navbar(n_clicks, collapsed):
     prevent_initial_call=True,
 )
 def toggle_aside(n_clicks, collapsed):
-    """Toggle aside collapsed state."""
+    """Toggle aside collapsed state.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    collapsed : Any
+        Value provided for this parameter."""
     if n_clicks:
         return not collapsed
     return collapsed
@@ -237,7 +248,12 @@ def toggle_aside(n_clicks, collapsed):
     Input("navbar-collapsed", "data"),
 )
 def update_navbar_state(collapsed):
-    """Update navbar collapsed state in AppShell."""
+    """Update navbar collapsed state in AppShell.
+
+    Parameters
+    ----------
+    collapsed : Any
+        Value provided for this parameter."""
     return {
         "width": 250,
         "breakpoint": "sm",
@@ -250,7 +266,12 @@ def update_navbar_state(collapsed):
     Input("aside-collapsed", "data"),
 )
 def update_aside_state(collapsed):
-    """Update aside collapsed state in AppShell."""
+    """Update aside collapsed state in AppShell.
+
+    Parameters
+    ----------
+    collapsed : Any
+        Value provided for this parameter."""
     return {
         "width": 300,
         "breakpoint": "md",
@@ -269,7 +290,14 @@ def update_aside_state(collapsed):
     Input("enabled-plugins", "data"),
 )
 def load_page_content(page, enabled_plugins):
-    """Load content for the selected page."""
+    """Load content for the selected page.
+
+    Parameters
+    ----------
+    page : Any
+        Input value for ``page``.
+    enabled_plugins : Any
+        Value provided for this parameter."""
 
     page_registry = get_page_registry(enabled_plugins)
     if page in page_registry:
@@ -282,7 +310,9 @@ def load_page_content(page, enabled_plugins):
     if fallback:
         return fallback.layout()
 
-    return dmc.Center(dmc.Text("Page not found", size="xl", c="dimmed"), style={"height": "50vh"})
+    return dmc.Center(
+        dmc.Text("Page not found", size="xl", c="dimmed"), style={"height": "50vh"}
+    )
 
 
 @callback(
@@ -290,7 +320,12 @@ def load_page_content(page, enabled_plugins):
     Input("enabled-plugins", "data"),
 )
 def update_navigation(enabled_plugins):
-    """Update navigation based on enabled plugins."""
+    """Update navigation based on enabled plugins.
+
+    Parameters
+    ----------
+    enabled_plugins : Any
+        Value provided for this parameter."""
 
     pages = get_pages(enabled_plugins)
     return create_navigation(build_navigation_sections(pages))
@@ -303,13 +338,24 @@ def update_navigation(enabled_plugins):
     prevent_initial_call=True,
 )
 def ensure_active_page(enabled_plugins, active_page):
-    """Ensure the active page is still enabled."""
+    """Ensure the active page is still enabled.
+
+    Parameters
+    ----------
+    enabled_plugins : Any
+        Input value for ``enabled_plugins``.
+    active_page : Any
+        Value provided for this parameter."""
 
     enabled_plugins = normalize_enabled_plugins(enabled_plugins)
     page_registry = get_page_registry(enabled_plugins)
     if not page_registry or active_page in page_registry:
         return dash.no_update
-    return HOME_PAGE_ID if HOME_PAGE_ID in page_registry else next(iter(page_registry), HOME_PAGE_ID)
+    return (
+        HOME_PAGE_ID
+        if HOME_PAGE_ID in page_registry
+        else next(iter(page_registry), HOME_PAGE_ID)
+    )
 
 
 @callback(
@@ -319,7 +365,14 @@ def ensure_active_page(enabled_plugins, active_page):
     prevent_initial_call=True,
 )
 def update_active_page(n_clicks, ids):
-    """Update active page based on navigation clicks."""
+    """Update active page based on navigation clicks.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    ids : Any
+        Value provided for this parameter."""
     if not ctx.triggered or not any(n_clicks):
         return dash.no_update
 
@@ -338,7 +391,14 @@ def update_active_page(n_clicks, ids):
     State("dataset-selector", "value"),
 )
 def update_dataset_selector(ts, current_value):
-    """Update dataset selector dropdown options."""
+    """Update dataset selector dropdown options.
+
+    Parameters
+    ----------
+    ts : Any
+        Input value for ``ts``.
+    current_value : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     data = [{"label": name, "value": name} for name in datasets]
 
@@ -357,7 +417,12 @@ def update_dataset_selector(ts, current_value):
     Input("dataset-selector", "value"),
 )
 def update_dataset_info(dataset_name):
-    """Update dataset information display."""
+    """Update dataset information display.
+
+    Parameters
+    ----------
+    dataset_name : Any
+        Value provided for this parameter."""
     if not dataset_name:
         return "0 rows", "0 cols", "No dataset selected", ""
 
@@ -401,7 +466,24 @@ def export_state(
     aside_collapsed,
     active_dataset,
 ):
-    """Export complete application state including all datasets to JSON file."""
+    """Export complete application state including all datasets to JSON file.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    app_state : Any
+        Input value for ``app_state``.
+    active_page : Any
+        Input value for ``active_page``.
+    enabled_plugins : Any
+        Input value for ``enabled_plugins``.
+    navbar_collapsed : Any
+        Input value for ``navbar_collapsed``.
+    aside_collapsed : Any
+        Input value for ``aside_collapsed``.
+    active_dataset : Any
+        Value provided for this parameter."""
     if not n_clicks:
         return dash.no_update
 
@@ -446,7 +528,14 @@ def export_state(
     prevent_initial_call=True,
 )
 def toggle_import_modal(n_clicks, is_open):
-    """Toggle the import modal."""
+    """Toggle the import modal.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    is_open : Any
+        Value provided for this parameter."""
     if n_clicks:
         return not is_open
     return dash.no_update
@@ -466,7 +555,14 @@ def toggle_import_modal(n_clicks, is_open):
     prevent_initial_call=True,
 )
 def import_state(contents, filename):
-    """Import complete application state including all datasets from JSON file."""
+    """Import complete application state including all datasets from JSON file.
+
+    Parameters
+    ----------
+    contents : Any
+        Input value for ``contents``.
+    filename : Any
+        Value provided for this parameter."""
     if not contents:
         return (
             dash.no_update,
@@ -497,28 +593,28 @@ def import_state(contents, filename):
             # Restore all datasets
             success, msg = data_manager.import_all_state(data_state)
             if not success:
-                raise ValueError(msg)  # noqa: TRY301
+                raise ValueError(msg)
 
             # Extract UI state components
-            app_state = ui_state.get("app_state", {})
-            active_page = ui_state.get("active_page", HOME_PAGE_ID)
-            enabled_plugins = normalize_enabled_plugins(ui_state.get("enabled_plugins"))
-            navbar_collapsed = ui_state.get("navbar_collapsed", False)
-            aside_collapsed = ui_state.get("aside_collapsed", False)
+            ui_state.get("app_state", {})
+            ui_state.get("active_page", HOME_PAGE_ID)
+            normalize_enabled_plugins(ui_state.get("enabled_plugins"))
+            ui_state.get("navbar_collapsed", False)
+            ui_state.get("aside_collapsed", False)
             active_dataset = ui_state.get("active_dataset")
 
         elif version.startswith("1."):
             # Old format - basic state only
-            app_state = state.get("app_state", {})
-            active_page = state.get("active_page", HOME_PAGE_ID)
-            enabled_plugins = normalize_enabled_plugins(state.get("enabled_plugins"))
-            navbar_collapsed = state.get("navbar_collapsed", False)
-            aside_collapsed = state.get("aside_collapsed", False)
+            state.get("app_state", {})
+            state.get("active_page", HOME_PAGE_ID)
+            normalize_enabled_plugins(state.get("enabled_plugins"))
+            state.get("navbar_collapsed", False)
+            state.get("aside_collapsed", False)
             active_dataset = state.get("active_dataset")
             msg = "Imported state (v1.0 - datasets not included)"
         else:
             error_message = f"Unknown state version: {version}"
-            raise ValueError(error_message)  # noqa: TRY301
+            raise ValueError(error_message)
 
         # Validate dataset exists
         available_datasets = data_manager.get_dataset_names()
@@ -526,7 +622,7 @@ def import_state(contents, filename):
             active_dataset = available_datasets[0] if available_datasets else None
 
         dataset_count = len(available_datasets)
-        success_msg = dmc.Alert(
+        dmc.Alert(
             [
                 dmc.Text("State imported successfully!", fw=500),
                 dmc.Text(f"Restored {dataset_count} dataset(s)", size="sm"),

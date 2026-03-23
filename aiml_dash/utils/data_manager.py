@@ -27,12 +27,14 @@ class DataManager:
     _instance = None
 
     def __new__(cls):
+        """Return a shared singleton instance of DataManager."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._initialized = False
         return cls._instance
 
     def __init__(self):
+        """Initialize singleton state once with in-memory dataset stores."""
         if self._initialized:
             return
 
@@ -71,18 +73,24 @@ class DataManager:
             # Create sample diamonds dataset
             np.random.seed(42)
             n = 200
-            diamonds = pd.DataFrame({
-                "carat": np.random.gamma(2, 0.5, n),
-                "cut": np.random.choice(["Fair", "Good", "Very Good", "Premium", "Ideal"], n),
-                "color": np.random.choice(["D", "E", "F", "G", "H", "I", "J"], n),
-                "clarity": np.random.choice(["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1", "SI2", "I1"], n),
-                "depth": np.random.normal(61.5, 1.5, n),
-                "table": np.random.normal(57, 2, n),
-                "price": np.random.gamma(5, 800, n).astype(int),
-                "x": np.random.normal(5.7, 1.1, n),
-                "y": np.random.normal(5.7, 1.1, n),
-                "z": np.random.normal(3.5, 0.7, n),
-            })
+            diamonds = pd.DataFrame(
+                {
+                    "carat": np.random.gamma(2, 0.5, n),
+                    "cut": np.random.choice(
+                        ["Fair", "Good", "Very Good", "Premium", "Ideal"], n
+                    ),
+                    "color": np.random.choice(["D", "E", "F", "G", "H", "I", "J"], n),
+                    "clarity": np.random.choice(
+                        ["IF", "VVS1", "VVS2", "VS1", "VS2", "SI1", "SI2", "I1"], n
+                    ),
+                    "depth": np.random.normal(61.5, 1.5, n),
+                    "table": np.random.normal(57, 2, n),
+                    "price": np.random.gamma(5, 800, n).astype(int),
+                    "x": np.random.normal(5.7, 1.1, n),
+                    "y": np.random.normal(5.7, 1.1, n),
+                    "z": np.random.normal(3.5, 0.7, n),
+                }
+            )
 
             # Convert to categorical
             diamonds["cut"] = pd.Categorical(
@@ -111,16 +119,18 @@ class DataManager:
             # Create sample titanic dataset
             np.random.seed(123)
             n = 150
-            titanic = pd.DataFrame({
-                "pclass": np.random.choice([1, 2, 3], n, p=[0.2, 0.3, 0.5]),
-                "survived": np.random.choice([0, 1], n, p=[0.6, 0.4]),
-                "sex": np.random.choice(["male", "female"], n, p=[0.65, 0.35]),
-                "age": np.random.gamma(4, 8, n),
-                "sibsp": np.random.poisson(0.5, n),
-                "parch": np.random.poisson(0.4, n),
-                "fare": np.random.gamma(3, 10, n),
-                "embarked": np.random.choice(["S", "C", "Q"], n, p=[0.7, 0.2, 0.1]),
-            })
+            titanic = pd.DataFrame(
+                {
+                    "pclass": np.random.choice([1, 2, 3], n, p=[0.2, 0.3, 0.5]),
+                    "survived": np.random.choice([0, 1], n, p=[0.6, 0.4]),
+                    "sex": np.random.choice(["male", "female"], n, p=[0.65, 0.35]),
+                    "age": np.random.gamma(4, 8, n),
+                    "sibsp": np.random.poisson(0.5, n),
+                    "parch": np.random.poisson(0.4, n),
+                    "fare": np.random.gamma(3, 10, n),
+                    "embarked": np.random.choice(["S", "C", "Q"], n, p=[0.7, 0.2, 0.1]),
+                }
+            )
 
             titanic["pclass"] = pd.Categorical(titanic["pclass"], ordered=True)
             titanic["sex"] = pd.Categorical(titanic["sex"])
@@ -146,20 +156,18 @@ class DataManager:
         description: str = "",
         load_command: str = "",
     ):
-        """
-        Add a dataset to the manager.
+        """Add a dataset to the manager.
 
         Parameters
         ----------
         name : str
-            Name of the dataset
+            Input value for ``name``.
         data : pd.DataFrame
-            The dataset to add
-        description : str, optional
-            Description of the dataset
-        load_command : str, optional
-            Command used to load this dataset (for code generation)
-        """
+            Input value for ``data``.
+        description : str
+            Input value for ``description``.
+        load_command : str
+            Value provided for this parameter."""
         self.datasets[name] = data.copy()
         self.descriptions[name] = description
         self.load_commands[name] = load_command
@@ -171,19 +179,17 @@ class DataManager:
         }
 
     def get_dataset(self, name: str | None = None) -> pd.DataFrame | None:
-        """
-        Get a dataset by name, or the active dataset if name is None.
+        """Get a dataset by name, or the active dataset if name is None.
 
         Parameters
         ----------
-        name : str, optional
-            Name of the dataset to retrieve
+        name : str | None
+            Input value for ``name``.
 
         Returns
         -------
-        pd.DataFrame or None
-            The requested dataset, or None if not found
-        """
+        value : pd.DataFrame | None
+            Result produced by this function."""
         if name is None:
             name = self.active_dataset
 
@@ -192,11 +198,21 @@ class DataManager:
         return None
 
     def get_dataset_names(self) -> list[str]:
-        """Get list of all dataset names."""
+        """Get list of all dataset names.
+
+        Returns
+        -------
+        value : list[str]
+            Result produced by this function."""
         return list(self.datasets.keys())
 
     def remove_dataset(self, name: str):
-        """Remove a dataset from the manager."""
+        """Remove a dataset from the manager.
+
+        Parameters
+        ----------
+        name : str
+            Value provided for this parameter."""
         if name in self.datasets:
             del self.datasets[name]
             del self.metadata[name]
@@ -211,28 +227,36 @@ class DataManager:
                 self.active_dataset = remaining[0] if remaining else None
 
     def set_active_dataset(self, name: str):
-        """Set the active dataset."""
+        """Set the active dataset.
+
+        Parameters
+        ----------
+        name : str
+            Value provided for this parameter."""
         if name in self.datasets:
             self.active_dataset = name
 
     def get_active_dataset_name(self) -> str | None:
-        """Get the name of the active dataset."""
-        return self.active_dataset
-
-    def get_dataset_info(self, name: str | None = None) -> dict[str, Any]:
-        """
-        Get metadata and information about a dataset.
-
-        Parameters
-        ----------
-        name : str, optional
-            Name of the dataset
+        """Get the name of the active dataset.
 
         Returns
         -------
-        dict
-            Dictionary containing dataset information
-        """
+        value : str | None
+            Result produced by this function."""
+        return self.active_dataset
+
+    def get_dataset_info(self, name: str | None = None) -> dict[str, Any]:
+        """Get metadata and information about a dataset.
+
+        Parameters
+        ----------
+        name : str | None
+            Input value for ``name``.
+
+        Returns
+        -------
+        value : dict[str, Any]
+            Result produced by this function."""
         if name is None:
             name = self.active_dataset
 
@@ -251,21 +275,19 @@ class DataManager:
         return {}
 
     def load_from_file(self, contents: str, filename: str) -> tuple[bool, str]:
-        """
-        Load a dataset from uploaded file.
+        """Load a dataset from uploaded file.
 
         Parameters
         ----------
         contents : str
-            Base64 encoded file contents
+            Input value for ``contents``.
         filename : str
-            Name of the uploaded file
+            Input value for ``filename``.
 
         Returns
         -------
-        tuple
-            (success: bool, message: str)
-        """
+        value : tuple[bool, str]
+            Result produced by this function."""
         try:
             # Decode the file contents
             _content_type, content_string = contents.split(",")
@@ -320,22 +342,22 @@ class DataManager:
         except Exception as e:
             return False, f"Error loading file: {e!s}"
 
-    def export_dataset(self, name: str | None = None, export_format: str = "csv") -> str | None:
-        """
-        Export a dataset to a file format.
+    def export_dataset(
+        self, name: str | None = None, export_format: str = "csv"
+    ) -> str | None:
+        """Export a dataset to a file format.
 
         Parameters
         ----------
-        name : str, optional
-            Name of the dataset to export
+        name : str | None
+            Input value for ``name``.
         export_format : str
-            Export format ('csv', 'excel', 'json')
+            Input value for ``export_format``.
 
         Returns
         -------
-        str or None
-            Exported data as string, or None if failed
-        """
+        value : str | None
+            Result produced by this function."""
         df = self.get_dataset(name)
         if df is None:
             return None
@@ -363,27 +385,25 @@ class DataManager:
         ascending: list[bool] | None = None,
         rows: str | None = None,
     ) -> pd.DataFrame | None:
-        """
-        Apply filter, sort, and row selection to a dataset.
+        """Apply filter, sort, and row selection to a dataset.
 
         Parameters
         ----------
-        name : str, optional
-            Name of the dataset
-        filter_expr : str, optional
-            pandas query expression for filtering
-        sort_by : list of str, optional
-            Columns to sort by
-        ascending : list of bool, optional
-            Sort order for each column
-        rows : str, optional
-            Row selection expression (e.g., '1:50', '0,5,10')
+        name : str | None
+            Input value for ``name``.
+        filter_expr : str | None
+            Input value for ``filter_expr``.
+        sort_by : list[str] | None
+            Input value for ``sort_by``.
+        ascending : list[bool] | None
+            Input value for ``ascending``.
+        rows : str | None
+            Input value for ``rows``.
 
         Returns
         -------
-        pd.DataFrame or None
-            Filtered/sorted dataset
-        """
+        value : pd.DataFrame | None
+            Result produced by this function."""
         df = self.get_dataset(name)
         if df is None:
             return None
@@ -424,14 +444,12 @@ class DataManager:
             return df
 
     def export_all_state(self) -> dict:
-        """
-        Export complete application state including all datasets.
+        """Export complete application state including all datasets.
 
         Returns
         -------
-        dict
-            Complete state with all datasets serialized
-        """
+        value : dict
+            Result produced by this function."""
         state = {
             "version": "2.0",
             "timestamp": datetime.now().isoformat(),
@@ -457,19 +475,17 @@ class DataManager:
         return state
 
     def import_all_state(self, state: dict) -> tuple[bool, str]:
-        """
-        Import complete application state including all datasets.
+        """Import complete application state including all datasets.
 
         Parameters
         ----------
         state : dict
-            Complete state dictionary from export_all_state
+            Input value for ``state``.
 
         Returns
         -------
-        tuple
-            (success: bool, message: str)
-        """
+        value : tuple[bool, str]
+            Result produced by this function."""
         try:
             # Validate version
             version = state.get("version", "1.0")
@@ -507,7 +523,9 @@ class DataManager:
                                 if "category" in dtype_str.lower():
                                     df[col] = df[col].astype("category")
                                 elif "int" in dtype_str.lower():
-                                    df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+                                    df[col] = pd.to_numeric(
+                                        df[col], errors="coerce"
+                                    ).astype("Int64")
                                 elif "float" in dtype_str.lower():
                                     df[col] = pd.to_numeric(df[col], errors="coerce")
                                 elif "bool" in dtype_str.lower():
@@ -515,7 +533,9 @@ class DataManager:
                                 elif "datetime" in dtype_str.lower():
                                     df[col] = pd.to_datetime(df[col], errors="coerce")
                             except Exception as e:
-                                print(f"Warning: Could not restore dtype for {name}.{col}: {e!s}")
+                                print(
+                                    f"Warning: Could not restore dtype for {name}.{col}: {e!s}"
+                                )
 
                     # Restore index name
                     if dataset_info.get("index_name"):
