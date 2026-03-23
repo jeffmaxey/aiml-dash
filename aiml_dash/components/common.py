@@ -34,8 +34,21 @@ def create_page_header(
         [
             dmc.Group(
                 [
-                    DashIconify(icon=icon, width=32, height=32),
-                    dmc.Title(title, order=2),
+                    dmc.ThemeIcon(
+                        DashIconify(icon=icon, width=26, height=26),
+                        size=54,
+                        radius="xl",
+                        variant="gradient",
+                        gradient={"from": "cyan", "to": "blue", "deg": 145},
+                        className="aiml-page-header-icon",
+                    ),
+                    dmc.Stack(
+                        [
+                            dmc.Text("Workspace", size="xs", tt="uppercase", fw=700, lts="0.16em", c="dimmed"),
+                            dmc.Title(title, order=2),
+                        ],
+                        gap=0,
+                    ),
                 ],
                 gap="sm",
             ),
@@ -43,6 +56,7 @@ def create_page_header(
         ],
         gap="xs",
         mb="md",
+        className="aiml-page-header",
     )
 
 
@@ -85,13 +99,17 @@ def create_filter_section() -> dmc.Accordion:
                                 ],
                                 gap="sm",
                             )
-                        ]
+                        ],
+                        className="aiml-filter-panel",
                     ),
                 ],
                 value="filter",
             ),
         ],
         value=None,  # Start collapsed
+        className="aiml-filter-section",
+        radius="xl",
+        variant="contained",
     )
 
 

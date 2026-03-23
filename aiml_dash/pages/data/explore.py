@@ -8,11 +8,11 @@ Statistical exploration and summary statistics with grouping.
 import dash
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
-from components.common import create_filter_section, create_page_header
+from aiml_dash.components.common import create_filter_section, create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
-from utils.data_manager import data_manager
-from utils.statistics import STAT_FUNCTIONS, explore
+from aiml_dash.utils.data_manager import data_manager
+from aiml_dash.utils.statistics import STAT_FUNCTIONS, explore
 
 
 def layout():
@@ -186,7 +186,7 @@ def calculate_statistics(n_clicks, dataset_name, vars, byvar, functions, data_fi
         # Calculate statistics
         result = explore(
             df,
-            vars=vars,
+            variables=vars,
             byvar=byvar if byvar else None,
             fun=functions,
             data_filter=data_filter,
@@ -259,7 +259,7 @@ def export_statistics(n_clicks, dataset_name, vars, byvar, functions, data_filte
     try:
         result = explore(
             df,
-            vars=vars,
+            variables=vars,
             byvar=byvar if byvar else None,
             fun=functions,
             data_filter=data_filter,
@@ -267,3 +267,4 @@ def export_statistics(n_clicks, dataset_name, vars, byvar, functions, data_filte
         return dcc.send_data_frame(result.to_csv, f"{dataset_name}_explore.csv", index=False)
     except:
         return dash.no_update
+

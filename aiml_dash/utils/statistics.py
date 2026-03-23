@@ -512,7 +512,7 @@ def explore(
 
     # Apply grouping if specified
     if byvar and len(byvar) > 0:
-        result = df.groupby(byvar)[vars].agg(agg_dict)
+        result = df.groupby(byvar)[variables].agg(agg_dict)
         # Flatten multi-level columns
         result.columns = ["_".join(col).strip() for col in result.columns.values]
         result = result.reset_index()

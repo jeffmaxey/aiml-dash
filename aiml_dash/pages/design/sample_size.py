@@ -7,7 +7,7 @@ Calculate required sample size for different types of tests.
 
 import dash_mantine_components as dmc
 import numpy as np
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, html
 from dash_iconify import DashIconify
 from scipy import stats
@@ -59,7 +59,8 @@ def layout():
                                             value=0.5,
                                             min=0.01,
                                             step=0.01,
-                                            precision=2,
+                                            decimalScale=2,
+                                            fixedDecimalScale=True,
                                         ),
                                         dmc.NumberInput(
                                             id="ss-power",
@@ -341,3 +342,4 @@ def calculate_sample_size(n_clicks, test_type, effect_size, power, alpha, altern
             color="red",
             icon=DashIconify(icon="carbon:warning"),
         )
+

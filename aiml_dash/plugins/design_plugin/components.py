@@ -1,7 +1,6 @@
 """Reusable components for the design plugin.
 
-Most design UI elements are page-specific and live in
-``aiml_dash.plugins.design_plugin.pages`` modules.
-This module is intentionally minimal and available for future shared
+Most design UI elements are page-specific and live in the canonical
+``aiml_dash.pages.design`` modules. This module remains available for shared
 component extraction.
 """

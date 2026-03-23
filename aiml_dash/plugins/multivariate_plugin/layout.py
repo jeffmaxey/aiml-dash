@@ -1,7 +1,7 @@
 """Layout module for multivariate plugin.
 
-This module provides lazy-loading layout functions that wrap
-plugin-owned multivariate layouts.
+This module provides lazy-loading layout functions that wrap the canonical
+application page modules under ``aiml_dash.pages.multivariate``.
 """
 
 from collections.abc import Callable
@@ -38,25 +38,23 @@ def _create_lazy_layout(
 
 
 # Create lazy-loading layout functions
-conjoint_layout = _create_lazy_layout(
-    "aiml_dash.plugins.multivariate_plugin.pages.conjoint"
-)
-fullfactor_layout = _create_lazy_layout(
-    "aiml_dash.plugins.multivariate_plugin.pages.full_factor"
-)
-hierarchicalcluster_layout = _create_lazy_layout(
-    "aiml_dash.plugins.multivariate_plugin.pages.hierarchical_cluster"
-)
-kmeanscluster_layout = _create_lazy_layout(
-    "aiml_dash.plugins.multivariate_plugin.pages.kmeans_cluster"
-)
-mds_layout = _create_lazy_layout("aiml_dash.plugins.multivariate_plugin.pages.mds")
-perceptualmap_layout = _create_lazy_layout(
-    "aiml_dash.plugins.multivariate_plugin.pages.perceptual_map"
-)
-prefactor_layout = _create_lazy_layout(
-    "aiml_dash.plugins.multivariate_plugin.pages.pre_factor"
-)
+conjoint_layout = _create_lazy_layout("aiml_dash.pages.multivariate.conjoint")
+fullfactor_layout = _create_lazy_layout("aiml_dash.pages.multivariate.full_factor")
+hierarchicalcluster_layout = _create_lazy_layout("aiml_dash.pages.multivariate.hierarchical_cluster")
+kmeanscluster_layout = _create_lazy_layout("aiml_dash.pages.multivariate.kmeans_cluster")
+mds_layout = _create_lazy_layout("aiml_dash.pages.multivariate.mds")
+perceptualmap_layout = _create_lazy_layout("aiml_dash.pages.multivariate.perceptual_map")
+prefactor_layout = _create_lazy_layout("aiml_dash.pages.multivariate.pre_factor")
+
+PAGE_LAYOUTS = {
+    "conjoint": conjoint_layout,
+    "full-factor": fullfactor_layout,
+    "hierarchical-cluster": hierarchicalcluster_layout,
+    "kmeans-cluster": kmeanscluster_layout,
+    "mds": mds_layout,
+    "perceptual-map": perceptualmap_layout,
+    "pre-factor": prefactor_layout,
+}
 
 __all__ = [
     "conjoint_layout",
@@ -66,4 +64,5 @@ __all__ = [
     "mds_layout",
     "perceptualmap_layout",
     "prefactor_layout",
+    "PAGE_LAYOUTS",
 ]

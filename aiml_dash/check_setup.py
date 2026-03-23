@@ -24,8 +24,9 @@ PROJECT_DIR = Path(__file__).parent.resolve()
 
 def _ensure_project_on_path() -> None:
     """Add the project directory to sys.path if not already present."""
-    if str(PROJECT_DIR) not in sys.path:
-        sys.path.insert(0, str(PROJECT_DIR))
+    parent = PROJECT_DIR.parent
+    if str(parent) not in sys.path:
+        sys.path.insert(0, str(parent))
 
 
 def check_imports() -> bool:
@@ -75,7 +76,12 @@ def _discover_project_modules() -> list[str]:
     -------
     value : list[str]
         Result produced by this function."""
-    root_packages = ("components", "pages", "plugins", "utils")
+    root_packages = (
+        "aiml_dash.components",
+        "aiml_dash.pages",
+        "aiml_dash.plugins",
+        "aiml_dash.utils",
+    )
     discovered: list[str] = []
 
     for py_file in PROJECT_DIR.glob("*.py"):

@@ -1,14 +1,14 @@
 """Callback registration for the multivariate plugin.
 
 Multivariate page callbacks are declared with Dash's ``@callback`` decorator
-in plugin-owned page modules under
-``aiml_dash.plugins.multivariate_plugin.pages``.
+in the canonical application page modules under
+``aiml_dash.pages.multivariate``.
 """
 
 from importlib import import_module
 from pkgutil import iter_modules
 
-PAGES_PACKAGE = "aiml_dash.plugins.multivariate_plugin.pages"
+PAGES_PACKAGE = "aiml_dash.pages.multivariate"
 
 
 def _import_page_modules() -> None:

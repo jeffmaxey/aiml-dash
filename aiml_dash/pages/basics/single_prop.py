@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from dash import Input, Output, State, callback, dcc
 from dash_iconify import DashIconify
 from scipy import stats
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 # ==============================================================================
 # LAYOUT
@@ -503,3 +503,4 @@ def run_single_prop_test(n_clicks, dataset, variable, success_level, p0, alterna
             {"display": "none"},
             {},
         )
+

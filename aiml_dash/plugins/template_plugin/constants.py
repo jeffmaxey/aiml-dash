@@ -24,3 +24,16 @@ TEMPLATE_ICON = "carbon:template"
 
 # Layout configuration
 CONTAINER_SIZE = "md"
+
+PAGE_DEFINITIONS = [
+    {
+        "id": TEMPLATE_PAGE_ID,
+        "label": "Template",
+        "icon": TEMPLATE_ICON,
+        "section": SECTION_NAME,
+        "group": GROUP_NAME,
+        "order": PAGE_ORDER,
+        "group_order": GROUP_ORDER,
+        "description": "Template for creating new plugins",
+    }
+]

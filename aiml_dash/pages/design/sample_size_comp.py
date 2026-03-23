@@ -8,7 +8,7 @@ Compare sample sizes across different scenarios and parameters.
 import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc
 from dash_iconify import DashIconify
 
@@ -216,3 +216,4 @@ def compare_sample_sizes(n_clicks, test_type, effect_min, effect_max, power_leve
             font={"size": 16, "color": "red"},
         )
         return fig
+

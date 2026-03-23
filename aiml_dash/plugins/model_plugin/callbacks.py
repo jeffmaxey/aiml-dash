@@ -1,13 +1,13 @@
 """Callback registration for the model plugin.
 
 Model page callbacks are declared with Dash's ``@callback`` decorator in the
-plugin-owned page modules under ``aiml_dash.plugins.model_plugin.pages``.
+canonical application page modules under ``aiml_dash.pages.model``.
 """
 
 from importlib import import_module
 from pkgutil import iter_modules
 
-PAGES_PACKAGE = "aiml_dash.plugins.model_plugin.pages"
+PAGES_PACKAGE = "aiml_dash.pages.model"
 
 
 def _import_page_modules() -> None:

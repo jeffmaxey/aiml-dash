@@ -24,3 +24,16 @@ EXAMPLE_ICON = "carbon:apps"
 
 # Layout configuration
 CONTAINER_SIZE = "md"
+
+PAGE_DEFINITIONS = [
+    {
+        "id": EXAMPLE_PAGE_ID,
+        "label": "Example",
+        "icon": EXAMPLE_ICON,
+        "section": SECTION_NAME,
+        "group": GROUP_NAME,
+        "order": PAGE_ORDER,
+        "group_order": GROUP_ORDER,
+        "description": "Demonstration of a minimal plugin structure",
+    }
+]

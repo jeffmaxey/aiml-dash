@@ -9,11 +9,11 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from scipy import stats
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 def layout():
@@ -438,3 +438,4 @@ def export_results(n_clicks, dataset_name, variable):
         return dcc.send_data_frame(data.to_csv, f"single_mean_{variable}.csv", index=False)
     except Exception:
         return None
+

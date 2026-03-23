@@ -10,13 +10,13 @@ import dash_mantine_components as dmc
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash.development.base_component import Component
 from dash_iconify import DashIconify
 from plotly.graph_objects import Figure
 from scipy import stats
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 def layout() -> Component:
@@ -392,3 +392,4 @@ def run_compare_means_test(
             {},
             dmc.Notification(title="Error", message=str(e), color="red", action="show"),
         )
+

@@ -1,13 +1,13 @@
 """Callback registration for the data plugin.
 
 Data page callbacks are declared with Dash's ``@callback`` decorator in the
-plugin-owned page modules under ``aiml_dash.plugins.data_plugin.pages``.
+canonical application page modules under ``aiml_dash.pages.data``.
 """
 
 from importlib import import_module
 from pkgutil import iter_modules
 
-PAGES_PACKAGE = "aiml_dash.plugins.data_plugin.pages"
+PAGES_PACKAGE = "aiml_dash.pages.data"
 
 
 def _import_page_modules() -> None:

@@ -10,10 +10,10 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
 import pandas as pd
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 def layout():
@@ -304,3 +304,4 @@ def download_randomization(n_clicks, result_data):
         df = pd.DataFrame(result_data)
         return dcc.send_data_frame(df.to_csv, "randomization.csv", index=False)
     return dash.no_update
+

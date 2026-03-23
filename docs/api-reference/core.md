@@ -1,15 +1,23 @@
-# API Reference - Core
+# Core Modules
 
-This page documents the core modules of AIML Dash.
+The core modules define how AIML Dash starts, assembles services, authorizes access, and exposes the Dash/Flask entrypoints.
 
-## App Module
+## Package Entrypoint
+
+::: aiml_dash
+
+## Application Factory
 
 ::: aiml_dash.app
 
-## Run Module
+## Authorization
+
+::: aiml_dash.auth
+
+## Service Container
+
+::: aiml_dash.services
+
+## Runtime Entrypoint
 
 ::: aiml_dash.run
-
-## Utils Module
-
-::: aiml_dash.utils

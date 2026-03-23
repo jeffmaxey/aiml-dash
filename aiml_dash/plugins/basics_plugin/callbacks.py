@@ -19,7 +19,7 @@ from dash_iconify import DashIconify
 from plotly.graph_objects import Figure
 from plotly.subplots import make_subplots
 from scipy import stats
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 @callback(
@@ -3048,3 +3048,4 @@ def register_callbacks(app: object) -> None:
         Value provided for this parameter."""
     # Callbacks are auto-registered via @callback decorators
     pass
+

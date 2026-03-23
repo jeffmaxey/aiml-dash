@@ -80,6 +80,7 @@ class TestPluginStructure:
             "PLUGIN_VERSION",
             "PLUGIN_DESCRIPTION",
             "SECTION_NAME",
+            "PAGE_DEFINITIONS",
         ]
 
         for const_name in required:
@@ -113,6 +114,9 @@ class TestPluginStructure:
         assert (
             len(layout_functions) > 0
         ), f"Plugin '{plugin_id}' has no layout functions"
+        assert hasattr(
+            module, "PAGE_LAYOUTS"
+        ), f"Plugin '{plugin_id}' layout.py missing PAGE_LAYOUTS"
 
     @pytest.mark.parametrize(
         "plugin_id",

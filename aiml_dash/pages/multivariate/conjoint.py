@@ -13,11 +13,11 @@ import dash_mantine_components as dmc
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LinearRegression
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 def layout():
@@ -585,3 +585,4 @@ def download_importance(n_clicks, results):
         return dcc.send_data_frame(importance_df.to_csv, "conjoint_importance.csv", index=False)
     except Exception:
         return None
+

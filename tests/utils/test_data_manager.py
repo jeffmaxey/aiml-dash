@@ -5,15 +5,13 @@ import base64
 import pandas as pd
 import pytest
 
-from aiml_dash.utils.data_manager import DataManager, data_manager
+from aiml_dash.utils.data_manager import DataManager, create_data_manager, data_manager
 
 
 @pytest.fixture
 def dm():
     """Create a fresh DataManager instance for testing."""
-    # Reset the singleton
-    DataManager._instance = None
-    return DataManager()
+    return DataManager(load_sample_data=False)
 
 
 @pytest.fixture
@@ -28,23 +26,19 @@ def sample_dataframe():
     )
 
 
-class TestDataManagerSingleton:
-    """Test DataManager singleton pattern."""
+class TestDataManagerFactory:
+    """Test DataManager creation helpers."""
 
-    def test_singleton_pattern(self):
-        """Test DataManager follows singleton pattern."""
-        dm1 = DataManager()
-        dm2 = DataManager()
-        assert dm1 is dm2
+    def test_factory_returns_new_instances(self):
+        """Each factory call should create an isolated manager."""
+        dm1 = create_data_manager(load_sample_data=False)
+        dm2 = create_data_manager(load_sample_data=False)
+        assert dm1 is not dm2
 
-    def test_singleton_initialization(self):
-        """Test singleton is initialized only once."""
-        DataManager._instance = None
-        dm1 = DataManager()
-        initial_datasets = len(dm1.datasets)
-
-        dm2 = DataManager()
-        assert len(dm2.datasets) == initial_datasets
+    def test_default_constructor_can_load_samples(self):
+        """Sample data should load when enabled."""
+        dm = DataManager()
+        assert len(dm.datasets) > 0
 
 
 class TestAddDataset:

@@ -9,7 +9,7 @@ All layouts have been extracted from pages/basics/ and refactored into this plug
 from typing import Any
 
 import dash_mantine_components as dmc
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import dcc, html
 from dash_iconify import DashIconify
 
@@ -1520,3 +1520,16 @@ __all__ = [
     "single_mean_layout",
     "single_prop_layout",
 ]
+
+PAGE_LAYOUTS = {
+    "single-mean": single_mean_layout,
+    "compare-means": compare_means_layout,
+    "single-prop": single_prop_layout,
+    "compare-props": compare_props_layout,
+    "cross-tabs": cross_tabs_layout,
+    "goodness": goodness_layout,
+    "correlation": correlation_layout,
+    "prob-calc": prob_calc_layout,
+    "clt": clt_layout,
+}
+

@@ -183,7 +183,6 @@ def reload_plugin_module(
             "callbacks",
             "styles",
             "constants",
-            "pages",
         ]
         modules_to_reload = {module_path}
         modules_to_reload.update(f"{module_path}.{sub}" for sub in base_submodules)

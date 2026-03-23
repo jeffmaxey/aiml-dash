@@ -14,19 +14,19 @@ from aiml_dash.plugins.hot_reload import reload_plugin_module
 CALLBACK_MODULE_CASES = [
     (
         "aiml_dash.plugins.data_plugin.callbacks",
-        "aiml_dash.plugins.data_plugin.pages",
+        "aiml_dash.pages.data",
     ),
     (
         "aiml_dash.plugins.design_plugin.callbacks",
-        "aiml_dash.plugins.design_plugin.pages",
+        "aiml_dash.pages.design",
     ),
     (
         "aiml_dash.plugins.model_plugin.callbacks",
-        "aiml_dash.plugins.model_plugin.pages",
+        "aiml_dash.pages.model",
     ),
     (
         "aiml_dash.plugins.multivariate_plugin.callbacks",
-        "aiml_dash.plugins.multivariate_plugin.pages",
+        "aiml_dash.pages.multivariate",
     ),
 ]
 
@@ -79,16 +79,15 @@ def test_register_callbacks_invokes_page_import(
 
 
 def test_reload_plugin_module_reloads_loaded_page_modules() -> None:
-    """Ensure hot reload includes loaded nested page modules."""
+    """Ensure hot reload includes loaded nested submodules."""
     plugin_id = "unit_test_plugin"
     plugins_package = "test.plugins"
     module_path = f"{plugins_package}.{plugin_id}"
     module_names = [
         module_path,
         f"{module_path}.callbacks",
-        f"{module_path}.pages",
-        f"{module_path}.pages.alpha",
-        f"{module_path}.pages.beta",
+        f"{module_path}.alpha",
+        f"{module_path}.beta",
     ]
 
     created_modules: dict[str, ModuleType] = {}
@@ -103,10 +102,9 @@ def test_reload_plugin_module_reloads_loaded_page_modules() -> None:
 
         reloaded_names = [args[0].__name__ for args, _ in mock_reload.call_args_list]
         assert reloaded_names == [
-            f"{module_path}.pages.alpha",
-            f"{module_path}.pages.beta",
+            f"{module_path}.alpha",
+            f"{module_path}.beta",
             f"{module_path}.callbacks",
-            f"{module_path}.pages",
             module_path,
         ]
     finally:

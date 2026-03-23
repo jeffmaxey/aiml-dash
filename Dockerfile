@@ -1,29 +1,69 @@
-# syntax=docker/dockerfile:1.6
+# syntax=docker/dockerfile:1.7
 
-# Install uv
-FROM python:3.12-slim
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+FROM python:3.14-slim AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/app/.venv
 
-# Change the working directory to the `app` directory
 WORKDIR /app
 
-# Copy the lockfile and `pyproject.toml` into the image
-COPY uv.lock /app/uv.lock
-COPY pyproject.toml /app/pyproject.toml
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        build-essential \
+        gcc \
+        unixodbc-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-RUN uv sync --frozen --no-install-project
+COPY pyproject.toml uv.lock README.md /app/
+RUN uv sync --frozen --no-dev --no-editable --no-install-project
 
-# Copy the project into the image
-COPY . /app
+COPY aiml_dash /app/aiml_dash
+RUN uv sync --frozen --no-dev --no-editable
 
-# Sync the project
-RUN uv sync --frozen
+
+FROM python:3.14-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    AIML_DASH_ENVIRONMENT=production \
+    AIML_DASH_DEBUG=false \
+    AIML_DASH_HOST=0.0.0.0 \
+    AIML_DASH_PORT=8050 \
+    GUNICORN_CMD_ARGS="--bind 0.0.0.0:8050 --workers 2 --threads 4 --timeout 120 --access-logfile - --error-logfile -" \
+    PATH=/app/.venv/bin:$PATH
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+        ca-certificates \
+        curl \
+        tini \
+        unixodbc \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system appuser \
+    && useradd --system --gid appuser --create-home --home-dir /home/appuser appuser
+
+COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder /app/aiml_dash /app/aiml_dash
+COPY pyproject.toml README.md /app/
+
+RUN mkdir -p /app/.aiml_dash \
+    && chown -R appuser:appuser /app /home/appuser
+
+USER appuser
 
 EXPOSE 8050
 
-CMD ["uv", "run", "python", "aiml_dash/run.py"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"AIML_DASH_PORT\", \"8050\")}/', timeout=3)"
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["gunicorn", "aiml_dash:server"]

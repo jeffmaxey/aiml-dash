@@ -10,7 +10,7 @@ import dash_mantine_components as dmc
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 
@@ -468,3 +468,4 @@ def export_results(n_clicks, data):
         return dcc.send_data_frame(df.to_csv, "decision_analysis.csv", index=False)
     except Exception:
         return None
+

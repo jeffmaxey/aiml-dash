@@ -1,15 +1,9 @@
-"""
-Database Connection Manager
-============================
-
-Manages SQL database connections with pooling support.
-Provides utilities for connecting to databases using pyodbc, sqlalchemy, and pandas.
-"""
+"""Database connection management for AIML Dash."""
 
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote_plus
 
 import pandas as pd
@@ -22,18 +16,15 @@ if TYPE_CHECKING:
 
 logger = get_logger(__name__)
 
+READ_ONLY_PREFIXES = ("select", "with", "pragma", "show", "describe", "explain")
+
 
 class DatabaseManager:
-    """
-    Manages database connections with connection pooling.
-
-    Supports multiple database types including SQL Server, PostgreSQL,
-    MySQL, SQLite, and any ODBC-compliant database.
-    """
+    """Manage database connections with conservative query validation."""
 
     def __init__(self):
         """Initialize the database manager."""
-        self._connections: dict[str, dict] = {}
+        self._connections: dict[str, dict[str, Any]] = {}
         self._engines: dict[str, sqlalchemy.Engine] = {}
 
     def add_connection(
@@ -49,66 +40,17 @@ class DatabaseManager:
         dialect: str = "mssql",
         use_sqlalchemy: bool = True,
     ) -> None:
-        """Add a database connection configuration.
-
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-        connection_string : str | None
-            Input value for ``connection_string``.
-        driver : str | None
-            Input value for ``driver``.
-        server : str | None
-            Input value for ``server``.
-        database : str | None
-            Input value for ``database``.
-        username : str | None
-            Input value for ``username``.
-        password : str | None
-            Input value for ``password``.
-        port : int | None
-            Input value for ``port``.
-        dialect : str
-            Input value for ``dialect``.
-        use_sqlalchemy : bool
-            Value provided for this parameter."""
+        """Register a connection configuration."""
         if connection_string is None:
-            # Build connection string
-            if dialect == "mssql":
-                if driver is None:
-                    driver = "ODBC Driver 17 for SQL Server"
-
-                conn_parts = [f"DRIVER={{{driver}}}", f"SERVER={server}"]
-
-                if port:
-                    conn_parts[-1] += f",{port}"
-
-                conn_parts.append(f"DATABASE={database}")
-
-                if username and password:
-                    conn_parts.extend([f"UID={username}", f"PWD={password}"])
-                else:
-                    conn_parts.append("Trusted_Connection=yes")
-
-                connection_string = ";".join(conn_parts)
-
-            elif dialect == "postgresql":
-                driver = driver or "postgresql+psycopg2"
-                port = port or 5432
-                connection_string = (
-                    f"{driver}://{username}:{password}@{server}:{port}/{database}"
-                )
-
-            elif dialect == "mysql":
-                driver = driver or "mysql+pymysql"
-                port = port or 3306
-                connection_string = (
-                    f"{driver}://{username}:{password}@{server}:{port}/{database}"
-                )
-
-            elif dialect == "sqlite":
-                connection_string = f"sqlite:///{database}"
+            connection_string = self._build_connection_string(
+                driver=driver,
+                server=server,
+                database=database,
+                username=username,
+                password=password,
+                port=port,
+                dialect=dialect,
+            )
 
         self._connections[name] = {
             "connection_string": connection_string,
@@ -118,193 +60,153 @@ class DatabaseManager:
             "server": server,
             "database": database,
         }
+        logger.info("Registered database connection '%s' (%s)", name, dialect)
 
-        logger.info(f"Added database connection: {name} ({dialect})")
+    def _build_connection_string(
+        self,
+        *,
+        driver: str | None,
+        server: str | None,
+        database: str | None,
+        username: str | None,
+        password: str | None,
+        port: int | None,
+        dialect: str,
+    ) -> str:
+        """Build a connection string for the requested dialect."""
+        if dialect == "mssql":
+            resolved_driver = driver or "ODBC Driver 17 for SQL Server"
+            conn_parts = [f"DRIVER={{{resolved_driver}}}", f"SERVER={server}"]
+            if port:
+                conn_parts[-1] += f",{port}"
+            conn_parts.append(f"DATABASE={database}")
+            if username and password:
+                conn_parts.extend([f"UID={username}", f"PWD={password}"])
+            else:
+                conn_parts.append("Trusted_Connection=yes")
+            return ";".join(conn_parts)
+        if dialect == "postgresql":
+            resolved_driver = driver or "postgresql+psycopg2"
+            resolved_port = port or 5432
+            return f"{resolved_driver}://{username}:{password}@{server}:{resolved_port}/{database}"
+        if dialect == "mysql":
+            resolved_driver = driver or "mysql+pymysql"
+            resolved_port = port or 3306
+            return f"{resolved_driver}://{username}:{password}@{server}:{resolved_port}/{database}"
+        if dialect == "sqlite":
+            return f"sqlite:///{database}"
+        raise ValueError(f"Unsupported dialect: {dialect}")
+
+    def _get_connection_config(self, name: str) -> dict[str, Any]:
+        """Return connection config or raise a clear error."""
+        if name not in self._connections:
+            raise ValueError(f"Connection '{name}' not found")
+        return self._connections[name]
+
+    def _validate_query(self, query: str, *, allow_write: bool) -> None:
+        """Reject obviously unsafe or unexpected SQL."""
+        normalized = " ".join(query.strip().split()).lower()
+        if not normalized:
+            raise ValueError("Query must not be empty")
+        if not allow_write and not normalized.startswith(READ_ONLY_PREFIXES):
+            raise ValueError("Only read-only queries are allowed by this method")
+        if ";" in normalized.rstrip(";"):
+            raise ValueError("Multiple SQL statements are not allowed")
 
     def get_connection(self, name: str) -> pyodbc.Connection:
-        """Get a raw pyodbc connection.
-
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-
-        Returns
-        -------
-        value : pyodbc.Connection
-            Result produced by this function."""
+        """Return a raw pyodbc connection."""
         try:
             import pyodbc
-        except ImportError as e:
-            msg = "pyodbc is required for database connections"
-            raise ImportError(msg) from e
+        except ImportError as exc:
+            raise ImportError("pyodbc is required for database connections") from exc
 
-        if name not in self._connections:
-            msg = f"Connection '{name}' not found"
-            raise ValueError(msg)
-
-        config = self._connections[name]
+        config = self._get_connection_config(name)
         conn = pyodbc.connect(config["connection_string"])
-        logger.debug(f"Opened connection: {name}")
+        logger.debug("Opened raw connection '%s'", name)
         return conn
 
     def get_engine(self, name: str) -> sqlalchemy.Engine:
-        """Get or create a SQLAlchemy engine with connection pooling.
-
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-
-        Returns
-        -------
-        value : sqlalchemy.Engine
-            Result produced by this function."""
+        """Return a SQLAlchemy engine for a registered connection."""
         try:
             from sqlalchemy import create_engine
-        except ImportError as e:
-            msg = "sqlalchemy is required for engine support"
-            raise ImportError(msg) from e
+        except ImportError as exc:
+            raise ImportError("sqlalchemy is required for engine support") from exc
 
         if name in self._engines:
             return self._engines[name]
 
-        if name not in self._connections:
-            msg = f"Connection '{name}' not found"
-            raise ValueError(msg)
-
-        config = self._connections[name]
-
-        # Build SQLAlchemy connection string
+        config = self._get_connection_config(name)
         if config["dialect"] == "mssql":
-            # URL encode the connection string for SQLAlchemy
             params = quote_plus(config["connection_string"])
-            conn_str = f"mssql+pyodbc:///?odbc_connect={params}"
+            connection_string = f"mssql+pyodbc:///?odbc_connect={params}"
         else:
-            conn_str = config["connection_string"]
+            connection_string = config["connection_string"]
 
         engine = create_engine(
-            conn_str,
+            connection_string,
             pool_size=5,
             max_overflow=10,
             pool_pre_ping=True,
             pool_recycle=3600,
+            connect_args={"timeout": 30} if config["dialect"] != "sqlite" else {},
         )
-
         self._engines[name] = engine
-        logger.info(f"Created SQLAlchemy engine: {name}")
+        logger.info("Created SQLAlchemy engine '%s'", name)
         return engine
 
     @contextmanager
     def connection_context(self, name: str):
-        """Context manager for database connections.
-
-        Parameters
-        ----------
-        name : str
-            Value provided for this parameter."""
+        """Yield a raw connection and ensure it closes."""
         conn = self.get_connection(name)
         try:
             yield conn
         finally:
             conn.close()
-            logger.debug(f"Closed connection: {name}")
+            logger.debug("Closed raw connection '%s'", name)
 
     def query_dataframe(
         self,
         name: str,
         query: str,
-        params: dict | None = None,
+        params: dict[str, Any] | None = None,
         use_engine: bool = True,
     ) -> pd.DataFrame:
-        """Execute a query and return results as a DataFrame.
+        """Execute a read-only query and return a DataFrame."""
+        self._validate_query(query, allow_write=False)
+        logger.debug("Executing read query on '%s'", name)
 
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-        query : str
-            Input value for ``query``.
-        params : dict | None
-            Input value for ``params``.
-        use_engine : bool
-            Input value for ``use_engine``.
-
-        Returns
-        -------
-        value : pd.DataFrame
-            Result produced by this function."""
-        logger.debug(f"Executing query on {name}: {query[:100]}...")
-
-        if use_engine and self._connections[name].get("use_sqlalchemy", True):
+        config = self._get_connection_config(name)
+        if use_engine and config.get("use_sqlalchemy", True):
             engine = self.get_engine(name)
-            df = pd.read_sql(query, engine, params=params)
-        else:
-            with self.connection_context(name) as conn:
-                df = pd.read_sql(query, conn, params=params)
+            return pd.read_sql(query, engine, params=params)
 
-        logger.info(f"Query returned {len(df)} rows")
-        return df
+        with self.connection_context(name) as conn:
+            return pd.read_sql(query, conn, params=params)
 
     def execute_query(
         self,
         name: str,
         query: str,
-        params: dict | None = None,
+        params: dict[str, Any] | tuple[Any, ...] | None = None,
         commit: bool = True,
     ) -> int:
-        """Execute a non-SELECT query (INSERT, UPDATE, DELETE, etc.).
-
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-        query : str
-            Input value for ``query``.
-        params : dict | None
-            Input value for ``params``.
-        commit : bool
-            Input value for ``commit``.
-
-        Returns
-        -------
-        value : int
-            Result produced by this function."""
-        logger.debug(f"Executing non-SELECT query on {name}")
+        """Execute a write query and return affected row count."""
+        self._validate_query(query, allow_write=True)
+        logger.debug("Executing write query on '%s'", name)
 
         with self.connection_context(name) as conn:
             cursor = conn.cursor()
-
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-
+            cursor.execute(query, params or ())
             rowcount = cursor.rowcount
-
             if commit:
                 conn.commit()
-
             cursor.close()
-
-        logger.info(f"Query affected {rowcount} rows")
+        logger.info("Write query on '%s' affected %s rows", name, rowcount)
         return rowcount
 
     def get_tables(self, name: str, schema: str | None = None) -> list[str]:
-        """Get list of tables in the database.
-
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-        schema : str | None
-            Input value for ``schema``.
-
-        Returns
-        -------
-        value : list[str]
-            Result produced by this function."""
-        config = self._connections[name]
+        """Return available tables for a connection."""
+        config = self._get_connection_config(name)
         dialect = config["dialect"]
 
         if dialect == "mssql":
@@ -313,110 +215,86 @@ class DatabaseManager:
                 FROM INFORMATION_SCHEMA.TABLES
                 WHERE TABLE_TYPE = 'BASE TABLE'
             """
+            params = {"schema": schema} if schema else None
             if schema:
-                query += f" AND TABLE_SCHEMA = '{schema}'"
-
-        elif dialect in ["postgresql", "mysql"]:
+                query += " AND TABLE_SCHEMA = :schema"
+        elif dialect in {"postgresql", "mysql"}:
             query = """
                 SELECT table_name
                 FROM information_schema.tables
                 WHERE table_type = 'BASE TABLE'
             """
+            params = {"schema": schema} if schema else None
             if schema:
-                query += f" AND table_schema = '{schema}'"
-
+                query += " AND table_schema = :schema"
         elif dialect == "sqlite":
             query = "SELECT name FROM sqlite_master WHERE type='table'"
-
+            params = None
         else:
-            msg = f"Unsupported dialect: {dialect}"
-            raise ValueError(msg)
+            raise ValueError(f"Unsupported dialect: {dialect}")
 
-        df = self.query_dataframe(name, query)
+        df = self.query_dataframe(name, query, params=params)
         return df.iloc[:, 0].tolist()
 
     def get_columns(
         self, name: str, table: str, schema: str | None = None
     ) -> pd.DataFrame:
-        """Get column information for a table.
+        """Return column metadata for a table."""
+        if not table.replace("_", "").isalnum():
+            raise ValueError("Table name contains unsupported characters")
+        if schema and not schema.replace("_", "").isalnum():
+            raise ValueError("Schema name contains unsupported characters")
 
-        Parameters
-        ----------
-        name : str
-            Input value for ``name``.
-        table : str
-            Input value for ``table``.
-        schema : str | None
-            Input value for ``schema``.
-
-        Returns
-        -------
-        value : pd.DataFrame
-            Result produced by this function."""
-        config = self._connections[name]
+        config = self._get_connection_config(name)
         dialect = config["dialect"]
 
         if dialect == "mssql":
-            # Note: Table/schema names from system catalogs, not user input - safe from SQL injection
-            query = f"""  # noqa: S608
+            query = """
                 SELECT
                     COLUMN_NAME,
                     DATA_TYPE,
                     IS_NULLABLE,
                     CHARACTER_MAXIMUM_LENGTH
                 FROM INFORMATION_SCHEMA.COLUMNS
-                WHERE TABLE_NAME = '{table}'
+                WHERE TABLE_NAME = :table
             """
+            params: dict[str, Any] = {"table": table}
             if schema:
-                query += f" AND TABLE_SCHEMA = '{schema}'"
-
-        elif dialect in ["postgresql", "mysql"]:
-            # Note: Table/schema names from system catalogs, not user input - safe from SQL injection
-            query = f"""  # noqa: S608
+                query += " AND TABLE_SCHEMA = :schema"
+                params["schema"] = schema
+        elif dialect in {"postgresql", "mysql"}:
+            query = """
                 SELECT
                     column_name,
                     data_type,
                     is_nullable,
                     character_maximum_length
                 FROM information_schema.columns
-                WHERE table_name = '{table}'
+                WHERE table_name = :table
             """
+            params = {"table": table}
             if schema:
-                query += f" AND table_schema = '{schema}'"
-
+                query += " AND table_schema = :schema"
+                params["schema"] = schema
         else:
-            msg = f"Unsupported dialect: {dialect}"
-            raise ValueError(msg)
+            raise ValueError(f"Unsupported dialect: {dialect}")
 
-        return self.query_dataframe(name, query)
+        return self.query_dataframe(name, query, params=params)
 
     def list_connections(self) -> list[str]:
-        """Get list of configured connection names.
-
-        Returns
-        -------
-        value : list[str]
-            Result produced by this function."""
+        """Return configured connection names."""
         return list(self._connections.keys())
 
     def remove_connection(self, name: str) -> None:
-        """Remove a connection configuration.
-
-        Parameters
-        ----------
-        name : str
-            Value provided for this parameter."""
-        if name in self._connections:
-            del self._connections[name]
-
+        """Remove a registered connection."""
+        self._connections.pop(name, None)
         if name in self._engines:
             self._engines[name].dispose()
             del self._engines[name]
+        logger.info("Removed database connection '%s'", name)
 
-        logger.info(f"Removed connection: {name}")
 
-
-# Global database manager instance
 db_manager = DatabaseManager()
 
 __all__ = ["DatabaseManager", "db_manager"]
+

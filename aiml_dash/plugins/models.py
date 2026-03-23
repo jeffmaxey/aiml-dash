@@ -48,6 +48,7 @@ class PluginPage:
     order: int = 0
     group_order: int = 0
     description: str | None = None
+    allowed_roles: Sequence[str] = ()
 
 
 @dataclass(frozen=True)
@@ -86,3 +87,6 @@ class Plugin:
     max_app_version: str | None = None
     config_schema: dict | None = None
     marketplace_url: str | None = None
+    api_version: str = "1.0"
+    capabilities: Sequence[str] = ()
+    allowed_roles: Sequence[str] = ()

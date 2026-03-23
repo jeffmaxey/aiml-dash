@@ -175,6 +175,7 @@ def validate_plugin(
     plugin: Plugin,
     available_plugins: dict[str, Plugin],
     app_version: str = "0.0.1",
+    supported_api_version: str = "1.0",
 ) -> tuple[bool, list[str]]:
     """Validate a plugin's compatibility and dependencies.
 
@@ -197,6 +198,11 @@ def validate_plugin(
     is_compatible, error = check_version_compatibility(plugin, app_version)
     if not is_compatible:
         errors.append(error)
+
+    if plugin.api_version != supported_api_version:
+        errors.append(
+            f"Plugin '{plugin.name}' requires plugin API {plugin.api_version}, supported API is {supported_api_version}"
+        )
 
     # Check dependencies
     deps_met, error = check_dependencies(plugin, available_plugins)

@@ -58,3 +58,15 @@ CLT_ORDER = 9
 
 # Container size
 CONTAINER_SIZE = "fluid"
+
+PAGE_DEFINITIONS = [
+    {"id": SINGLE_MEAN_ID, "label": "Single Mean", "icon": SINGLE_MEAN_ICON, "section": SECTION_NAME, "group": MEANS_GROUP, "order": SINGLE_MEAN_ORDER, "group_order": MEANS_GROUP_ORDER, "description": "Test a single population mean"},
+    {"id": COMPARE_MEANS_ID, "label": "Compare Means", "icon": COMPARE_MEANS_ICON, "section": SECTION_NAME, "group": MEANS_GROUP, "order": COMPARE_MEANS_ORDER, "group_order": MEANS_GROUP_ORDER, "description": "Compare two population means"},
+    {"id": SINGLE_PROP_ID, "label": "Single Proportion", "icon": SINGLE_PROP_ICON, "section": SECTION_NAME, "group": PROPORTIONS_GROUP, "order": SINGLE_PROP_ORDER, "group_order": PROPORTIONS_GROUP_ORDER, "description": "Test a single population proportion"},
+    {"id": COMPARE_PROPS_ID, "label": "Compare Proportions", "icon": COMPARE_PROPS_ICON, "section": SECTION_NAME, "group": PROPORTIONS_GROUP, "order": COMPARE_PROPS_ORDER, "group_order": PROPORTIONS_GROUP_ORDER, "description": "Compare two population proportions"},
+    {"id": CROSS_TABS_ID, "label": "Cross-tabs", "icon": CROSS_TABS_ICON, "section": SECTION_NAME, "group": TABLES_GROUP, "order": CROSS_TABS_ORDER, "group_order": TABLES_GROUP_ORDER, "description": "Cross-tabulation and chi-square tests"},
+    {"id": GOODNESS_ID, "label": "Goodness of Fit", "icon": GOODNESS_ICON, "section": SECTION_NAME, "group": TABLES_GROUP, "order": GOODNESS_ORDER, "group_order": TABLES_GROUP_ORDER, "description": "Chi-square goodness of fit test"},
+    {"id": CORRELATION_ID, "label": "Correlation", "icon": CORRELATION_ICON, "section": SECTION_NAME, "order": CORRELATION_ORDER, "description": "Correlation analysis"},
+    {"id": PROB_CALC_ID, "label": "Probability Calculator", "icon": PROB_CALC_ICON, "section": SECTION_NAME, "order": PROB_CALC_ORDER, "description": "Calculate probabilities from distributions"},
+    {"id": CLT_ID, "label": "CLT Simulation", "icon": CLT_ICON, "section": SECTION_NAME, "order": CLT_ORDER, "description": "Central Limit Theorem demonstration"},
+]

@@ -53,3 +53,8 @@ def example_layout() -> dmc.Container:
         size=EXAMPLE_CONTAINER_SIZE,
         py="xl",
     )
+
+
+PAGE_LAYOUTS = {
+    "example": example_layout,
+}

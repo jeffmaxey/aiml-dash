@@ -1,7 +1,7 @@
 """Layouts for core plugin pages."""
 
 import dash_mantine_components as dmc
-from dash import dcc
+from dash import dcc, html
 from dash_iconify import DashIconify
 
 from aiml_dash.plugins.core.components import (create_feature_card,
@@ -9,6 +9,40 @@ from aiml_dash.plugins.core.components import (create_feature_card,
                                                create_section_header,
                                                create_step_card)
 from aiml_dash.plugins.core.styles import CONTAINER_SIZE, SECTION_GAP
+
+
+def _internal_link(path: str, child):
+    """Wrap content in a Dash link for internal navigation."""
+
+    return dcc.Link(
+        child,
+        href=path,
+        style={"textDecoration": "none", "color": "inherit"},
+    )
+
+
+def _external_link(url: str, child):
+    """Wrap content in an anchor for external navigation."""
+
+    return html.A(
+        child,
+        href=url,
+        target="_blank",
+        rel="noopener noreferrer",
+        style={"textDecoration": "none", "color": "inherit"},
+    )
+
+
+def _internal_link_button(path: str, *button_args, **button_kwargs):
+    """Wrap a Mantine button in a Dash link for internal navigation."""
+
+    return _internal_link(path, dmc.Button(*button_args, **button_kwargs))
+
+
+def _external_link_button(url: str, *button_args, **button_kwargs):
+    """Wrap a Mantine button in an anchor for external navigation."""
+
+    return _external_link(url, dmc.Button(*button_args, **button_kwargs))
 
 
 def home_layout() -> dmc.Container:
@@ -44,20 +78,19 @@ def home_layout() -> dmc.Container:
                             ),
                             dmc.Group(
                                 [
-                                    dmc.Button(
+                                    _internal_link_button(
+                                        "#help",
                                         "Get Started",
                                         leftSection=DashIconify(icon="carbon:rocket"),
                                         variant="filled",
-                                        href="/help",
                                     ),
-                                    dmc.Button(
+                                    _external_link_button(
+                                        "https://github.com/jeffmaxey/aiml-dash",
                                         "View on GitHub",
                                         leftSection=DashIconify(
                                             icon="carbon:logo-github"
                                         ),
                                         variant="light",
-                                        href="https://github.com/jeffmaxey/aiml-dash",
-                                        target="_blank",
                                     ),
                                 ],
                                 gap="sm",
@@ -149,200 +182,218 @@ def home_layout() -> dmc.Container:
                 ),
                 dmc.SimpleGrid(
                     [
-                        dmc.Card(
-                            [
-                                dmc.Group(
-                                    [
-                                        dmc.ThemeIcon(
-                                            DashIconify(
-                                                icon="carbon:data-table", width=24
-                                            ),
-                                            size="xl",
-                                            radius="md",
-                                            variant="light",
-                                            color="blue",
-                                        ),
-                                        dmc.Stack(
-                                            [
-                                                dmc.Text("Data", fw=600, size="lg"),
-                                                dmc.Text(
-                                                    "Import, explore, transform, and visualize datasets",
-                                                    size="sm",
-                                                    c="dimmed",
+                        _internal_link(
+                            "#manage",
+                            dmc.Card(
+                                [
+                                    dmc.Group(
+                                        [
+                                            dmc.ThemeIcon(
+                                                DashIconify(
+                                                    icon="carbon:data-table", width=24
                                                 ),
-                                            ],
-                                            gap=4,
-                                        ),
-                                    ],
-                                    align="flex-start",
-                                ),
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
+                                                size="xl",
+                                                radius="md",
+                                                variant="light",
+                                                color="blue",
+                                            ),
+                                            dmc.Stack(
+                                                [
+                                                    dmc.Text("Data", fw=600, size="lg"),
+                                                    dmc.Text(
+                                                        "Import, explore, transform, and visualize datasets",
+                                                        size="sm",
+                                                        c="dimmed",
+                                                    ),
+                                                ],
+                                                gap=4,
+                                            ),
+                                        ],
+                                        align="flex-start",
+                                    ),
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
                         ),
-                        dmc.Card(
-                            [
-                                dmc.Group(
-                                    [
-                                        dmc.ThemeIcon(
-                                            DashIconify(
-                                                icon="carbon:chart-line", width=24
-                                            ),
-                                            size="xl",
-                                            radius="md",
-                                            variant="light",
-                                            color="green",
-                                        ),
-                                        dmc.Stack(
-                                            [
-                                                dmc.Text("Basics", fw=600, size="lg"),
-                                                dmc.Text(
-                                                    "Statistical tests, correlation, and hypothesis testing",
-                                                    size="sm",
-                                                    c="dimmed",
+                        _internal_link(
+                            "#single-mean",
+                            dmc.Card(
+                                [
+                                    dmc.Group(
+                                        [
+                                            dmc.ThemeIcon(
+                                                DashIconify(
+                                                    icon="carbon:chart-line", width=24
                                                 ),
-                                            ],
-                                            gap=4,
-                                        ),
-                                    ],
-                                    align="flex-start",
-                                ),
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
+                                                size="xl",
+                                                radius="md",
+                                                variant="light",
+                                                color="green",
+                                            ),
+                                            dmc.Stack(
+                                                [
+                                                    dmc.Text("Basics", fw=600, size="lg"),
+                                                    dmc.Text(
+                                                        "Statistical tests, correlation, and hypothesis testing",
+                                                        size="sm",
+                                                        c="dimmed",
+                                                    ),
+                                                ],
+                                                gap=4,
+                                            ),
+                                        ],
+                                        align="flex-start",
+                                    ),
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
                         ),
-                        dmc.Card(
-                            [
-                                dmc.Group(
-                                    [
-                                        dmc.ThemeIcon(
-                                            DashIconify(
-                                                icon="carbon:chemistry", width=24
-                                            ),
-                                            size="xl",
-                                            radius="md",
-                                            variant="light",
-                                            color="orange",
-                                        ),
-                                        dmc.Stack(
-                                            [
-                                                dmc.Text("Design", fw=600, size="lg"),
-                                                dmc.Text(
-                                                    "Experimental design, DOE, and sample size calculations",
-                                                    size="sm",
-                                                    c="dimmed",
+                        _internal_link(
+                            "#doe",
+                            dmc.Card(
+                                [
+                                    dmc.Group(
+                                        [
+                                            dmc.ThemeIcon(
+                                                DashIconify(
+                                                    icon="carbon:chemistry", width=24
                                                 ),
-                                            ],
-                                            gap=4,
-                                        ),
-                                    ],
-                                    align="flex-start",
-                                ),
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
+                                                size="xl",
+                                                radius="md",
+                                                variant="light",
+                                                color="orange",
+                                            ),
+                                            dmc.Stack(
+                                                [
+                                                    dmc.Text("Design", fw=600, size="lg"),
+                                                    dmc.Text(
+                                                        "Experimental design, DOE, and sample size calculations",
+                                                        size="sm",
+                                                        c="dimmed",
+                                                    ),
+                                                ],
+                                                gap=4,
+                                            ),
+                                        ],
+                                        align="flex-start",
+                                    ),
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
                         ),
-                        dmc.Card(
-                            [
-                                dmc.Group(
-                                    [
-                                        dmc.ThemeIcon(
-                                            DashIconify(
-                                                icon="carbon:machine-learning-model",
-                                                width=24,
-                                            ),
-                                            size="xl",
-                                            radius="md",
-                                            variant="light",
-                                            color="violet",
-                                        ),
-                                        dmc.Stack(
-                                            [
-                                                dmc.Text("Model", fw=600, size="lg"),
-                                                dmc.Text(
-                                                    "Machine learning models and predictive analytics",
-                                                    size="sm",
-                                                    c="dimmed",
+                        _internal_link(
+                            "#linear-regression",
+                            dmc.Card(
+                                [
+                                    dmc.Group(
+                                        [
+                                            dmc.ThemeIcon(
+                                                DashIconify(
+                                                    icon="carbon:machine-learning-model",
+                                                    width=24,
                                                 ),
-                                            ],
-                                            gap=4,
-                                        ),
-                                    ],
-                                    align="flex-start",
-                                ),
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
+                                                size="xl",
+                                                radius="md",
+                                                variant="light",
+                                                color="violet",
+                                            ),
+                                            dmc.Stack(
+                                                [
+                                                    dmc.Text("Model", fw=600, size="lg"),
+                                                    dmc.Text(
+                                                        "Machine learning models and predictive analytics",
+                                                        size="sm",
+                                                        c="dimmed",
+                                                    ),
+                                                ],
+                                                gap=4,
+                                            ),
+                                        ],
+                                        align="flex-start",
+                                    ),
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
                         ),
-                        dmc.Card(
-                            [
-                                dmc.Group(
-                                    [
-                                        dmc.ThemeIcon(
-                                            DashIconify(
-                                                icon="carbon:chart-3d", width=24
+                        _internal_link(
+                            "#kmeans-cluster",
+                            dmc.Card(
+                                [
+                                    dmc.Group(
+                                        [
+                                            dmc.ThemeIcon(
+                                                DashIconify(
+                                                    icon="carbon:chart-3d", width=24
+                                                ),
+                                                size="xl",
+                                                radius="md",
+                                                variant="light",
+                                                color="pink",
                                             ),
-                                            size="xl",
-                                            radius="md",
-                                            variant="light",
-                                            color="pink",
-                                        ),
-                                        dmc.Stack(
-                                            [
-                                                dmc.Text(
-                                                    "Multivariate", fw=600, size="lg"
-                                                ),
-                                                dmc.Text(
-                                                    "Advanced multivariate analysis and clustering",
-                                                    size="sm",
-                                                    c="dimmed",
-                                                ),
-                                            ],
-                                            gap=4,
-                                        ),
-                                    ],
-                                    align="flex-start",
-                                ),
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
+                                            dmc.Stack(
+                                                [
+                                                    dmc.Text(
+                                                        "Multivariate", fw=600, size="lg"
+                                                    ),
+                                                    dmc.Text(
+                                                        "Advanced multivariate analysis and clustering",
+                                                        size="sm",
+                                                        c="dimmed",
+                                                    ),
+                                                ],
+                                                gap=4,
+                                            ),
+                                        ],
+                                        align="flex-start",
+                                    ),
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
                         ),
-                        dmc.Card(
-                            [
-                                dmc.Group(
-                                    [
-                                        dmc.ThemeIcon(
-                                            DashIconify(
-                                                icon="carbon:settings", width=24
-                                            ),
-                                            size="xl",
-                                            radius="md",
-                                            variant="light",
-                                            color="gray",
-                                        ),
-                                        dmc.Stack(
-                                            [
-                                                dmc.Text("Settings", fw=600, size="lg"),
-                                                dmc.Text(
-                                                    "Configure plugins and application preferences",
-                                                    size="sm",
-                                                    c="dimmed",
+                        _internal_link(
+                            "#settings",
+                            dmc.Card(
+                                [
+                                    dmc.Group(
+                                        [
+                                            dmc.ThemeIcon(
+                                                DashIconify(
+                                                    icon="carbon:settings", width=24
                                                 ),
-                                            ],
-                                            gap=4,
-                                        ),
-                                    ],
-                                    align="flex-start",
-                                ),
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
+                                                size="xl",
+                                                radius="md",
+                                                variant="light",
+                                                color="gray",
+                                            ),
+                                            dmc.Stack(
+                                                [
+                                                    dmc.Text("Settings", fw=600, size="lg"),
+                                                    dmc.Text(
+                                                        "Configure plugins and application preferences",
+                                                        size="sm",
+                                                        c="dimmed",
+                                                    ),
+                                                ],
+                                                gap=4,
+                                            ),
+                                        ],
+                                        align="flex-start",
+                                    ),
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
                         ),
                     ],
                     cols={"base": 1, "sm": 2, "md": 3},
@@ -358,16 +409,19 @@ def home_layout() -> dmc.Container:
                                 "Documentation",
                                 "Comprehensive guides, tutorials, and API reference",
                                 "carbon:book",
+                                href="#help",
                             ),
                             create_resource_item(
                                 "GitHub Repository",
                                 "Source code, issue tracking, and contribution guidelines",
                                 "carbon:logo-github",
+                                href="https://github.com/jeffmaxey/aiml-dash",
                             ),
                             create_resource_item(
                                 "Plugin Development",
                                 "Learn how to create custom plugins and extend functionality",
                                 "carbon:code",
+                                href="https://github.com/jeffmaxey/aiml-dash",
                             ),
                         ],
                         gap="md",
@@ -440,26 +494,23 @@ def help_layout() -> dmc.Container:
                             dmc.Divider(),
                             dmc.Group(
                                 [
-                                    dmc.Button(
+                                    _external_link_button(
+                                        "https://jeffmaxey.github.io/aiml-dash/getting-started/installation/",
                                         "Installation Guide",
                                         leftSection=DashIconify(icon="carbon:download"),
                                         variant="light",
-                                        href="https://jeffmaxey.github.io/aiml-dash/getting-started/installation/",
-                                        target="_blank",
                                     ),
-                                    dmc.Button(
+                                    _external_link_button(
+                                        "https://jeffmaxey.github.io/aiml-dash/getting-started/quick-start/",
                                         "Quick Start",
                                         leftSection=DashIconify(icon="carbon:rocket"),
                                         variant="light",
-                                        href="https://jeffmaxey.github.io/aiml-dash/getting-started/quick-start/",
-                                        target="_blank",
                                     ),
-                                    dmc.Button(
+                                    _external_link_button(
+                                        "https://jeffmaxey.github.io/aiml-dash/user-guide/overview/",
                                         "User Guide",
                                         leftSection=DashIconify(icon="carbon:book"),
                                         variant="light",
-                                        href="https://jeffmaxey.github.io/aiml-dash/user-guide/overview/",
-                                        target="_blank",
                                     ),
                                 ],
                                 gap="sm",
@@ -506,7 +557,8 @@ def help_layout() -> dmc.Container:
                                                             "Export results in multiple formats",
                                                             size="sm",
                                                         ),
-                                                        dmc.Button(
+                                                        _external_link_button(
+                                                            "https://jeffmaxey.github.io/aiml-dash/user-guide/data-management/",
                                                             "Learn More",
                                                             size="xs",
                                                             variant="subtle",
@@ -514,8 +566,6 @@ def help_layout() -> dmc.Container:
                                                                 icon="carbon:arrow-right",
                                                                 width=16,
                                                             ),
-                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/data-management/",
-                                                            target="_blank",
                                                         ),
                                                     ],
                                                     gap="xs",
@@ -551,7 +601,8 @@ def help_layout() -> dmc.Container:
                                                             "Cross-tabulation and goodness-of-fit tests",
                                                             size="sm",
                                                         ),
-                                                        dmc.Button(
+                                                        _external_link_button(
+                                                            "https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
                                                             "Learn More",
                                                             size="xs",
                                                             variant="subtle",
@@ -559,8 +610,6 @@ def help_layout() -> dmc.Container:
                                                                 icon="carbon:arrow-right",
                                                                 width=16,
                                                             ),
-                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
-                                                            target="_blank",
                                                         ),
                                                     ],
                                                     gap="xs",
@@ -597,7 +646,8 @@ def help_layout() -> dmc.Container:
                                                             "Model evaluation and comparison",
                                                             size="sm",
                                                         ),
-                                                        dmc.Button(
+                                                        _external_link_button(
+                                                            "https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
                                                             "Learn More",
                                                             size="xs",
                                                             variant="subtle",
@@ -605,8 +655,6 @@ def help_layout() -> dmc.Container:
                                                                 icon="carbon:arrow-right",
                                                                 width=16,
                                                             ),
-                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/analysis-tools/",
-                                                            target="_blank",
                                                         ),
                                                     ],
                                                     gap="xs",
@@ -642,7 +690,8 @@ def help_layout() -> dmc.Container:
                                                             "3D visualizations and custom plots",
                                                             size="sm",
                                                         ),
-                                                        dmc.Button(
+                                                        _external_link_button(
+                                                            "https://jeffmaxey.github.io/aiml-dash/user-guide/visualization/",
                                                             "Learn More",
                                                             size="xs",
                                                             variant="subtle",
@@ -650,8 +699,6 @@ def help_layout() -> dmc.Container:
                                                                 icon="carbon:arrow-right",
                                                                 width=16,
                                                             ),
-                                                            href="https://jeffmaxey.github.io/aiml-dash/user-guide/visualization/",
-                                                            target="_blank",
                                                         ),
                                                     ],
                                                     gap="xs",
@@ -784,12 +831,11 @@ def help_layout() -> dmc.Container:
                                 "File an issue on GitHub with logs, screenshots, and steps to reproduce.",
                                 size="sm",
                             ),
-                            dmc.Button(
+                            _external_link_button(
+                                "https://github.com/jeffmaxey/aiml-dash/issues/new",
                                 "Report an Issue",
                                 leftSection=DashIconify(icon="carbon:logo-github"),
                                 variant="outline",
-                                href="https://github.com/jeffmaxey/aiml-dash/issues/new",
-                                target="_blank",
                                 mt="xs",
                             ),
                         ],
@@ -1207,3 +1253,11 @@ def logs_layout() -> dmc.Container:
         size=CONTAINER_SIZE,
         py="xl",
     )
+
+
+PAGE_LAYOUTS = {
+    "home": home_layout,
+    "settings": settings_layout,
+    "help": help_layout,
+    "logs": logs_layout,
+}

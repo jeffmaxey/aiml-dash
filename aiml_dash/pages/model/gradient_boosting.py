@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor
@@ -21,7 +21,7 @@ from sklearn.metrics import (
     r2_score,
 )
 from sklearn.model_selection import train_test_split
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 def layout():
@@ -61,20 +61,25 @@ def layout():
                                             data=[],
                                             searchable=True,
                                         ),
-                                        dmc.SegmentedControl(
-                                            id="gbt-type",
-                                            label="Model Type",
-                                            data=[
-                                                {
-                                                    "label": "Classification",
-                                                    "value": "classification",
-                                                },
-                                                {
-                                                    "label": "Regression",
-                                                    "value": "regression",
-                                                },
+                                        dmc.Stack(
+                                            [
+                                                dmc.Text("Model Type", size="sm", fw=500),
+                                                dmc.SegmentedControl(
+                                                    id="gbt-type",
+                                                    data=[
+                                                        {
+                                                            "label": "Classification",
+                                                            "value": "classification",
+                                                        },
+                                                        {
+                                                            "label": "Regression",
+                                                            "value": "regression",
+                                                        },
+                                                    ],
+                                                    value="classification",
+                                                ),
                                             ],
-                                            value="classification",
+                                            gap=4,
                                         ),
                                         dmc.Divider(
                                             label="Hyperparameters",
@@ -518,3 +523,4 @@ def train_gradient_boosting(
                 action="show",
             ),
         )
+

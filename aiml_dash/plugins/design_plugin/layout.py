@@ -1,7 +1,7 @@
 """Layout module for design plugin.
 
-This module provides lazy-loading layout functions that wrap
-plugin-owned design layouts.
+This module provides lazy-loading layout functions that wrap the canonical
+application page modules under ``aiml_dash.pages.design``.
 """
 
 from collections.abc import Callable
@@ -38,17 +38,19 @@ def _create_lazy_layout(
 
 
 # Create lazy-loading layout functions
-doe_layout = _create_lazy_layout("aiml_dash.plugins.design_plugin.pages.doe")
-randomizer_layout = _create_lazy_layout(
-    "aiml_dash.plugins.design_plugin.pages.randomizer"
-)
-samplesize_layout = _create_lazy_layout(
-    "aiml_dash.plugins.design_plugin.pages.sample_size"
-)
-samplesizecomp_layout = _create_lazy_layout(
-    "aiml_dash.plugins.design_plugin.pages.sample_size_comp"
-)
-sampling_layout = _create_lazy_layout("aiml_dash.plugins.design_plugin.pages.sampling")
+doe_layout = _create_lazy_layout("aiml_dash.pages.design.doe")
+randomizer_layout = _create_lazy_layout("aiml_dash.pages.design.randomizer")
+samplesize_layout = _create_lazy_layout("aiml_dash.pages.design.sample_size")
+samplesizecomp_layout = _create_lazy_layout("aiml_dash.pages.design.sample_size_comp")
+sampling_layout = _create_lazy_layout("aiml_dash.pages.design.sampling")
+
+PAGE_LAYOUTS = {
+    "doe": doe_layout,
+    "randomizer": randomizer_layout,
+    "sample-size": samplesize_layout,
+    "sample-size-comp": samplesizecomp_layout,
+    "sampling": sampling_layout,
+}
 
 __all__ = [
     "doe_layout",
@@ -56,4 +58,5 @@ __all__ = [
     "samplesize_layout",
     "samplesizecomp_layout",
     "sampling_layout",
+    "PAGE_LAYOUTS",
 ]

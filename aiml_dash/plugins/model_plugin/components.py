@@ -1,7 +1,6 @@
 """Reusable components for the model plugin.
 
-Most model UI elements are page-specific and live in
-``aiml_dash.plugins.model_plugin.pages`` modules.
-This module is intentionally minimal and available for future shared
+Most model UI elements are page-specific and live in the canonical
+``aiml_dash.pages.model`` modules. This module remains available for shared
 component extraction.
 """

@@ -12,3 +12,5 @@ PLUGIN_DESCRIPTION = "Data management, basic statistics, and legacy analysis too
 
 # Section and ordering
 SECTION_NAME = "Data"
+
+PAGE_DEFINITIONS: list[dict[str, object]] = []

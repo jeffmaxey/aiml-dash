@@ -9,12 +9,12 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import pandas as pd
 import plotly.express as px
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from utils.data_manager import data_manager
+from aiml_dash.utils.data_manager import data_manager
 
 
 def layout():
@@ -360,3 +360,4 @@ def train_model(n_clicks, dataset_name, target, features, solver, max_iter, test
                 action="show",
             ),
         )
+

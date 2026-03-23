@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from aiml_dash.plugins.models import Plugin
+from aiml_dash.utils.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ class PluginConfig:
         config_dir : Path | None
             Value provided for this parameter."""
         if config_dir is None:
-            config_dir = Path.home() / ".aiml_dash" / "plugins"
+            config_dir = get_settings().plugin_config_dir
 
         self.config_dir = config_dir
         self.config_dir.mkdir(parents=True, exist_ok=True)

@@ -1,6 +1,7 @@
 """Reusable components for core plugin pages."""
 
 import dash_mantine_components as dmc
+from dash import dcc, html
 from dash_iconify import DashIconify
 
 from aiml_dash.plugins.core.styles import CARD_STYLE
@@ -103,7 +104,12 @@ def create_step_card(
     return dmc.Card(content, withBorder=True, radius="md", p="md")
 
 
-def create_resource_item(title: str, description: str, icon: str) -> dmc.Group:
+def create_resource_item(
+    title: str,
+    description: str,
+    icon: str,
+    href: str | None = None,
+) -> dmc.Group | dcc.Link | html.A:
     """Create a resource line item.
 
     Parameters
@@ -120,7 +126,7 @@ def create_resource_item(title: str, description: str, icon: str) -> dmc.Group:
     value : dmc.Group
         Result produced by this function."""
 
-    return dmc.Group(
+    content = dmc.Group(
         [
             dmc.ThemeIcon(
                 DashIconify(icon=icon, width=18), radius="xl", variant="light"
@@ -135,6 +141,22 @@ def create_resource_item(title: str, description: str, icon: str) -> dmc.Group:
         ],
         gap="sm",
         align="flex-start",
+    )
+
+    if not href:
+        return content
+    if href.startswith("#"):
+        return dcc.Link(
+            content,
+            href=href,
+            style={"textDecoration": "none", "color": "inherit"},
+        )
+    return html.A(
+        content,
+        href=href,
+        target="_blank",
+        rel="noopener noreferrer",
+        style={"textDecoration": "none", "color": "inherit"},
     )
 
 

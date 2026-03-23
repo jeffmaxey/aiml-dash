@@ -1,7 +1,7 @@
 """Layout module for data plugin.
 
-This module provides lazy-loading layout functions that wrap
-plugin-owned data layouts.
+This module provides lazy-loading layout functions that wrap the canonical
+application page modules under ``aiml_dash.pages.data``.
 """
 
 from collections.abc import Callable
@@ -38,15 +38,27 @@ def _create_lazy_layout(
 
 
 # Create lazy-loading layout functions
-combine_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.combine")
-explore_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.explore")
-manage_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.manage")
-pivot_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.pivot")
-report_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.report")
-sqlquery_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.sql_query")
-transform_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.transform")
-view_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.view")
-visualize_layout = _create_lazy_layout("aiml_dash.plugins.data_plugin.pages.visualize")
+combine_layout = _create_lazy_layout("aiml_dash.pages.data.combine")
+explore_layout = _create_lazy_layout("aiml_dash.pages.data.explore")
+manage_layout = _create_lazy_layout("aiml_dash.pages.data.manage")
+pivot_layout = _create_lazy_layout("aiml_dash.pages.data.pivot")
+report_layout = _create_lazy_layout("aiml_dash.pages.data.report")
+sqlquery_layout = _create_lazy_layout("aiml_dash.pages.data.sql_query")
+transform_layout = _create_lazy_layout("aiml_dash.pages.data.transform")
+view_layout = _create_lazy_layout("aiml_dash.pages.data.view")
+visualize_layout = _create_lazy_layout("aiml_dash.pages.data.visualize")
+
+PAGE_LAYOUTS = {
+    "combine": combine_layout,
+    "explore": explore_layout,
+    "manage": manage_layout,
+    "pivot": pivot_layout,
+    "report": report_layout,
+    "sql-query": sqlquery_layout,
+    "transform": transform_layout,
+    "view": view_layout,
+    "visualize": visualize_layout,
+}
 
 __all__ = [
     "combine_layout",
@@ -58,4 +70,5 @@ __all__ = [
     "transform_layout",
     "view_layout",
     "visualize_layout",
+    "PAGE_LAYOUTS",
 ]

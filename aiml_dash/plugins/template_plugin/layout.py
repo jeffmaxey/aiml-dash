@@ -57,3 +57,8 @@ def template_layout() -> dmc.Container:
         size=TEMPLATE_CONTAINER_SIZE,
         py="xl",
     )
+
+
+PAGE_LAYOUTS = {
+    "template": template_layout,
+}

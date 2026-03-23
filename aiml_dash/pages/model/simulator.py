@@ -9,7 +9,7 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-from components.common import create_page_header
+from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 
@@ -509,3 +509,4 @@ def run_simulation(n_clicks, n_iter, seed, formula, vars_data):
                 action="show",
             ),
         )
+

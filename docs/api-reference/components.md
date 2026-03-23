@@ -1,6 +1,10 @@
-# API Reference - Components
+# Components
 
-This page documents reusable components.
+These modules contain reusable UI building blocks that support the app shell and analytical pages.
+
+## Package
+
+::: aiml_dash.components
 
 ## Common Components
 

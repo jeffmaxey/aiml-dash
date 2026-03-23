@@ -6,7 +6,7 @@ and better code locality. This module can be extended in the future if common pa
 
 Component Organization:
 - Page-specific components are defined within their respective layout functions
-- Common components (like page headers) are imported from components.common
+- Common components (like page headers) are imported from aiml_dash.components.common
 - Alert and notification components are created inline using dmc components
 
 Future Extensions:
@@ -17,3 +17,4 @@ Future Extensions:
 
 # This module intentionally left minimal as components are best kept local to layouts
 # for maintainability and clarity. Common cross-plugin components are in components.common
+

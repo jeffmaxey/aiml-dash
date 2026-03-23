@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
-"""
-Test script for AIML Dash application
-"""
+"""Runtime entrypoint for AIML Dash."""
 
-import sys
-from pathlib import Path
+from aiml_dash.app import create_app
+from aiml_dash.utils.config import get_settings
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent))
 
-from app import app
+def main() -> None:
+    """Start the AIML Dash application."""
+    settings = get_settings()
+    app = create_app(settings=settings)
 
-if __name__ == "__main__":
     print("Starting AIML Dash application...")
-    print("Navigate to: http://localhost:8050")
+    print(f"Navigate to: http://{settings.host}:{settings.port}")
     print("\nPress Ctrl+C to stop the server\n")
 
-    app.run(debug=True, host="127.0.0.1", port=8050)
+    app.run(debug=settings.debug, host=settings.host, port=settings.port)
+
+
+if __name__ == "__main__":
+    main()
+
