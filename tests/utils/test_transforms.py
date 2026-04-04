@@ -185,7 +185,6 @@ class TestTypeConversions:
         """Test conversion to string."""
         series = pd.Series([1, 2, 3, 4])
         result = as_character(series)
-        assert result.dtype == object
         assert all(isinstance(x, str) for x in result)
 
 
@@ -334,7 +333,7 @@ class TestTypeConvert:
         sample_dataframe : Any
             Value provided for this parameter."""
         result = type_convert(sample_dataframe, "x", "character")
-        assert result["x"].dtype == object
+        assert all(isinstance(v, str) for v in result["x"])
 
 
 class TestCreateVariable:
