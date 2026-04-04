@@ -23,12 +23,11 @@ from typing import Any
 
 from aiml_dash.auth import AuthorizationService, UserContext
 from aiml_dash.plugins.registry import (
-    _default_runtime,  # noqa: PLC2701
+    _default_runtime,
 )
 from aiml_dash.plugins.runtime import PluginRuntime
 from aiml_dash.utils.config import AppSettings
 from aiml_dash.utils.data_manager import DataManager, create_data_manager
-
 
 # ---------------------------------------------------------------------------
 # Projects

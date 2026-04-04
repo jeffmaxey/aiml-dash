@@ -9,10 +9,11 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from scipy import stats
+
+from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
@@ -337,7 +338,7 @@ def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternati
                 dmc.Divider(),
                 dmc.Text("Conclusion", fw=600, size="lg"),
                 dmc.Text(
-                    f"{'Reject' if reject_null else 'Fail to reject'} H₀ at α = {1 - confidence:.2f} level.",
+                    f"{'Reject' if reject_null else 'Fail to reject'} H₀ at α = {1 - confidence:.2f} level.",  # noqa: RUF001
                     c="green" if reject_null else "orange",
                     fw=600,
                 ),

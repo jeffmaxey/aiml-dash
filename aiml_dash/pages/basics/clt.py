@@ -269,7 +269,7 @@ def run_clt_simulation(
 
         # Normality test (Shapiro-Wilk)
         if len(sample_means_array) <= 5000:
-            shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
+            _shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
         else:
             # Use Kolmogorov-Smirnov for large samples
             _shapiro_stat, shapiro_p = stats.kstest((sample_means_array - mean_of_means) / std_of_means, "norm")

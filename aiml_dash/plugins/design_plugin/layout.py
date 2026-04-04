@@ -53,10 +53,10 @@ PAGE_LAYOUTS = {
 }
 
 __all__ = [
+    "PAGE_LAYOUTS",
     "doe_layout",
     "randomizer_layout",
     "samplesize_layout",
     "samplesizecomp_layout",
     "sampling_layout",
-    "PAGE_LAYOUTS",
 ]

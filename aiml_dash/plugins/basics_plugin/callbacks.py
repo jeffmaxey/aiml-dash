@@ -19,6 +19,7 @@ from dash_iconify import DashIconify
 from plotly.graph_objects import Figure
 from plotly.subplots import make_subplots
 from scipy import stats
+
 from aiml_dash.utils.data_manager import data_manager
 
 
@@ -214,7 +215,7 @@ def run_single_mean_test(
                 dmc.Divider(),
                 dmc.Text("Conclusion", fw=600, size="lg"),
                 dmc.Text(
-                    f"{'Reject' if reject_null else 'Fail to reject'} H₀ at α = {1 - confidence:.2f} level.",
+                    f"{'Reject' if reject_null else 'Fail to reject'} H₀ at α = {1 - confidence:.2f} level.",  # noqa: RUF001
                     c="green" if reject_null else "orange",
                     fw=600,
                 ),
@@ -578,7 +579,7 @@ def run_compare_means_test(
                 dmc.Divider(),
                 dmc.Text("Conclusion", fw=600, size="lg"),
                 dmc.Text(
-                    f"{'Reject' if reject_null else 'Fail to reject'} H₀ at α = {1 - confidence:.2f} level.",
+                    f"{'Reject' if reject_null else 'Fail to reject'} H₀ at α = {1 - confidence:.2f} level.",  # noqa: RUF001
                     c="green" if reject_null else "orange",
                     fw=600,
                 ),
@@ -2212,7 +2213,7 @@ def update_params(distribution):
             ),
             dmc.NumberInput(
                 id="prob-param2",
-                label="Standard Deviation (σ)",
+                label="Standard Deviation (σ)",  # noqa: RUF001
                 value=1,
                 min=0.01,
                 step=0.1,
@@ -2342,8 +2343,8 @@ def update_input_type(calc_type):
         return [
             dmc.NumberInput(
                 id="prob-alpha",
-                label="Significance Level (α)",
-                description="For two-tailed test, α is split between tails",
+                label="Significance Level (α)",  # noqa: RUF001
+                description="For two-tailed test, α is split between tails",  # noqa: RUF001
                 value=0.05,
                 min=0.001,
                 max=0.5,
@@ -2582,7 +2583,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                             color="blue",
                             icon=DashIconify(icon="mdi:information"),
                             children=dmc.Text(
-                                f"For a two-tailed test with α = {alpha}, the critical values are {critical_lower:.4f} and {critical_upper:.4f}.",
+                                f"For a two-tailed test with α = {alpha}, the critical values are {critical_lower:.4f} and {critical_upper:.4f}.",  # noqa: RUF001
                                 size="sm",
                             ),
                         ),
@@ -2648,7 +2649,7 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
                 )
 
             fig.update_layout(
-                title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",
+                title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",  # noqa: RUF001
                 xaxis_title="x",
                 yaxis_title=(
                     "Density"
@@ -2771,7 +2772,7 @@ def run_clt_simulation(
 
         # Normality test (Shapiro-Wilk)
         if len(sample_means_array) <= 5000:
-            shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
+            _shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
         else:
             # Use Kolmogorov-Smirnov for large samples
             _shapiro_stat, shapiro_p = stats.kstest(
@@ -3042,10 +3043,13 @@ def run_clt_simulation(
 def register_callbacks(app: object) -> None:
     """Register all callbacks for the basics plugin.
 
+    All callbacks in this module are registered automatically via the
+    ``@callback`` decorator at import time, so no explicit registration
+    is needed here.  The ``app`` argument is accepted for API compatibility
+    with other plugins that do require it.
+
     Parameters
     ----------
     app : object
         Value provided for this parameter."""
-    # Callbacks are auto-registered via @callback decorators
-    pass
 

@@ -310,7 +310,7 @@ def update_input_type(calc_type):
             dmc.NumberInput(
                 id="prob-alpha",
                 label="Significance Level (α)",  # noqa: RUF001
-                description="For two-tailed test, α is split between tails",
+                description="For two-tailed test, α is split between tails",  # noqa: RUF001
                 value=0.05,
                 min=0.001,
                 max=0.5,

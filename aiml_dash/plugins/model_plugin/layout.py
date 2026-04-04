@@ -71,6 +71,7 @@ PAGE_LAYOUTS = {
 }
 
 __all__ = [
+    "PAGE_LAYOUTS",
     "collaborativefiltering_layout",
     "decisionanalysis_layout",
     "decisiontree_layout",
@@ -85,5 +86,4 @@ __all__ = [
     "neuralnetwork_layout",
     "randomforest_layout",
     "simulator_layout",
-    "PAGE_LAYOUTS",
 ]

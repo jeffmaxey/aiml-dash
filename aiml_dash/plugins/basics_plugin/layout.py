@@ -9,9 +9,10 @@ All layouts have been extracted from pages/basics/ and refactored into this plug
 from typing import Any
 
 import dash_mantine_components as dmc
-from aiml_dash.components.common import create_page_header
 from dash import dcc, html
 from dash_iconify import DashIconify
+
+from aiml_dash.components.common import create_page_header
 
 
 def single_mean_layout():

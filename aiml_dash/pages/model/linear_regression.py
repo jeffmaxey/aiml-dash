@@ -10,12 +10,13 @@ import dash_mantine_components as dmc
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
+
+from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
@@ -870,6 +871,104 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
                 title="Coefficient Plot",
                 xaxis_title="Coefficient Value",
                 yaxis_title="Variable",
+                template="plotly_white",
+            )
+
+        elif plot_type == "resid_pred":
+            # Residuals vs first explanatory variable
+            x_col = X.columns[0] if len(X.columns) > 0 else None
+            fig = go.Figure()
+            if x_col is not None:
+                fig.add_trace(
+                    go.Scatter(
+                        x=X[x_col],
+                        y=residuals,
+                        mode="markers",
+                        marker={"color": "blue", "opacity": 0.6},
+                        name="Residuals",
+                    )
+                )
+                fig.add_hline(y=0, line_dash="dash", line_color="red")
+                fig.update_layout(
+                    title=f"Residuals vs {x_col}",
+                    xaxis_title=x_col,
+                    yaxis_title="Residuals",
+                    template="plotly_white",
+                )
+
+        elif plot_type == "qq":
+            # Normal Q-Q plot of residuals
+            sorted_residuals = np.sort(residuals)
+            n = len(sorted_residuals)
+            theoretical_quantiles = np.array(
+                [np.percentile(sorted_residuals, 100 * (i - 0.5) / n) for i in range(1, n + 1)]
+            )
+            sample_quantiles = sorted_residuals
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=theoretical_quantiles,
+                    y=sample_quantiles,
+                    mode="markers",
+                    marker={"color": "blue", "opacity": 0.6},
+                    name="Residuals",
+                )
+            )
+            q_min, q_max = theoretical_quantiles.min(), theoretical_quantiles.max()
+            fig.add_trace(
+                go.Scatter(
+                    x=[q_min, q_max],
+                    y=[q_min, q_max],
+                    mode="lines",
+                    line={"color": "red", "dash": "dash"},
+                    name="Normal Line",
+                )
+            )
+            fig.update_layout(
+                title="Normal Q-Q Plot of Residuals",
+                xaxis_title="Theoretical Quantiles",
+                yaxis_title="Sample Quantiles",
+                template="plotly_white",
+            )
+
+        elif plot_type == "scale_location":
+            # Scale-Location plot: sqrt(|standardised residuals|) vs fitted
+            std_res = residuals / (residuals.std() or 1)
+            sqrt_abs_std_res = np.sqrt(np.abs(std_res))
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=y_pred,
+                    y=sqrt_abs_std_res,
+                    mode="markers",
+                    marker={"color": "blue", "opacity": 0.6},
+                    name="√|Standardised Residuals|",
+                )
+            )
+            fig.update_layout(
+                title="Scale-Location",
+                xaxis_title="Fitted Values",
+                yaxis_title="√|Standardised Residuals|",
+                template="plotly_white",
+            )
+
+        elif plot_type == "corr":
+            # Correlation matrix heatmap of explanatory variables
+            corr_matrix = X.corr()
+            fig = go.Figure(
+                go.Heatmap(
+                    z=corr_matrix.values,
+                    x=list(corr_matrix.columns),
+                    y=list(corr_matrix.index),
+                    colorscale="RdBu",
+                    zmin=-1,
+                    zmax=1,
+                    text=corr_matrix.round(2).values,
+                    texttemplate="%{text}",
+                )
+            )
+            fig.update_layout(
+                title="Correlation Matrix",
                 template="plotly_white",
             )
 

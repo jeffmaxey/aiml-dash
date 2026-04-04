@@ -8,9 +8,10 @@ Interactive data table viewer with filtering and sorting.
 import dash
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
-from aiml_dash.components.common import create_filter_section, create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
+
+from aiml_dash.components.common import create_filter_section, create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
@@ -122,7 +123,7 @@ def update_view_table(dataset_name, filter_expr, sort_by, slice_expr):
     return dmc.Stack(
         [
             dmc.Text(
-                f"Showing {len(df):,} rows × {len(df.columns)} columns",
+                f"Showing {len(df):,} rows × {len(df.columns)} columns",  # noqa: RUF001
                 size="sm",
                 c="dimmed",
             ),

@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from scipy import stats
+
 from aiml_dash.utils.data_manager import data_manager
 
 

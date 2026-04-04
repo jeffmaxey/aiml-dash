@@ -7,9 +7,10 @@ Generate Python code and reproducible reports.
 
 import dash
 import dash_mantine_components as dmc
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
+
+from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
