@@ -5,17 +5,24 @@ the application to control access to plugins and pages based on roles.
 
 Classes:
     UserContext: Lightweight representation of the current user and their roles.
-    AuthorizationService: Service for default user creation and role-based access checks.
+    AuthorizationService: Service for default user creation, role-based access
+        checks, and Flask session-based session management.
 """
 
 from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from aiml_dash.utils.config import AppSettings
+    from aiml_dash.utils.user_store import UserStore
+
+# Key used to store/retrieve the serialised UserContext inside a Flask session
+# dict.  Kept as a module-level constant so all methods share a single source
+# of truth.
+_SESSION_USER_KEY = "_auth_user"
 
 
 @dataclass(frozen=True)
@@ -102,3 +109,89 @@ class AuthorizationService:
         if not allowed_roles:
             return True
         return any(role in user.roles for role in allowed_roles)
+
+    # ------------------------------------------------------------------
+    # Session management
+    # ------------------------------------------------------------------
+
+    def login(
+        self,
+        username: str,
+        password: str,
+        user_store: UserStore,
+    ) -> UserContext | None:
+        """Authenticate *username* / *password* against *user_store*.
+
+        Returns a :class:`UserContext` on success or ``None`` on failure.
+
+        Parameters
+        ----------
+        username : str
+            Login name supplied by the user.
+        password : str
+            Plain-text password supplied by the user.
+        user_store : UserStore
+            The store to authenticate against.
+
+        Returns
+        -------
+        UserContext | None
+            An authenticated context on success, or ``None`` when credentials
+            are invalid or the account is inactive.
+        """
+        user = user_store.authenticate(username, password)
+        if user is None:
+            return None
+        return UserContext(user_id=user.user_id, roles=user.roles)
+
+    def get_session_user(self, session: dict[str, Any]) -> UserContext:
+        """Extract the current user from a Flask *session* dict.
+
+        Falls back to :meth:`default_user` when no authenticated user is
+        stored in the session.
+
+        Parameters
+        ----------
+        session : dict[str, Any]
+            Flask ``session`` proxy (or any plain dict with the same shape).
+
+        Returns
+        -------
+        UserContext
+            The stored user, or the anonymous default user if absent.
+        """
+        data = session.get(_SESSION_USER_KEY)
+        if data is None:
+            return self.default_user()
+        try:
+            return UserContext(
+                user_id=data["user_id"],
+                roles=tuple(data.get("roles", ())),
+            )
+        except (KeyError, TypeError):
+            return self.default_user()
+
+    def set_session_user(self, session: dict[str, Any], user: UserContext) -> None:
+        """Persist *user* into the Flask *session* dict.
+
+        Parameters
+        ----------
+        session : dict[str, Any]
+            Flask ``session`` proxy to write into.
+        user : UserContext
+            The authenticated user to store.
+        """
+        session[_SESSION_USER_KEY] = {
+            "user_id": user.user_id,
+            "roles": list(user.roles),
+        }
+
+    def clear_session_user(self, session: dict[str, Any]) -> None:
+        """Remove the authenticated user entry from the Flask *session* dict.
+
+        Parameters
+        ----------
+        session : dict[str, Any]
+            Flask ``session`` proxy to clear.
+        """
+        session.pop(_SESSION_USER_KEY, None)

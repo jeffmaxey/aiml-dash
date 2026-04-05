@@ -1149,3 +1149,7 @@ def create_app(
 
 app = create_app()
 server = app.server
+
+from aiml_dash.api.blueprint import api_blueprint  # noqa: E402
+
+server.register_blueprint(api_blueprint)

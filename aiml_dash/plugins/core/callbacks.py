@@ -178,6 +178,98 @@ def register_callbacks(_app: object) -> None:
 
 
 # ============================================================================
+# Marketplace Callbacks
+# ============================================================================
+
+
+@callback(
+    Output("marketplace-results", "children"),
+    Input("marketplace-search-btn", "n_clicks"),
+    State("marketplace-search-input", "value"),
+    prevent_initial_call=True,
+)
+def marketplace_search(n_clicks, query):
+    """Search the plugin marketplace and render results.
+
+    Parameters
+    ----------
+    n_clicks : int | None
+        Number of times the search button has been clicked.
+    query : str | None
+        Search query entered by the user.
+
+    Returns
+    -------
+    children : dash component
+        Rendered search results or a no-results message."""
+    from aiml_dash.plugins.marketplace import PluginMarketplace
+
+    results = PluginMarketplace().search_plugins(query or "")
+    if not results:
+        return dmc.Text(
+            "No marketplace plugins found. The marketplace is not yet available.",
+            c="dimmed",
+        )
+    return dmc.Stack(
+        [
+            dmc.Card(
+                dmc.Stack(
+                    [
+                        dmc.Text(plugin.get("name", plugin.get("id", "Unknown")), fw=600),
+                        dmc.Text(
+                            plugin.get("description", "No description available."),
+                            size="sm",
+                            c="dimmed",
+                        ),
+                    ],
+                    gap="xs",
+                ),
+                withBorder=True,
+                radius="sm",
+                p="sm",
+            )
+            for plugin in results
+        ],
+        gap="xs",
+    )
+
+
+@callback(
+    Output("marketplace-installed-list", "children"),
+    Input("marketplace-refresh-btn", "n_clicks"),
+    prevent_initial_call=True,
+)
+def refresh_installed_plugins(n_clicks):
+    """Refresh the list of dynamically installed plugins.
+
+    Parameters
+    ----------
+    n_clicks : int | None
+        Number of times the refresh button has been clicked.
+
+    Returns
+    -------
+    children : dash component
+        List of installed plugins or a no-plugins message."""
+    from pathlib import Path
+
+    from aiml_dash.plugins.marketplace import PluginMarketplace
+
+    installed = PluginMarketplace().list_installed_plugins(
+        Path.home() / ".aiml_dash" / "plugins"
+    )
+    if not installed:
+        return dmc.Text("No dynamic plugins installed.", c="dimmed")
+    return dmc.Stack(
+        [
+            dmc.Text(plugin.get("name", plugin.get("id", "Unknown")), size="sm")
+            for plugin in installed
+        ],
+        gap="xs",
+    )
+
+
+# ============================================================================
 # Logs Page Callbacks
 # ============================================================================
 
