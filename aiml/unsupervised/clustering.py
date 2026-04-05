@@ -146,7 +146,7 @@ class HierarchicalClustering(BaseModel):
             ``{"silhouette_score": float, "n_clusters": int}``
         """
         X_prep = self._prepare(X)
-        labels = self.predict(X_prep)
+        labels = self.predict(X)
         result: dict[str, Any] = {"n_clusters": self.n_clusters}
         if len(set(labels)) > 1:
             result["silhouette_score"] = float(silhouette_score(X_prep, labels))
@@ -299,7 +299,7 @@ class KMeans(BaseModel):
             ``{"inertia": float, "silhouette_score": float, "n_clusters": int}``
         """
         X_prep = self._prepare(X)
-        labels = self.predict(X)
+        labels = self._estimator.predict(X_prep)
         result: dict[str, Any] = {
             "inertia": float(self._estimator.inertia_),
             "n_clusters": int(self._estimator.n_clusters),
