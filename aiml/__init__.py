@@ -41,10 +41,18 @@ Model Selection
 ::
 
     from aiml.model_selection import cross_validate, grid_search, compare_models
+
+Experiments
+-----------
+Track, log, compare, save, and export end-to-end ML experiments::
+
+    from aiml.experiments import Experiment, ExperimentRegistry
 """
 
 from aiml.base import BaseModel
 from aiml.deep_learning.neural_network import NeuralNetwork
+from aiml.experiments.experiment import Experiment, ExperimentStatus
+from aiml.experiments.registry import ExperimentRegistry
 from aiml.model_selection import compare_models, cross_validate, grid_search, random_search
 from aiml.supervised.glm import ElasticNet, Lasso, Ridge
 from aiml.supervised.linear import LinearRegression, LogisticRegression
@@ -89,4 +97,8 @@ __all__ = [
     "grid_search",
     "random_search",
     "compare_models",
+    # Experiments
+    "Experiment",
+    "ExperimentRegistry",
+    "ExperimentStatus",
 ]
