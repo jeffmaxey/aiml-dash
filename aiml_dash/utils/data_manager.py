@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import pickle
 from datetime import datetime
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -19,13 +21,24 @@ logger = get_logger(__name__)
 class DataManager:
     """Manage in-memory datasets for a single app instance."""
 
-    def __init__(self, load_sample_data: bool = True):
-        """Initialize the dataset manager."""
+    def __init__(
+        self,
+        load_sample_data: bool = True,
+        data_dir: Path | None = None,
+    ):
+        """Initialize the dataset manager.
+
+        Args:
+            load_sample_data: Whether to load bundled sample datasets on startup.
+            data_dir: Directory used for Parquet persistence.  Defaults to
+                ``~/.aiml_dash/data``.
+        """
         self.datasets: dict[str, pd.DataFrame] = {}
         self.metadata: dict[str, dict[str, Any]] = {}
         self.load_commands: dict[str, str] = {}
         self.descriptions: dict[str, str] = {}
         self.active_dataset: str | None = None
+        self.data_dir: Path = data_dir or (Path.home() / ".aiml_dash" / "data")
 
         if load_sample_data:
             self._load_sample_data()
@@ -373,6 +386,257 @@ class DataManager:
         except Exception as exc:
             logger.exception("Error importing dataset state")
             return False, f"Error importing state: {exc!s}"
+
+
+    # ------------------------------------------------------------------
+    # Parquet-based disk persistence
+    # ------------------------------------------------------------------
+
+    def persist_to_disk(
+        self,
+        name: str | None = None,
+        data_dir: Path | None = None,
+    ) -> tuple[bool, str]:
+        """Save a dataset to disk as a Parquet file with a JSON sidecar.
+
+        Args:
+            name: Dataset name to persist.  Defaults to ``active_dataset``.
+            data_dir: Target directory.  Defaults to ``self.data_dir``.
+
+        Returns:
+            A ``(success, message)`` tuple where *success* is ``True`` when the
+            file was written successfully and *message* describes the outcome.
+        """
+        dataset_name = name or self.active_dataset
+        if not dataset_name or dataset_name not in self.datasets:
+            return False, f"Dataset '{dataset_name}' not found"
+
+        resolved_dir = data_dir or self.data_dir
+        try:
+            resolved_dir.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            return False, f"Could not create directory '{resolved_dir}': {exc}"
+
+        parquet_path = resolved_dir / f"{dataset_name}.parquet"
+        meta_path = resolved_dir / f"{dataset_name}.meta.json"
+
+        df = self.datasets[dataset_name]
+        try:
+            df.to_parquet(parquet_path, engine="pyarrow", index=True)
+        except Exception as exc:
+            logger.exception("Error writing Parquet for '%s'", dataset_name)
+            return False, f"Error saving '{dataset_name}': {exc}"
+
+        meta = self.metadata.get(dataset_name, {})
+        sidecar: dict[str, Any] = {
+            "description": self.descriptions.get(dataset_name, ""),
+            "load_command": self.load_commands.get(dataset_name, ""),
+            "added": meta.get("added", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            "rows": len(df),
+            "columns": len(df.columns),
+        }
+        try:
+            meta_path.write_text(json.dumps(sidecar, indent=2), encoding="utf-8")
+        except OSError as exc:
+            logger.warning("Could not write sidecar for '%s': %s", dataset_name, exc)
+
+        return True, f"Saved '{dataset_name}' to {parquet_path}"
+
+    def load_from_disk(
+        self,
+        name: str,
+        data_dir: Path | None = None,
+    ) -> tuple[bool, str]:
+        """Load a dataset from a Parquet file on disk.
+
+        Args:
+            name: Dataset name (filename stem) to load.
+            data_dir: Source directory.  Defaults to ``self.data_dir``.
+
+        Returns:
+            A ``(success, message)`` tuple where *success* is ``True`` when the
+            dataset was loaded and registered successfully.
+        """
+        resolved_dir = data_dir or self.data_dir
+        parquet_path = resolved_dir / f"{name}.parquet"
+        meta_path = resolved_dir / f"{name}.meta.json"
+
+        if not parquet_path.exists():
+            return False, f"File not found: {parquet_path}"
+
+        try:
+            df = pd.read_parquet(parquet_path, engine="pyarrow")
+        except Exception as exc:
+            logger.exception("Error reading Parquet for '%s'", name)
+            return False, f"Error loading '{name}': {exc}"
+
+        description = ""
+        load_command = ""
+        if meta_path.exists():
+            try:
+                sidecar = json.loads(meta_path.read_text(encoding="utf-8"))
+                description = sidecar.get("description", "")
+                load_command = sidecar.get("load_command", "")
+            except Exception:
+                logger.warning("Could not read sidecar for '%s'", name)
+
+        self.add_dataset(name, df, description=description, load_command=load_command)
+        self.set_active_dataset(name)
+
+        rows, cols = len(df), len(df.columns)
+        return True, f"Loaded '{name}' ({rows} rows, {cols} cols)"
+
+    def list_disk_datasets(
+        self,
+        data_dir: Path | None = None,
+    ) -> list[dict[str, Any]]:
+        """Return metadata for every Parquet dataset found in *data_dir*.
+
+        Args:
+            data_dir: Directory to scan.  Defaults to ``self.data_dir``.
+
+        Returns:
+            A list of dicts with keys ``name``, ``path``, ``size_kb``,
+            ``description``, ``rows``, and ``columns``.  Returns ``[]`` when
+            the directory does not exist or an error occurs.
+        """
+        resolved_dir = data_dir or self.data_dir
+        if not resolved_dir.exists():
+            return []
+
+        results: list[dict[str, Any]] = []
+        try:
+            for parquet_path in sorted(resolved_dir.glob("*.parquet")):
+                stem = parquet_path.stem
+                if stem.startswith("_"):
+                    continue
+
+                size_kb = round(parquet_path.stat().st_size / 1024, 2)
+                description = ""
+                rows = 0
+                columns = 0
+
+                meta_path = resolved_dir / f"{stem}.meta.json"
+                if meta_path.exists():
+                    try:
+                        sidecar = json.loads(meta_path.read_text(encoding="utf-8"))
+                        description = sidecar.get("description", "")
+                        rows = sidecar.get("rows", 0)
+                        columns = sidecar.get("columns", 0)
+                    except Exception:
+                        logger.warning("Could not parse sidecar for '%s'", stem)
+
+                results.append(
+                    {
+                        "name": stem,
+                        "path": str(parquet_path),
+                        "size_kb": size_kb,
+                        "description": description,
+                        "rows": rows,
+                        "columns": columns,
+                    }
+                )
+        except Exception:
+            logger.exception("Error listing datasets in '%s'", resolved_dir)
+            return []
+
+        return results
+
+    def persist_all_datasets(
+        self,
+        data_dir: Path | None = None,
+    ) -> dict[str, tuple[bool, str]]:
+        """Persist every in-memory dataset to disk.
+
+        Args:
+            data_dir: Target directory.  Defaults to ``self.data_dir``.
+
+        Returns:
+            A mapping of dataset name → ``(success, message)`` result tuple.
+        """
+        return {name: self.persist_to_disk(name, data_dir) for name in list(self.datasets)}
+
+    # ------------------------------------------------------------------
+    # Data quality
+    # ------------------------------------------------------------------
+
+    def get_data_quality(self, name: str | None = None) -> dict[str, Any]:
+        """Return data-quality metrics for a dataset.
+
+        Args:
+            name: Dataset name.  Defaults to ``active_dataset``.
+
+        Returns:
+            A dict containing ``row_count``, ``col_count``, ``null_counts``,
+            ``null_pct``, ``duplicate_rows``, ``duplicate_pct``,
+            ``high_cardinality_cols``, ``constant_cols``, ``outlier_counts``,
+            and ``dtypes``.  Returns ``{}`` when the dataset is not found.
+        """
+        dataset_name = name or self.active_dataset
+        if not dataset_name or dataset_name not in self.datasets:
+            return {}
+
+        df = self.datasets[dataset_name]
+        row_count = len(df)
+        col_count = len(df.columns)
+
+        # Null counts / percentages
+        null_counts: dict[str, int] = df.isnull().sum().to_dict()
+        null_pct: dict[str, float] = {
+            col: round(cnt / row_count * 100, 2) if row_count else 0.0
+            for col, cnt in null_counts.items()
+        }
+
+        # Duplicates
+        duplicate_rows = int(df.duplicated().sum())
+        duplicate_pct = round(duplicate_rows / row_count * 100, 2) if row_count else 0.0
+
+        # High cardinality: string/object/category columns where unique values
+        # > 20 % of rows AND there are more than 10 unique values.
+        # Handles both legacy ``object`` dtype and pandas 3.x ``StringDtype``.
+        high_cardinality_cols: list[str] = []
+        for col in df.columns:
+            is_text = (
+                df[col].dtype == object
+                or pd.api.types.is_string_dtype(df[col])
+                or isinstance(df[col].dtype, pd.CategoricalDtype)
+            )
+            if is_text:
+                n_unique = df[col].nunique(dropna=True)
+                if n_unique > 10 and n_unique > row_count * 0.20:
+                    high_cardinality_cols.append(col)
+
+        # Constant columns: exactly 1 unique non-null value
+        constant_cols: list[str] = [
+            col for col in df.columns if df[col].nunique(dropna=True) == 1
+        ]
+
+        # Outlier counts for numeric columns (|z-score| > 3)
+        outlier_counts: dict[str, int] = {}
+        for col in df.select_dtypes(include="number").columns:
+            series = df[col].dropna()
+            std = series.std()
+            if std == 0:
+                outlier_counts[col] = 0
+            else:
+                mean = series.mean()
+                outlier_counts[col] = int(((series - mean).abs() > 3 * std).sum())
+
+        # dtype strings
+        dtypes: dict[str, str] = {col: str(dtype) for col, dtype in df.dtypes.items()}
+
+        return {
+            "row_count": row_count,
+            "col_count": col_count,
+            "null_counts": null_counts,
+            "null_pct": null_pct,
+            "duplicate_rows": duplicate_rows,
+            "duplicate_pct": duplicate_pct,
+            "high_cardinality_cols": high_cardinality_cols,
+            "constant_cols": constant_cols,
+            "outlier_counts": outlier_counts,
+            "dtypes": dtypes,
+        }
 
 
 def create_data_manager(load_sample_data: bool = True) -> DataManager:
