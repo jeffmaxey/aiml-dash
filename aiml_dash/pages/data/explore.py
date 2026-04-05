@@ -8,9 +8,10 @@ Statistical exploration and summary statistics with grouping.
 import dash
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
-from aiml_dash.components.common import create_filter_section, create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
+
+from aiml_dash.components.common import create_filter_section, create_page_header
 from aiml_dash.utils.data_manager import data_manager
 from aiml_dash.utils.statistics import STAT_FUNCTIONS, explore
 
@@ -68,7 +69,7 @@ def layout():
                                                     "p25",
                                                     "p75",
                                                 ]
-                                            ],  # type: ignore
+                                            ],  # type: ignore[list-item]
                                             searchable=True,
                                             clearable=True,
                                         ),
@@ -170,9 +171,9 @@ def update_explore_selectors(dataset_name):
     State("data-filter-input", "value"),
     prevent_initial_call=True,
 )
-def calculate_statistics(n_clicks, dataset_name, vars, byvar, functions, data_filter):
+def calculate_statistics(n_clicks, dataset_name, variables, byvar, functions, data_filter):
     """Calculate and display summary statistics."""
-    if not n_clicks or not dataset_name or not vars or not functions:
+    if not n_clicks or not dataset_name or not variables or not functions:
         return dmc.Center(
             dmc.Text("Select variables and functions, then click Calculate", c="dimmed"),
             style={"height": "300px"},
@@ -186,7 +187,7 @@ def calculate_statistics(n_clicks, dataset_name, vars, byvar, functions, data_fi
         # Calculate statistics
         result = explore(
             df,
-            variables=vars,
+            variables=variables,
             byvar=byvar if byvar else None,
             fun=functions,
             data_filter=data_filter,
@@ -199,7 +200,7 @@ def calculate_statistics(n_clicks, dataset_name, vars, byvar, functions, data_fi
         return dmc.Stack(
             [
                 dmc.Text(
-                    f"{len(result)} rows × {len(result.columns)} columns",
+                    f"{len(result)} rows × {len(result.columns)} columns",  # noqa: RUF001
                     size="sm",
                     c="dimmed",
                 ),
@@ -247,9 +248,9 @@ def calculate_statistics(n_clicks, dataset_name, vars, byvar, functions, data_fi
     State("data-filter-input", "value"),
     prevent_initial_call=True,
 )
-def export_statistics(n_clicks, dataset_name, vars, byvar, functions, data_filter):
+def export_statistics(n_clicks, dataset_name, variables, byvar, functions, data_filter):
     """Export statistics to CSV."""
-    if not n_clicks or not dataset_name or not vars or not functions:
+    if not n_clicks or not dataset_name or not variables or not functions:
         return dash.no_update
 
     df = data_manager.get_dataset(dataset_name)
@@ -259,12 +260,12 @@ def export_statistics(n_clicks, dataset_name, vars, byvar, functions, data_filte
     try:
         result = explore(
             df,
-            variables=vars,
+            variables=variables,
             byvar=byvar if byvar else None,
             fun=functions,
             data_filter=data_filter,
         )
         return dcc.send_data_frame(result.to_csv, f"{dataset_name}_explore.csv", index=False)
-    except:
+    except Exception:
         return dash.no_update
 

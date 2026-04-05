@@ -2,7 +2,7 @@
 name = "aiml-dash"
 version = "0.1.0"
 description = "A comprehensive Dash application for Predictive Analytics and Machine Learning with dynamic plugin framework."
-authors = [{ name = "Jeff A. Maxey", email = "aiml-dash@proton.mee" }]
+authors = [{ name = "Jeff A. Maxey", email = "aiml-dash@proton.me" }]
 readme = "README.md"
 license = { text = "MIT" }
 keywords = [

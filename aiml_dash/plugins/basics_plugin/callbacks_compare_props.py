@@ -1,198 +1,30 @@
-"""
-Compare Proportions Test Page
-Two-sample test for comparing proportions between independent groups.
+"""Compare Proportions hypothesis test callbacks.
+
+This module is part of the basics plugin callback suite.
+Callbacks are registered automatically via ``@callback`` decorators on import.
 """
 
 import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, dcc
+from dash import Input, Output, State, callback
 from dash_iconify import DashIconify
 from scipy import stats
 
 from aiml_dash.utils.data_manager import data_manager
 
 
-def layout():
-    """Create layout for compare proportions test page."""
-    return dmc.Container(
-        fluid=True,
-        p="md",
-        children=[
-            # Page Header
-            dmc.Stack(
-                gap="md",
-                children=[
-                    dmc.Group(
-                        [
-                            DashIconify(icon="mdi:percent-box-outline", width=32),
-                            dmc.Title("Compare Proportions Test", order=2),
-                        ],
-                        gap="sm",
-                    ),
-                    dmc.Text(
-                        "Test whether proportions differ significantly between two independent groups",
-                        c="dimmed",
-                        size="sm",
-                    ),
-                    dmc.Divider(),
-                ],
-            ),
-            # Main Content
-            dmc.Grid(
-                gutter="md",
-                children=[
-                    # Left Column - Controls
-                    dmc.GridCol(
-                        span={"base": 12, "md": 4},
-                        children=[
-                            dmc.Paper(
-                                p="md",
-                                withBorder=True,
-                                children=[
-                                    dmc.Stack(
-                                        gap="md",
-                                        children=[
-                                            dmc.Text("Data Selection", fw=500, size="lg"),
-                                            dmc.Select(
-                                                id="compare-props-dataset",
-                                                label="Select Dataset",
-                                                placeholder="Choose dataset...",
-                                                data=[],
-                                                searchable=True,
-                                                clearable=False,
-                                            ),
-                                            dmc.Select(
-                                                id="compare-props-variable",
-                                                label="Variable",
-                                                placeholder="Choose variable...",
-                                                description="Binary variable to test",
-                                                data=[],
-                                                searchable=True,
-                                            ),
-                                            dmc.Select(
-                                                id="compare-props-success",
-                                                label="Success Level",
-                                                placeholder="Choose success level...",
-                                                description="Level representing 'success'",
-                                                data=[],
-                                                searchable=True,
-                                            ),
-                                            dmc.Select(
-                                                id="compare-props-group",
-                                                label="Group Variable",
-                                                placeholder="Choose grouping variable...",
-                                                description="Variable with exactly 2 groups",
-                                                data=[],
-                                                searchable=True,
-                                            ),
-                                            dmc.Divider(),
-                                            dmc.Text("Test Parameters", fw=500, size="lg"),
-                                            dmc.Stack(
-                                                gap=5,
-                                                children=[
-                                                    dmc.Text(
-                                                        "Alternative Hypothesis",
-                                                        size="sm",
-                                                        fw=500,
-                                                    ),
-                                                    dmc.SegmentedControl(
-                                                        id="compare-props-alternative",
-                                                        data=[
-                                                            {
-                                                                "label": "Two-sided",
-                                                                "value": "two-sided",
-                                                            },
-                                                            {
-                                                                "label": "Greater",
-                                                                "value": "greater",
-                                                            },
-                                                            {
-                                                                "label": "Less",
-                                                                "value": "less",
-                                                            },
-                                                        ],
-                                                        value="two-sided",
-                                                        fullWidth=True,
-                                                    ),
-                                                ],
-                                            ),
-                                            dmc.NumberInput(
-                                                id="compare-props-confidence",
-                                                label="Confidence Level",
-                                                description="For confidence interval",
-                                                value=0.95,
-                                                min=0.5,
-                                                max=0.999,
-                                                step=0.01,
-                                                decimalScale=3,
-                                            ),
-                                            dmc.Button(
-                                                "Run Test",
-                                                id="compare-props-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
-                                                fullWidth=True,
-                                                variant="filled",
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                    # Right Column - Results
-                    dmc.GridCol(
-                        span={"base": 12, "md": 8},
-                        children=[
-                            dmc.Stack(
-                                gap="md",
-                                children=[
-                                    dmc.Paper(
-                                        id="compare-props-results",
-                                        p="md",
-                                        withBorder=True,
-                                        children=[
-                                            dmc.Text(
-                                                "Configure test parameters and click 'Run Test' to see results",
-                                                c="dimmed",
-                                                ta="center",
-                                                py="xl",
-                                            ),
-                                        ],
-                                    ),
-                                    dmc.Paper(
-                                        id="compare-props-plot-container",
-                                        p="md",
-                                        withBorder=True,
-                                        style={"display": "none"},
-                                        children=[
-                                            dcc.Graph(
-                                                id="compare-props-plot",
-                                                config={"displayModeBar": False},
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    )
-
-
-# ==============================================================================
-# CALLBACKS
-# ==============================================================================
-
-
 @callback(
     Output("compare-props-dataset", "data"),
     Input("compare-props-dataset", "id"),
 )
-def update_datasets(_):
-    """Populate dataset dropdown."""
+def update_compare_props_datasets(_):
+    """Populate dataset dropdown.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": ds, "value": ds} for ds in datasets]
 
@@ -206,8 +38,13 @@ def update_datasets(_):
     ],
     Input("compare-props-dataset", "value"),
 )
-def update_variables(dataset):
-    """Populate variable dropdowns."""
+def update_compare_props_variables(dataset):
+    """Populate variable dropdowns.
+
+    Parameters
+    ----------
+    dataset : Any
+        Value provided for this parameter."""
     if not dataset:
         return [], None, [], None
 
@@ -222,8 +59,15 @@ def update_variables(dataset):
     [Output("compare-props-success", "data"), Output("compare-props-success", "value")],
     [Input("compare-props-dataset", "value"), Input("compare-props-variable", "value")],
 )
-def update_success_levels(dataset, variable):
-    """Populate success level dropdown."""
+def update_compare_props_success_levels(dataset, variable):
+    """Populate success level dropdown.
+
+    Parameters
+    ----------
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Value provided for this parameter."""
     if not dataset or not variable:
         return [], None
 
@@ -235,7 +79,9 @@ def update_success_levels(dataset, variable):
     unique_vals = df[variable].dropna().unique()
     unique_vals = sorted([str(v) for v in unique_vals])
 
-    return [{"label": val, "value": val} for val in unique_vals], None if len(unique_vals) == 0 else unique_vals[0]
+    return [{"label": val, "value": val} for val in unique_vals], (
+        None if len(unique_vals) == 0 else unique_vals[0]
+    )
 
 
 @callback(
@@ -255,8 +101,27 @@ def update_success_levels(dataset, variable):
     ],
     prevent_initial_call=True,
 )
-def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var, alternative, confidence):
-    """Run two-sample proportion test."""
+def run_compare_props_test(
+    n_clicks, dataset, variable, success_level, group_var, alternative, confidence
+):
+    """Run two-sample proportion test.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Input value for ``variable``.
+    success_level : Any
+        Input value for ``success_level``.
+    group_var : Any
+        Input value for ``group_var``.
+    alternative : Any
+        Input value for ``alternative``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset, variable, success_level, group_var]):
         return (
             [
@@ -376,13 +241,17 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                 p="sm",
                                 withBorder=True,
                                 children=[
-                                    dmc.Text(f"Group: {group1}", fw=500, size="sm", mb="xs"),
+                                    dmc.Text(
+                                        f"Group: {group1}", fw=500, size="sm", mb="xs"
+                                    ),
                                     dmc.Group(
                                         [
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("n", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "n", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{n1}", fw=600),
                                                 ],
                                             ),
@@ -405,7 +274,9 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                                         size="xs",
                                                         c="dimmed",
                                                     ),
-                                                    dmc.Text(f"{p1:.4f}", fw=600, c="blue"),
+                                                    dmc.Text(
+                                                        f"{p1:.4f}", fw=600, c="blue"
+                                                    ),
                                                 ],
                                             ),
                                         ],
@@ -417,13 +288,17 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                 p="sm",
                                 withBorder=True,
                                 children=[
-                                    dmc.Text(f"Group: {group2}", fw=500, size="sm", mb="xs"),
+                                    dmc.Text(
+                                        f"Group: {group2}", fw=500, size="sm", mb="xs"
+                                    ),
                                     dmc.Group(
                                         [
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("n", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "n", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{n2}", fw=600),
                                                 ],
                                             ),
@@ -446,7 +321,9 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                                         size="xs",
                                                         c="dimmed",
                                                     ),
-                                                    dmc.Text(f"{p2:.4f}", fw=600, c="blue"),
+                                                    dmc.Text(
+                                                        f"{p2:.4f}", fw=600, c="blue"
+                                                    ),
                                                 ],
                                             ),
                                         ],
@@ -516,9 +393,15 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                     dmc.Stack(
                                         gap=2,
                                         children=[
-                                            dmc.Text("Relative Risk", size="xs", c="dimmed"),
                                             dmc.Text(
-                                                f"{relative_risk:.4f}" if relative_risk != float("inf") else "∞",
+                                                "Relative Risk", size="xs", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                (
+                                                    f"{relative_risk:.4f}"
+                                                    if relative_risk != float("inf")
+                                                    else "∞"
+                                                ),
                                                 fw=600,
                                             ),
                                         ],
@@ -526,9 +409,15 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                                     dmc.Stack(
                                         gap=2,
                                         children=[
-                                            dmc.Text("Odds Ratio", size="xs", c="dimmed"),
                                             dmc.Text(
-                                                f"{odds_ratio:.4f}" if odds_ratio != float("inf") else "∞",
+                                                "Odds Ratio", size="xs", c="dimmed"
+                                            ),
+                                            dmc.Text(
+                                                (
+                                                    f"{odds_ratio:.4f}"
+                                                    if odds_ratio != float("inf")
+                                                    else "∞"
+                                                ),
                                                 fw=600,
                                             ),
                                         ],
@@ -567,8 +456,10 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
                 error_y={
                     "type": "data",
                     "array": [
-                        stats.norm.ppf(1 - (1 - confidence) / 2) * np.sqrt(p1 * (1 - p1) / n1),
-                        stats.norm.ppf(1 - (1 - confidence) / 2) * np.sqrt(p2 * (1 - p2) / n2),
+                        stats.norm.ppf(1 - (1 - confidence) / 2)
+                        * np.sqrt(p1 * (1 - p1) / n1),
+                        stats.norm.ppf(1 - (1 - confidence) / 2)
+                        * np.sqrt(p2 * (1 - p2) / n2),
                     ],
                     "visible": True,
                     "color": "gray",
@@ -600,4 +491,5 @@ def run_compare_props_test(n_clicks, dataset, variable, success_level, group_var
             {"display": "none"},
             {},
         )
+
 

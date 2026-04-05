@@ -7,10 +7,11 @@ Calculate required sample size for different types of tests.
 
 import dash_mantine_components as dmc
 import numpy as np
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, html
 from dash_iconify import DashIconify
 from scipy import stats
+
+from aiml_dash.components.common import create_page_header
 
 
 def layout():

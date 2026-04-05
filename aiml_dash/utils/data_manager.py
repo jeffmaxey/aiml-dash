@@ -238,10 +238,10 @@ class DataManager:
         self,
         name: str | None = None,
         export_format: str = "csv",
-        format: str | None = None,
+        file_format: str | None = None,
     ) -> str | None:
         """Export a dataset in the requested format."""
-        resolved_format = format or export_format
+        resolved_format = file_format or export_format
         df = self.get_dataset(name)
         if df is None:
             return None

@@ -4,10 +4,12 @@ import dash_mantine_components as dmc
 from dash import dcc, html
 from dash_iconify import DashIconify
 
-from aiml_dash.plugins.core.components import (create_feature_card,
-                                               create_resource_item,
-                                               create_section_header,
-                                               create_step_card)
+from aiml_dash.plugins.core.components import (
+    create_feature_card,
+    create_resource_item,
+    create_section_header,
+    create_step_card,
+)
 from aiml_dash.plugins.core.styles import CONTAINER_SIZE, SECTION_GAP
 
 

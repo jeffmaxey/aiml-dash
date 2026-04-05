@@ -9,10 +9,11 @@ import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
 import pandas as pd
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.metrics.pairwise import cosine_similarity
+
+from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
@@ -402,6 +403,8 @@ def get_recommendations(n_clicks, target_user, top_n, model_data):
                 elif matrix.index.dtype == np.float64:
                     target_user = float(target_user)
             except ValueError:
+                # Conversion failed; leave target_user as-is and let the
+                # membership check below report the missing-user error.
                 pass
 
         if target_user not in matrix.index:

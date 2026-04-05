@@ -367,7 +367,7 @@ def execute_query(exec_clicks, preview_clicks, connection_name, query, dataset_n
                         color="green",
                         icon=DashIconify(icon="carbon:checkmark"),
                     ),
-                    dmc.Text(f"{len(df)} rows × {len(df.columns)} columns", size="sm", c="dimmed"),
+                    dmc.Text(f"{len(df)} rows × {len(df.columns)} columns", size="sm", c="dimmed"),  # noqa: RUF001
                     dag.AgGrid(
                         rowData=df.head(100).to_dict("records"),
                         columnDefs=[{"field": col, "filter": True} for col in df.columns],
@@ -383,7 +383,7 @@ def execute_query(exec_clicks, preview_clicks, connection_name, query, dataset_n
         # Preview mode - just show results
         return dmc.Stack(
             [
-                dmc.Text(f"{len(df)} rows × {len(df.columns)} columns", size="sm", c="dimmed"),
+                dmc.Text(f"{len(df)} rows × {len(df.columns)} columns", size="sm", c="dimmed"),  # noqa: RUF001
                 dag.AgGrid(
                     rowData=df.head(100).to_dict("records"),
                     columnDefs=[{"field": col, "filter": True} for col in df.columns],

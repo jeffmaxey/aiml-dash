@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LogisticRegression
@@ -22,6 +21,8 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
+
+from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 

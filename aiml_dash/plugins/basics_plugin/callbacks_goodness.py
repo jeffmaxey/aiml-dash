@@ -1,170 +1,385 @@
-"""
-Probability Calculator
-Calculate probabilities and critical values for various distributions.
+"""Goodness-of-Fit and Probability Calculator callbacks.
+
+This module is part of the basics plugin callback suite.
+Callbacks are registered automatically via ``@callback`` decorators on import.
 """
 
+import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, dcc, html
+from dash import Input, Output, State, callback, html
 from dash_iconify import DashIconify
 from scipy import stats
 
+from aiml_dash.utils.data_manager import data_manager
 
-def layout():
-    """Create layout for probability calculator page."""
-    return dmc.Container(
-        fluid=True,
-        p="md",
-        children=[
-            # Page Header
+
+@callback(
+    Output("goodness-dataset", "data"),
+    Input("goodness-dataset", "id"),
+)
+def update_prob_calc_datasets(_):
+    """Populate dataset dropdown.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
+    datasets = data_manager.get_dataset_names()
+    return [{"label": ds, "value": ds} for ds in datasets]
+
+
+@callback(
+    [Output("goodness-variable", "data"), Output("goodness-variable", "value")],
+    Input("goodness-dataset", "value"),
+)
+def update_prob_calc_variables(dataset):
+    """Populate variable dropdown.
+
+    Parameters
+    ----------
+    dataset : Any
+        Value provided for this parameter."""
+    if not dataset:
+        return [], None
+
+    df = data_manager.get_dataset(dataset)
+    columns = df.columns.tolist()
+
+    return [{"label": col, "value": col} for col in columns], None
+
+
+@callback(
+    Output("goodness-expected-input", "style"),
+    Input("goodness-dist-type", "value"),
+)
+def toggle_custom_input(dist_type):
+    """Show/hide custom expected input based on distribution type.
+
+    Parameters
+    ----------
+    dist_type : Any
+        Value provided for this parameter."""
+    if dist_type == "custom":
+        return {"display": "block"}
+    return {"display": "none"}
+
+
+@callback(
+    [
+        Output("goodness-results", "children"),
+        Output("goodness-table-container", "style"),
+        Output("goodness-table", "children"),
+        Output("goodness-plot-container", "style"),
+        Output("goodness-plot", "figure"),
+    ],
+    Input("goodness-run", "n_clicks"),
+    [
+        State("goodness-dataset", "value"),
+        State("goodness-variable", "value"),
+        State("goodness-dist-type", "value"),
+        State("goodness-expected-input", "value"),
+        State("goodness-confidence", "value"),
+    ],
+    prevent_initial_call=True,
+)
+def run_goodness_test(
+    n_clicks, dataset, variable, dist_type, custom_expected, confidence
+):
+    """Run chi-square goodness of fit test.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset : Any
+        Input value for ``dataset``.
+    variable : Any
+        Input value for ``variable``.
+    dist_type : Any
+        Input value for ``dist_type``.
+    custom_expected : Any
+        Input value for ``custom_expected``.
+    confidence : Any
+        Value provided for this parameter."""
+    if not all([dataset, variable]):
+        return (
+            [
+                dmc.Alert(
+                    "Please select dataset and variable",
+                    title="Missing inputs",
+                    color="yellow",
+                    icon=DashIconify(icon="mdi:alert"),
+                )
+            ],
+            {"display": "none"},
+            None,
+            {"display": "none"},
+            {},
+        )
+
+    try:
+        df = data_manager.get_dataset(dataset)
+
+        if variable not in df.columns:
+            return (
+                [
+                    dmc.Alert(
+                        "Variable not found in dataset",
+                        title="Error",
+                        color="red",
+                        icon=DashIconify(icon="mdi:alert-circle"),
+                    )
+                ],
+                {"display": "none"},
+                None,
+                {"display": "none"},
+                {},
+            )
+
+        # Get observed frequencies
+        observed_counts = df[variable].value_counts().sort_index()
+        categories = observed_counts.index.tolist()
+        observed = observed_counts.values
+        n_categories = len(categories)
+        total = observed.sum()
+
+        # Calculate expected frequencies
+        if dist_type == "uniform":
+            expected = np.ones(n_categories) * (total / n_categories)
+        else:  # custom
+            if not custom_expected:
+                return (
+                    [
+                        dmc.Alert(
+                            "Please enter custom expected proportions",
+                            title="Missing input",
+                            color="yellow",
+                            icon=DashIconify(icon="mdi:alert"),
+                        )
+                    ],
+                    {"display": "none"},
+                    None,
+                    {"display": "none"},
+                    {},
+                )
+
+            try:
+                proportions = [float(x.strip()) for x in custom_expected.split(",")]
+                if len(proportions) != n_categories:
+                    return (
+                        [
+                            dmc.Alert(
+                                f"Number of proportions ({len(proportions)}) doesn't match number of categories ({n_categories})",
+                                title="Error",
+                                color="red",
+                                icon=DashIconify(icon="mdi:alert-circle"),
+                            )
+                        ],
+                        {"display": "none"},
+                        None,
+                        {"display": "none"},
+                        {},
+                    )
+
+                if not np.isclose(sum(proportions), 1.0):
+                    return (
+                        [
+                            dmc.Alert(
+                                f"Proportions must sum to 1.0 (currently {sum(proportions):.4f})",
+                                title="Error",
+                                color="red",
+                                icon=DashIconify(icon="mdi:alert-circle"),
+                            )
+                        ],
+                        {"display": "none"},
+                        None,
+                        {"display": "none"},
+                        {},
+                    )
+
+                expected = np.array(proportions) * total
+            except ValueError:
+                return (
+                    [
+                        dmc.Alert(
+                            "Invalid format for expected proportions",
+                            title="Error",
+                            color="red",
+                            icon=DashIconify(icon="mdi:alert-circle"),
+                        )
+                    ],
+                    {"display": "none"},
+                    None,
+                    {"display": "none"},
+                    {},
+                )
+
+        # Run chi-square goodness of fit test
+        chi2, p_value = stats.chisquare(observed, expected)
+        dof = n_categories - 1
+
+        # Calculate residuals
+        residuals = observed - expected
+        std_residuals = residuals / np.sqrt(expected)
+
+        is_significant = p_value < (1 - confidence)
+
+        # Create results display
+        results_content = [
             dmc.Stack(
                 gap="md",
                 children=[
                     dmc.Group(
                         [
-                            DashIconify(icon="mdi:calculator", width=32),
-                            dmc.Title("Probability Calculator", order=2),
-                        ],
-                        gap="sm",
-                    ),
-                    dmc.Text(
-                        "Calculate probabilities and critical values for various distributions",
-                        c="dimmed",
-                        size="sm",
-                    ),
-                    dmc.Divider(),
-                ],
-            ),
-            # Main Content
-            dmc.Grid(
-                gutter="md",
-                children=[
-                    # Left Column - Controls
-                    dmc.GridCol(
-                        span={"base": 12, "md": 4},
-                        children=[
-                            dmc.Paper(
-                                p="md",
-                                withBorder=True,
-                                children=[
-                                    dmc.Stack(
-                                        gap="md",
-                                        children=[
-                                            dmc.Text("Distribution", fw=500, size="lg"),
-                                            dmc.Select(
-                                                id="prob-distribution",
-                                                label="Distribution Type",
-                                                data=[
-                                                    {
-                                                        "label": "Normal",
-                                                        "value": "normal",
-                                                    },
-                                                    {
-                                                        "label": "t (Student's)",
-                                                        "value": "t",
-                                                    },
-                                                    {
-                                                        "label": "Chi-square (χ²)",
-                                                        "value": "chi2",
-                                                    },
-                                                    {"label": "F", "value": "f"},
-                                                    {
-                                                        "label": "Binomial",
-                                                        "value": "binomial",
-                                                    },
-                                                    {
-                                                        "label": "Poisson",
-                                                        "value": "poisson",
-                                                    },
-                                                ],
-                                                value="normal",
-                                                clearable=False,
-                                            ),
-                                            # Distribution parameters
-                                            html.Div(id="prob-params-container"),
-                                            dmc.Divider(),
-                                            dmc.Text("Calculation", fw=500, size="lg"),
-                                            dmc.Stack(
-                                                gap=5,
-                                                children=[
-                                                    dmc.Text("Calculate", size="sm", fw=500),
-                                                    dmc.SegmentedControl(
-                                                        id="prob-calc-type",
-                                                        data=[
-                                                            {
-                                                                "label": "Probability",
-                                                                "value": "probability",
-                                                            },
-                                                            {
-                                                                "label": "Critical Value",
-                                                                "value": "critical",
-                                                            },
-                                                        ],
-                                                        value="probability",
-                                                        fullWidth=True,
-                                                    ),
-                                                ],
-                                            ),
-                                            html.Div(id="prob-input-container"),
-                                            dmc.Button(
-                                                "Calculate",
-                                                id="prob-calculate",
-                                                leftSection=DashIconify(icon="mdi:calculator"),
-                                                fullWidth=True,
-                                                variant="filled",
-                                            ),
-                                        ],
-                                    ),
-                                ],
+                            dmc.Text(
+                                "Chi-Square Goodness of Fit Test", fw=600, size="lg"
+                            ),
+                            dmc.Badge(
+                                "Significant" if is_significant else "Not Significant",
+                                color="green" if is_significant else "gray",
+                                variant="filled",
                             ),
                         ],
+                        justify="space-between",
                     ),
-                    # Right Column - Results
-                    dmc.GridCol(
-                        span={"base": 12, "md": 8},
+                    dmc.SimpleGrid(
+                        cols={"base": 2, "sm": 3},
+                        spacing="md",
                         children=[
                             dmc.Stack(
-                                gap="md",
+                                gap=4,
                                 children=[
-                                    dmc.Paper(
-                                        id="prob-results",
-                                        p="md",
-                                        withBorder=True,
-                                        children=[
-                                            dmc.Text(
-                                                "Select distribution and parameters, then click 'Calculate'",
-                                                c="dimmed",
-                                                ta="center",
-                                                py="xl",
-                                            ),
-                                        ],
-                                    ),
-                                    dmc.Paper(
-                                        id="prob-plot-container",
-                                        p="md",
-                                        withBorder=True,
-                                        style={"display": "none"},
-                                        children=[
-                                            dcc.Graph(
-                                                id="prob-plot",
-                                                config={"displayModeBar": False},
-                                            ),
-                                        ],
+                                    dmc.Text("χ² Statistic", size="xs", c="dimmed"),
+                                    dmc.Text(f"{chi2:.4f}", fw=600, size="xl"),
+                                ],
+                            ),
+                            dmc.Stack(
+                                gap=4,
+                                children=[
+                                    dmc.Text("df", size="xs", c="dimmed"),
+                                    dmc.Text(f"{dof}", fw=600, size="xl"),
+                                ],
+                            ),
+                            dmc.Stack(
+                                gap=4,
+                                children=[
+                                    dmc.Text("P-value", size="xs", c="dimmed"),
+                                    dmc.Text(
+                                        f"{p_value:.4f}",
+                                        fw=600,
+                                        size="xl",
+                                        c="green" if is_significant else "gray",
                                     ),
                                 ],
                             ),
                         ],
                     ),
+                    dmc.Alert(
+                        title="Interpretation",
+                        color="blue",
+                        icon=DashIconify(icon="mdi:information"),
+                        children=dmc.Text(
+                            f"The observed distribution {'does' if is_significant else 'does not'} "
+                            f"significantly differ from the expected {'uniform' if dist_type == 'uniform' else 'custom'} "
+                            f"distribution (χ² = {chi2:.2f}, df = {dof}, p = {p_value:.4f}).",
+                            size="sm",
+                        ),
+                    ),
                 ],
             ),
-        ],
-    )
+        ]
 
+        # Create frequency table
+        freq_df = pd.DataFrame(
+            {
+                "Category": [str(cat) for cat in categories],
+                "Observed": observed,
+                "Expected": expected.round(2),
+                "Residual": residuals.round(2),
+                "Std. Residual": std_residuals.round(2),
+            }
+        )
 
-# ==============================================================================
-# CALLBACKS
-# ==============================================================================
+        table_component = dag.AgGrid(
+            rowData=freq_df.to_dict("records"),
+            columnDefs=[
+                {"field": "Category", "headerName": variable},
+                {"field": "Observed", "headerName": "Observed"},
+                {"field": "Expected", "headerName": "Expected"},
+                {"field": "Residual", "headerName": "Residual"},
+                {"field": "Std. Residual", "headerName": "Std. Residual"},
+            ],
+            defaultColDef={"resizable": True, "sortable": True, "filter": False},
+            style={"height": "300px"},
+        )
+
+        # Create grouped bar chart
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Bar(
+                name="Observed",
+                x=[str(cat) for cat in categories],
+                y=observed,
+                marker={"color": "#1c7ed6"},
+                text=observed,
+                textposition="auto",
+            )
+        )
+
+        fig.add_trace(
+            go.Bar(
+                name="Expected",
+                x=[str(cat) for cat in categories],
+                y=expected,
+                marker={"color": "#868e96"},
+                text=expected.round(2),
+                textposition="auto",
+            )
+        )
+
+        fig.update_layout(
+            title=f"Observed vs Expected Frequencies: {variable}",
+            xaxis_title=variable,
+            yaxis_title="Frequency",
+            barmode="group",
+            template="plotly_white",
+            height=400,
+            legend={
+                "orientation": "h",
+                "yanchor": "bottom",
+                "y": 1.02,
+                "xanchor": "right",
+                "x": 1,
+            },
+        )
+
+        return (
+            results_content,
+            {"display": "block"},
+            table_component,
+            {"display": "block"},
+            fig,
+        )
+
+    except Exception as e:
+        return (
+            [
+                dmc.Alert(
+                    f"Error: {e!s}",
+                    title="Error",
+                    color="red",
+                    icon=DashIconify(icon="mdi:alert-circle"),
+                )
+            ],
+            {"display": "none"},
+            None,
+            {"display": "none"},
+            {},
+        )
 
 
 @callback(
@@ -172,7 +387,12 @@ def layout():
     Input("prob-distribution", "value"),
 )
 def update_params(distribution):
-    """Update parameter inputs based on distribution."""
+    """Update parameter inputs based on distribution.
+
+    Parameters
+    ----------
+    distribution : Any
+        Value provided for this parameter."""
     if distribution == "normal":
         return [
             dmc.NumberInput(
@@ -265,7 +485,12 @@ def update_params(distribution):
     Input("prob-calc-type", "value"),
 )
 def update_input_type(calc_type):
-    """Update input fields based on calculation type."""
+    """Update input fields based on calculation type.
+
+    Parameters
+    ----------
+    calc_type : Any
+        Value provided for this parameter."""
     if calc_type == "probability":
         return [
             dmc.Stack(
@@ -342,7 +567,12 @@ def update_input_type(calc_type):
     prevent_initial_call=True,
 )
 def toggle_value2(tail):
-    """Show/hide second value input for 'between' probability."""
+    """Show/hide second value input for 'between' probability.
+
+    Parameters
+    ----------
+    tail : Any
+        Value provided for this parameter."""
     if tail == "between":
         return {"display": "block"}
     return {"display": "none"}
@@ -364,7 +594,20 @@ def toggle_value2(tail):
     prevent_initial_call=True,
 )
 def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
-    """Calculate probability or critical value."""
+    """Calculate probability or critical value.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    distribution : Any
+        Input value for ``distribution``.
+    calc_type : Any
+        Input value for ``calc_type``.
+    param1 : Any
+        Input value for ``param1``.
+    param2 : Any
+        Value provided for this parameter."""
     try:
         # Get additional parameters from context
 
@@ -469,7 +712,11 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
             fig.update_layout(
                 title=f"{distribution.title()} Distribution",
                 xaxis_title="x",
-                yaxis_title="Density" if distribution not in ["binomial", "poisson"] else "Probability",
+                yaxis_title=(
+                    "Density"
+                    if distribution not in ["binomial", "poisson"]
+                    else "Probability"
+                ),
                 template="plotly_white",
                 height=400,
             )
@@ -595,7 +842,11 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
             fig.update_layout(
                 title=f"{distribution.title()} Distribution with Critical Regions (α = {alpha})",  # noqa: RUF001
                 xaxis_title="x",
-                yaxis_title="Density" if distribution not in ["binomial", "poisson"] else "Probability",
+                yaxis_title=(
+                    "Density"
+                    if distribution not in ["binomial", "poisson"]
+                    else "Probability"
+                ),
                 template="plotly_white",
                 height=400,
             )
@@ -615,3 +866,5 @@ def calculate_probability(n_clicks, distribution, calc_type, param1, param2):
             {"display": "none"},
             {},
         )
+
+

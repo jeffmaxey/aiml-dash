@@ -335,7 +335,7 @@ class TestExportDataset:
         sample_dataframe : Any
             Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
-        result = dm.export_dataset("test_data", format="csv")
+        result = dm.export_dataset("test_data", file_format="csv")
 
         assert result is not None
         assert "A,B,C" in result
@@ -350,7 +350,7 @@ class TestExportDataset:
         sample_dataframe : Any
             Value provided for this parameter."""
         dm.add_dataset("test_data", sample_dataframe)
-        result = dm.export_dataset("test_data", format="json")
+        result = dm.export_dataset("test_data", file_format="json")
 
         assert result is not None
         assert isinstance(result, str)
@@ -362,7 +362,7 @@ class TestExportDataset:
         ----------
         dm : Any
             Value provided for this parameter."""
-        result = dm.export_dataset("nonexistent", format="csv")
+        result = dm.export_dataset("nonexistent", file_format="csv")
         assert result is None
 
 

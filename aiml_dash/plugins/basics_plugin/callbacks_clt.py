@@ -1,195 +1,18 @@
-"""
-Central Limit Theorem Simulation
-Interactive demonstration of the Central Limit Theorem.
+"""Central Limit Theorem simulation callbacks.
+
+This module is part of the basics plugin callback suite.
+Callbacks are registered automatically via ``@callback`` decorators on import.
 """
 
 import dash_mantine_components as dmc
 import numpy as np
 import numpy.typing as npt
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, dcc
+from dash import Input, Output, State, callback
 from dash.development.base_component import Component
 from dash_iconify import DashIconify
 from plotly.subplots import make_subplots
 from scipy import stats
-
-
-def layout() -> Component:
-    """Create layout for CLT simulation page."""
-    return dmc.Container(
-        fluid=True,
-        p="md",
-        children=[
-            # Page Header
-            dmc.Stack(
-                gap="md",
-                children=[
-                    dmc.Group(
-                        [
-                            DashIconify(icon="mdi:chart-bell-curve-cumulative", width=32),
-                            dmc.Title("Central Limit Theorem", order=2),
-                        ],
-                        gap="sm",
-                    ),
-                    dmc.Text(
-                        "Visualize how sample means converge to a normal distribution",
-                        c="dimmed",
-                        size="sm",
-                    ),
-                    dmc.Divider(),
-                ],
-            ),
-            # Main Content
-            dmc.Grid(
-                gutter="md",
-                children=[
-                    # Left Column - Controls
-                    dmc.GridCol(
-                        span={"base": 12, "md": 4},
-                        children=[
-                            dmc.Paper(
-                                p="md",
-                                withBorder=True,
-                                children=[
-                                    dmc.Stack(
-                                        gap="md",
-                                        children=[
-                                            dmc.Text(
-                                                "Population Distribution",
-                                                fw=500,
-                                                size="lg",
-                                            ),
-                                            dmc.Select(
-                                                id="clt-distribution",
-                                                label="Distribution Type",
-                                                data=[
-                                                    {
-                                                        "label": "Uniform",
-                                                        "value": "uniform",
-                                                    },
-                                                    {
-                                                        "label": "Normal",
-                                                        "value": "normal",
-                                                    },
-                                                    {
-                                                        "label": "Exponential",
-                                                        "value": "exponential",
-                                                    },
-                                                    {
-                                                        "label": "Binomial",
-                                                        "value": "binomial",
-                                                    },
-                                                    {
-                                                        "label": "Poisson",
-                                                        "value": "poisson",
-                                                    },
-                                                    {
-                                                        "label": "Beta (Skewed)",
-                                                        "value": "beta",
-                                                    },
-                                                ],
-                                                value="uniform",
-                                                clearable=False,
-                                            ),
-                                            dmc.Divider(),
-                                            dmc.Text("Sampling Parameters", fw=500, size="lg"),
-                                            dmc.NumberInput(
-                                                id="clt-sample-size",
-                                                label="Sample Size (n)",
-                                                description="Number of observations per sample",
-                                                value=30,
-                                                min=2,
-                                                max=200,
-                                                step=1,
-                                            ),
-                                            dmc.NumberInput(
-                                                id="clt-num-samples",
-                                                label="Number of Samples",
-                                                description="How many samples to draw",
-                                                value=1000,
-                                                min=100,
-                                                max=10000,
-                                                step=100,
-                                            ),
-                                            dmc.NumberInput(
-                                                id="clt-seed",
-                                                label="Random Seed",
-                                                description="For reproducibility (optional)",
-                                                value=42,
-                                                min=0,
-                                                max=9999,
-                                                step=1,
-                                            ),
-                                            dmc.Button(
-                                                "Run Simulation",
-                                                id="clt-run",
-                                                leftSection=DashIconify(icon="mdi:play"),
-                                                fullWidth=True,
-                                                variant="filled",
-                                            ),
-                                            dmc.Divider(),
-                                            dmc.Alert(
-                                                title="About CLT",
-                                                color="blue",
-                                                icon=DashIconify(icon="mdi:information"),
-                                                children=dmc.Text(
-                                                    "The Central Limit Theorem states that the distribution of "
-                                                    "sample means approaches a normal distribution as sample size increases, "
-                                                    "regardless of the population distribution.",
-                                                    size="sm",
-                                                ),
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                    # Right Column - Results
-                    dmc.GridCol(
-                        span={"base": 12, "md": 8},
-                        children=[
-                            dmc.Stack(
-                                gap="md",
-                                children=[
-                                    dmc.Paper(
-                                        id="clt-stats",
-                                        p="md",
-                                        withBorder=True,
-                                        children=[
-                                            dmc.Text(
-                                                "Set parameters and click 'Run Simulation' to see results",
-                                                c="dimmed",
-                                                ta="center",
-                                                py="xl",
-                                            ),
-                                        ],
-                                    ),
-                                    dmc.Paper(
-                                        id="clt-plot-container",
-                                        p="md",
-                                        withBorder=True,
-                                        style={"display": "none"},
-                                        children=[
-                                            dcc.Graph(
-                                                id="clt-plot",
-                                                config={"displayModeBar": False},
-                                            ),
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    )
-
-
-# ==============================================================================
-# CALLBACKS
-# ==============================================================================
 
 
 @callback(
@@ -214,7 +37,25 @@ def run_clt_simulation(
     num_samples: int | float | None,
     seed: int | None,
 ) -> tuple[list[Component], dict[str, str], go.Figure | dict[str, object]]:
-    """Run CLT simulation."""
+    """Run CLT simulation.
+
+    Parameters
+    ----------
+    n_clicks : int | None
+        Input value for ``n_clicks``.
+    distribution : str | None
+        Input value for ``distribution``.
+    sample_size : int | float | None
+        Input value for ``sample_size``.
+    num_samples : int | float | None
+        Input value for ``num_samples``.
+    seed : int | None
+        Input value for ``seed``.
+
+    Returns
+    -------
+    value : tuple[list[Component], dict[str, str], go.Figure | dict[str, object]]
+        Result produced by this function."""
     try:
         if sample_size is None or num_samples is None:
             raise ValueError("Sample size and number of samples are required.")
@@ -272,7 +113,9 @@ def run_clt_simulation(
             _shapiro_stat, shapiro_p = stats.shapiro(sample_means_array)
         else:
             # Use Kolmogorov-Smirnov for large samples
-            _shapiro_stat, shapiro_p = stats.kstest((sample_means_array - mean_of_means) / std_of_means, "norm")
+            _shapiro_stat, shapiro_p = stats.kstest(
+                (sample_means_array - mean_of_means) / std_of_means, "norm"
+            )
 
         # Create statistics display
         stats_content = [
@@ -300,14 +143,18 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Mean", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Mean", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{pop_mean:.3f}", fw=600),
                                                 ],
                                             ),
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Std Dev", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Std Dev", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(f"{pop_std:.3f}", fw=600),
                                                 ],
                                             ),
@@ -332,7 +179,9 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Mean", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Mean", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{mean_of_means:.3f}",
                                                         fw=600,
@@ -343,7 +192,9 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Std Dev", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Std Dev", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{std_of_means:.3f}",
                                                         fw=600,
@@ -360,13 +211,17 @@ def run_clt_simulation(
                                 p="sm",
                                 withBorder=True,
                                 children=[
-                                    dmc.Text("Theory", fw=500, size="sm", mb="xs", c="dimmed"),
+                                    dmc.Text(
+                                        "Theory", fw=500, size="sm", mb="xs", c="dimmed"
+                                    ),
                                     dmc.Group(
                                         [
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("SE(x̄)", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "SE(x̄)", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{theoretical_std:.3f}",
                                                         fw=600,
@@ -377,7 +232,9 @@ def run_clt_simulation(
                                             dmc.Stack(
                                                 gap=2,
                                                 children=[
-                                                    dmc.Text("Error", size="xs", c="dimmed"),
+                                                    dmc.Text(
+                                                        "Error", size="xs", c="dimmed"
+                                                    ),
                                                     dmc.Text(
                                                         f"{abs(std_of_means - theoretical_std):.3f}",
                                                         fw=600,
@@ -420,7 +277,9 @@ def run_clt_simulation(
         )
 
         # Population histogram (sample for display)
-        pop_sample = np.random.choice(population, size=min(10000, len(population)), replace=False)
+        pop_sample = np.random.choice(
+            population, size=min(10000, len(population)), replace=False
+        )
         fig.add_trace(
             go.Histogram(
                 x=pop_sample,
@@ -493,7 +352,13 @@ def run_clt_simulation(
             height=700,
             template="plotly_white",
             showlegend=True,
-            legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1},
+            legend={
+                "orientation": "h",
+                "yanchor": "bottom",
+                "y": 1.02,
+                "xanchor": "right",
+                "x": 1,
+            },
         )
 
         return stats_content, {"display": "block"}, fig
@@ -511,3 +376,5 @@ def run_clt_simulation(
             {"display": "none"},
             {},
         )
+
+

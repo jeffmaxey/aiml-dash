@@ -57,6 +57,7 @@ PAGE_LAYOUTS = {
 }
 
 __all__ = [
+    "PAGE_LAYOUTS",
     "conjoint_layout",
     "fullfactor_layout",
     "hierarchicalcluster_layout",
@@ -64,5 +65,4 @@ __all__ = [
     "mds_layout",
     "perceptualmap_layout",
     "prefactor_layout",
-    "PAGE_LAYOUTS",
 ]

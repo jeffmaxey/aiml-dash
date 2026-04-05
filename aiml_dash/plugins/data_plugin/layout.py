@@ -61,6 +61,7 @@ PAGE_LAYOUTS = {
 }
 
 __all__ = [
+    "PAGE_LAYOUTS",
     "combine_layout",
     "explore_layout",
     "manage_layout",
@@ -70,5 +71,4 @@ __all__ = [
     "transform_layout",
     "view_layout",
     "visualize_layout",
-    "PAGE_LAYOUTS",
 ]

@@ -11,11 +11,12 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from aiml_dash.components.common import create_page_header
 from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.manifold import MDS as SklearnMDS
 from sklearn.metrics import pairwise_distances
+
+from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
@@ -347,12 +348,7 @@ def run_mds(
         labels = [labels[i] for i in X.index]
 
         # Compute distances
-        if input_type == "distance":
-            # Assume data is already a distance matrix
-            distance_matrix = X.values
-        else:
-            # Compute distance matrix from data
-            distance_matrix = pairwise_distances(X, metric=metric)
+        distance_matrix = X.values if input_type == "distance" else pairwise_distances(X, metric=metric)
 
         # Run MDS
         mds = SklearnMDS(
@@ -364,11 +360,7 @@ def run_mds(
             max_iter=300,
         )
 
-        if input_type == "distance":
-            coords = mds.fit_transform(distance_matrix)
-        else:
-            # For data matrix, we need to compute distances first
-            coords = mds.fit_transform(distance_matrix)
+        coords = mds.fit_transform(distance_matrix)
 
         # Get stress value
         stress = mds.stress_

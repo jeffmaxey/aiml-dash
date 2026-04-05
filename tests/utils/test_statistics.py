@@ -393,7 +393,7 @@ class TestExplore:
         ----------
         sample_dataframe : Any
             Value provided for this parameter."""
-        result = explore(sample_dataframe, vars=["A", "B"], fun=["mean", "min", "max"])
+        result = explore(sample_dataframe, variables=["A", "B"], fun=["mean", "min", "max"])
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 1
         assert "A_mean" in result.columns
@@ -406,7 +406,7 @@ class TestExplore:
         ----------
         sample_dataframe : Any
             Value provided for this parameter."""
-        result = explore(sample_dataframe, vars=["A"], byvar=["C"], fun=["mean"])
+        result = explore(sample_dataframe, variables=["A"], byvar=["C"], fun=["mean"])
         assert isinstance(result, pd.DataFrame)
         assert "C" in result.columns
         assert len(result) == 2  # Two categories
@@ -419,7 +419,7 @@ class TestExplore:
         sample_dataframe : Any
             Value provided for this parameter."""
         result = explore(
-            sample_dataframe, vars=["A"], fun=["mean"], data_filter="A > 2"
+            sample_dataframe, variables=["A"], fun=["mean"], data_filter="A > 2"
         )
         assert isinstance(result, pd.DataFrame)
         # Should only include rows where A > 2

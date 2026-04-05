@@ -1,184 +1,30 @@
-"""
-Single Mean Test Page
-=====================
+"""Single Mean hypothesis test callbacks.
 
-One-sample t-test to compare sample mean against a population value.
+This module is part of the basics plugin callback suite.
+Callbacks are registered automatically via ``@callback`` decorators on import.
 """
 
 import dash_ag_grid as dag
 import dash_mantine_components as dmc
 import numpy as np
 import plotly.graph_objects as go
-from dash import Input, Output, State, callback, dcc, html
-from dash_iconify import DashIconify
+from dash import Input, Output, State, callback, dcc
 from scipy import stats
 
-from aiml_dash.components.common import create_page_header
 from aiml_dash.utils.data_manager import data_manager
 
 
-def layout():
-    """Create the single mean test page layout."""
-    return dmc.Container(
-        [
-            create_page_header(
-                "Single Mean",
-                "One-sample t-test to compare a sample mean against a hypothesized population value.",
-                icon="carbon:chart-average",
-            ),
-            dmc.Grid([
-                # Left panel
-                dmc.GridCol(
-                    [
-                        dmc.Card(
-                            [
-                                dmc.Stack(
-                                    [
-                                        dmc.Title("Test Settings", order=4),
-                                        dmc.Select(
-                                            id="smean-dataset",
-                                            label="Dataset",
-                                            placeholder="Select dataset...",
-                                            data=[],
-                                        ),
-                                        dmc.Select(
-                                            id="smean-variable",
-                                            label="Variable",
-                                            placeholder="Select variable...",
-                                            data=[],
-                                        ),
-                                        dmc.NumberInput(
-                                            id="smean-comparison",
-                                            label="Comparison Value",
-                                            description="Hypothesized population mean",
-                                            value=0,
-                                            step=0.1,
-                                        ),
-                                        dmc.Select(
-                                            id="smean-alternative",
-                                            label="Alternative Hypothesis",
-                                            value="two-sided",
-                                            data=[
-                                                {
-                                                    "label": "Two-sided (≠)",
-                                                    "value": "two-sided",
-                                                },
-                                                {
-                                                    "label": "Greater than (>)",
-                                                    "value": "greater",
-                                                },
-                                                {
-                                                    "label": "Less than (<)",
-                                                    "value": "less",
-                                                },
-                                            ],
-                                        ),
-                                        dmc.NumberInput(
-                                            id="smean-confidence",
-                                            label="Confidence Level",
-                                            value=0.95,
-                                            min=0.5,
-                                            max=0.99,
-                                            step=0.01,
-                                            decimalScale=2,
-                                        ),
-                                        dmc.Button(
-                                            "Run Test",
-                                            id="smean-run-btn",
-                                            leftSection=DashIconify(icon="carbon:play", width=20),
-                                            fullWidth=True,
-                                            size="lg",
-                                            color="blue",
-                                        ),
-                                        dmc.Divider(),
-                                        dmc.Button(
-                                            "Export Results (CSV)",
-                                            id="smean-export-btn",
-                                            leftSection=DashIconify(icon="carbon:download", width=20),
-                                            variant="light",
-                                            fullWidth=True,
-                                        ),
-                                    ],
-                                    gap="sm",
-                                )
-                            ],
-                            withBorder=True,
-                            radius="md",
-                            p="md",
-                        ),
-                    ],
-                    span={"base": 12, "md": 4},
-                ),
-                # Right panel
-                dmc.GridCol(
-                    [
-                        dmc.Tabs(
-                            [
-                                dmc.TabsList([
-                                    dmc.TabsTab(
-                                        "Summary",
-                                        value="summary",
-                                        leftSection=DashIconify(icon="carbon:report"),
-                                    ),
-                                    dmc.TabsTab(
-                                        "Plot",
-                                        value="plot",
-                                        leftSection=DashIconify(icon="carbon:chart-histogram"),
-                                    ),
-                                ]),
-                                dmc.TabsPanel(
-                                    [
-                                        dmc.Card(
-                                            [
-                                                html.Div(id="smean-summary"),
-                                            ],
-                                            withBorder=True,
-                                            radius="md",
-                                            p="md",
-                                            mt="md",
-                                        ),
-                                    ],
-                                    value="summary",
-                                ),
-                                dmc.TabsPanel(
-                                    [
-                                        dmc.Card(
-                                            [
-                                                dcc.Graph(id="smean-plot"),
-                                            ],
-                                            withBorder=True,
-                                            radius="md",
-                                            p="md",
-                                            mt="md",
-                                        ),
-                                    ],
-                                    value="plot",
-                                ),
-                            ],
-                            value="summary",
-                            id="smean-tabs",
-                        ),
-                    ],
-                    span={"base": 12, "md": 8},
-                ),
-            ]),
-            # Hidden components
-            dcc.Store(id="smean-results-store"),
-            dcc.Download(id="smean-download"),
-            html.Div(id="smean-notification"),
-        ],
-        fluid=True,
-        style={"maxWidth": "1400px"},
-    )
-
-
-# Callbacks
 @callback(
     Output("smean-dataset", "data"),
     Input("smean-dataset", "id"),
 )
 def update_datasets(_):
-    """Update available datasets."""
+    """Update available datasets.
+
+    Parameters
+    ----------
+    _ : Any
+        Value provided for this parameter."""
     datasets = data_manager.get_dataset_names()
     return [{"label": name, "value": name} for name in datasets]
 
@@ -188,7 +34,12 @@ def update_datasets(_):
     Input("smean-dataset", "value"),
 )
 def update_variables(dataset_name):
-    """Update available variables when dataset changes."""
+    """Update available variables when dataset changes.
+
+    Parameters
+    ----------
+    dataset_name : Any
+        Value provided for this parameter."""
     if not dataset_name:
         return []
 
@@ -217,8 +68,25 @@ def update_variables(dataset_name):
     ],
     prevent_initial_call=True,
 )
-def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternative, confidence):
-    """Run single mean t-test."""
+def run_single_mean_test(
+    n_clicks, dataset_name, variable, comparison, alternative, confidence
+):
+    """Run single mean t-test.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset_name : Any
+        Input value for ``dataset_name``.
+    variable : Any
+        Input value for ``variable``.
+    comparison : Any
+        Input value for ``comparison``.
+    alternative : Any
+        Input value for ``alternative``.
+    confidence : Any
+        Value provided for this parameter."""
     if not all([dataset_name, variable]):
         return (
             dmc.Text("Please select dataset and variable.", c="red"),
@@ -375,9 +243,13 @@ def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternati
 
         # Confidence interval (dashed black lines)
         if ci_lower != -np.inf:
-            fig.add_vline(x=ci_lower, line_dash="dash", line_color="black", line_width=1)
+            fig.add_vline(
+                x=ci_lower, line_dash="dash", line_color="black", line_width=1
+            )
         if ci_upper != np.inf:
-            fig.add_vline(x=ci_upper, line_dash="dash", line_color="black", line_width=1)
+            fig.add_vline(
+                x=ci_upper, line_dash="dash", line_color="black", line_width=1
+            )
 
         # Comparison value (red line)
         fig.add_vline(
@@ -429,14 +301,26 @@ def run_single_mean_test(n_clicks, dataset_name, variable, comparison, alternati
     prevent_initial_call=True,
 )
 def export_results(n_clicks, dataset_name, variable):
-    """Export test results."""
+    """Export test results.
+
+    Parameters
+    ----------
+    n_clicks : Any
+        Input value for ``n_clicks``.
+    dataset_name : Any
+        Input value for ``dataset_name``.
+    variable : Any
+        Value provided for this parameter."""
     if not all([dataset_name, variable]):
         return None
 
     try:
         df = data_manager.get_dataset(dataset_name)
         data = df[[variable]].dropna()
-        return dcc.send_data_frame(data.to_csv, f"single_mean_{variable}.csv", index=False)
+        return dcc.send_data_frame(
+            data.to_csv, f"single_mean_{variable}.csv", index=False
+        )
     except Exception:
         return None
+
 

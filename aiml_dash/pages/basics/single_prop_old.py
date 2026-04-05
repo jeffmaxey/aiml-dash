@@ -1,6 +1,7 @@
 """Single Proportion Test Page"""
 
 import dash_mantine_components as dmc
+
 from aiml_dash.components.common import create_page_header
 
 
