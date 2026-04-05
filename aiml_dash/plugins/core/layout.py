@@ -907,6 +907,50 @@ def settings_layout() -> dmc.Container:
                     radius="md",
                     p="md",
                 ),
+                dmc.Card(
+                    dmc.Stack(
+                        [
+                            dmc.Group(
+                                [
+                                    dmc.Text("Plugin Marketplace", fw=600),
+                                    dmc.Badge("Beta", color="orange", variant="light"),
+                                ],
+                                justify="space-between",
+                            ),
+                            dmc.Text(
+                                "Browse and manage community plugins. Installed plugins appear in your enabled plugins list.",
+                                size="sm",
+                                c="dimmed",
+                            ),
+                            dmc.TextInput(
+                                id="marketplace-search-input",
+                                placeholder="Search plugins...",
+                                leftSection=DashIconify(icon="carbon:search"),
+                            ),
+                            dmc.Button(
+                                "Search Marketplace",
+                                id="marketplace-search-btn",
+                                leftSection=DashIconify(icon="carbon:search"),
+                                variant="light",
+                            ),
+                            html.Div(id="marketplace-results"),
+                            dmc.Divider(),
+                            dmc.Text("Installed (Dynamic) Plugins", fw=600, size="sm"),
+                            html.Div(id="marketplace-installed-list"),
+                            dmc.Button(
+                                "Refresh Installed Plugins",
+                                id="marketplace-refresh-btn",
+                                leftSection=DashIconify(icon="carbon:renew"),
+                                variant="subtle",
+                                size="sm",
+                            ),
+                        ],
+                        gap="sm",
+                    ),
+                    withBorder=True,
+                    radius="md",
+                    p="md",
+                ),
             ],
             gap=SECTION_GAP,
         ),
