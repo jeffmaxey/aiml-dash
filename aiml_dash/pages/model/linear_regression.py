@@ -1063,7 +1063,7 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
             )
 
         elif plot_type == "scale_location":
-            # Scale-Location plot: sqrt(|standardised residuals|) vs fitted
+            # Scale-Location plot: sqrt(|standardized residuals|) vs fitted
             std_res = residuals / (residuals.std() or 1)
             sqrt_abs_std_res = np.sqrt(np.abs(std_res))
             fig = go.Figure()
@@ -1177,7 +1177,7 @@ def run_lr_cv(n_clicks, dataset_name, response, explanatory, cv_folds, scoring, 
         X = X[mask]
         y = y[mask]
 
-        # Optionally standardise
+        # Optionally standardize
         if options and "standardize" in options:
             scaler = StandardScaler()
             X_arr = scaler.fit_transform(X)

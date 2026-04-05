@@ -6,12 +6,15 @@ Authenticated via API key header: X-API-Key (configurable via AIML_DASH_API_KEY 
 
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, request
 
 from aiml_dash.utils.data_manager import data_manager
+
+logger = logging.getLogger(__name__)
 
 api_blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
 
@@ -123,5 +126,7 @@ def persist_dataset(name):
 
     success, message = data_manager.persist_to_disk(name)
     if success:
-        return jsonify({"success": True, "message": message})
-    return jsonify({"success": False, "error": message})
+        return jsonify({"success": True, "message": f"Dataset '{name}' persisted successfully."})
+    # Log the full message internally but don't expose internal paths to callers.
+    logger.warning("persist_dataset API failed for '%s': %s", name, message)
+    return jsonify({"success": False, "error": f"Failed to persist dataset '{name}'."})

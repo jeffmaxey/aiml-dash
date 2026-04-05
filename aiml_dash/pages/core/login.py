@@ -129,7 +129,7 @@ def _handle_login(
 ) -> tuple[str | object, dict | object, dict]:
     """Process a login form submission.
 
-    On success the user context is serialised into the session store and the
+    On success the user context is serialized into the session store and the
     browser is redirected to ``/home``.  On failure the error alert is made
     visible and no redirect or store update is performed.
 

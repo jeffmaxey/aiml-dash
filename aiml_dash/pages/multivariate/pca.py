@@ -25,7 +25,7 @@ def layout():
         [
             create_page_header(
                 "Principal Component Analysis",
-                "Reduce dimensionality and uncover latent structure. Visualise data variance through scree plots, biplots and component loadings.",
+                "Reduce dimensionality and uncover latent structure. Visualize data variance through scree plots, biplots and component loadings.",
                 icon="carbon:chart-scatter",
             ),
             dmc.Grid([
@@ -248,7 +248,7 @@ def run_pca(n_clicks, dataset_name, variables, n_components, standardize):
         dataset_name: Name of the dataset to analyse.
         variables: List of numeric variable names to include.
         n_components: Number of principal components to extract.
-        standardize: Whether to standardise variables before PCA.
+        standardize: Whether to standardize variables before PCA.
 
     Returns:
         Tuple of (scree_figure, biplot_figure, loadings_row_data,
@@ -282,7 +282,7 @@ def run_pca(n_clicks, dataset_name, variables, n_components, standardize):
                 f"given {n_obs} observations and {n_vars} variables."
             )
 
-        # Optional standardisation
+        # Optional standardization
         if standardize:
             scaler = StandardScaler()
             X_arr = scaler.fit_transform(X)
