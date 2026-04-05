@@ -7,6 +7,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -17,7 +24,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pre-commit
-          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Set up the environment
         uses: ./.github/actions/setup-python-env
@@ -25,7 +32,7 @@ jobs:
       - name: Run checks
         run: make check
 
-  tests-and-type-check:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -46,36 +53,12 @@ jobs:
       - name: Run tests
         run: uv run python -m pytest tests --cov --cov-config=pyproject.toml --cov-report=xml
 
-      - name: Check typing
-        run: uv run mypy
-
-
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  test:
-    name: Run tests and collect coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-
-      - name: Install dependencies
-        run: pip install pytest pytest-cov
-
-      - name: Run tests
-        run: pytest --cov --cov-branch --cov-report=xml
-
-      - name: Upload results to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+
   check-docs:
     runs-on: ubuntu-latest
     steps:
