@@ -14,6 +14,7 @@ PLUGIN_DESCRIPTION = "Multivariate analysis tools"
 SECTION_NAME = "Multivariate"
 
 # Page identifiers
+PCA_ID = "pca"
 CONJOINT_ID = "conjoint"
 FULL_FACTOR_ID = "full-factor"
 HIERARCHICAL_CLUSTER_ID = "hierarchical-cluster"
@@ -23,6 +24,7 @@ PERCEPTUAL_MAP_ID = "perceptual-map"
 PRE_FACTOR_ID = "pre-factor"
 
 # Icons
+PCA_ICON = "carbon:chart-scatter"
 CONJOINT_ICON = "carbon:chart-multitype"
 FULL_FACTOR_ICON = "carbon:chart-3d"
 HIERARCHICAL_CLUSTER_ICON = "carbon:network-3"
@@ -35,6 +37,7 @@ PRE_FACTOR_ICON = "carbon:chart-area"
 CONTAINER_SIZE = "fluid"
 
 PAGE_DEFINITIONS = [
+    {"id": PCA_ID, "label": "PCA", "icon": PCA_ICON, "section": SECTION_NAME, "order": 0, "description": "Principal Component Analysis"},
     {"id": CONJOINT_ID, "label": "Conjoint", "icon": CONJOINT_ICON, "section": SECTION_NAME, "order": 1, "description": "Conjoint analysis"},
     {"id": FULL_FACTOR_ID, "label": "Full Factor", "icon": FULL_FACTOR_ICON, "section": SECTION_NAME, "order": 2, "description": "Full factorial analysis"},
     {"id": HIERARCHICAL_CLUSTER_ID, "label": "Hierarchical Cluster", "icon": HIERARCHICAL_CLUSTER_ICON, "section": SECTION_NAME, "order": 3, "description": "Hierarchical clustering"},

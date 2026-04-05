@@ -14,6 +14,7 @@ from dash import Input, Output, State, callback, dcc, html
 from dash_iconify import DashIconify
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import KFold, cross_val_score
 from sklearn.preprocessing import StandardScaler
 
 from aiml_dash.components.common import create_page_header
@@ -51,6 +52,16 @@ def layout():
                             "Plot",
                             value="plot",
                             leftSection=DashIconify(icon="carbon:chart-scatter", width=16),
+                        ),
+                        dmc.TabsTab(
+                            "Feature Importance",
+                            value="importance",
+                            leftSection=DashIconify(icon="carbon:chart-bar", width=16),
+                        ),
+                        dmc.TabsTab(
+                            "Cross-Validation",
+                            value="cv",
+                            leftSection=DashIconify(icon="carbon:data-analytics", width=16),
                         ),
                     ]),
                     # Model Tab
@@ -465,6 +476,100 @@ def layout():
                         ],
                         value="plot",
                     ),
+                    # Feature Importance Tab
+                    dmc.TabsPanel(
+                        [
+                            dmc.Card(
+                                [
+                                    dmc.Stack(
+                                        [
+                                            dmc.Title("Feature Importance", order=4),
+                                            dcc.Graph(id="lr-feature-importance"),
+                                        ],
+                                        gap="xs",
+                                    )
+                                ],
+                                withBorder=True,
+                                radius="md",
+                                p="md",
+                            ),
+                        ],
+                        value="importance",
+                    ),
+                    # Cross-Validation Tab
+                    dmc.TabsPanel(
+                        [
+                            dmc.Grid([
+                                dmc.GridCol(
+                                    [
+                                        dmc.Card(
+                                            [
+                                                dmc.Stack(
+                                                    [
+                                                        dmc.Title(
+                                                            "Cross-Validation Settings",
+                                                            order=4,
+                                                        ),
+                                                        dmc.NumberInput(
+                                                            id="lr-cv-folds",
+                                                            label="Number of Folds (k)",
+                                                            value=5,
+                                                            min=2,
+                                                            max=20,
+                                                            step=1,
+                                                        ),
+                                                        dmc.Select(
+                                                            id="lr-cv-scoring",
+                                                            label="Scoring Metric",
+                                                            data=[
+                                                                {
+                                                                    "label": "R² Score",
+                                                                    "value": "r2",
+                                                                },
+                                                                {
+                                                                    "label": "RMSE",
+                                                                    "value": "neg_root_mean_squared_error",
+                                                                },
+                                                                {
+                                                                    "label": "MAE",
+                                                                    "value": "neg_mean_absolute_error",
+                                                                },
+                                                            ],
+                                                            value="r2",
+                                                        ),
+                                                        dmc.Button(
+                                                            "Run Cross-Validation",
+                                                            id="lr-cv-run-btn",
+                                                            fullWidth=True,
+                                                            color="green",
+                                                        ),
+                                                    ],
+                                                    gap="md",
+                                                )
+                                            ],
+                                            withBorder=True,
+                                            radius="md",
+                                            p="md",
+                                        ),
+                                    ],
+                                    span={"base": 12, "md": 4},
+                                ),
+                                dmc.GridCol(
+                                    [
+                                        dmc.Stack(
+                                            [
+                                                dcc.Graph(id="lr-cv-plot"),
+                                                html.Div(id="lr-cv-summary"),
+                                            ],
+                                            gap="md",
+                                        ),
+                                    ],
+                                    span={"base": 12, "md": 8},
+                                ),
+                            ]),
+                        ],
+                        value="cv",
+                    ),
                 ],
                 value="model",
                 id="lr-tabs",
@@ -554,6 +659,7 @@ def update_formula(response, explanatory, interactions):
         Output("lr-model-store", "data"),
         Output("lr-model-info", "children"),
         Output("lr-notification", "children"),
+        Output("lr-feature-importance", "figure"),
     ],
     Input("lr-estimate-btn", "n_clicks"),
     [
@@ -575,6 +681,7 @@ def estimate_model(n_clicks, dataset_name, response, explanatory, options, inter
                 color="red",
             ),
             None,
+            {},
         )
 
     try:
@@ -667,10 +774,34 @@ def estimate_model(n_clicks, dataset_name, response, explanatory, options, inter
             autoClose=3000,
         )
 
-        return model_data, info, notification
+        # Feature importance: absolute coefficients sorted descending (no intercept)
+        coef_names = list(X.columns)
+        coef_vals = list(model.coef_)
+        abs_coefs = sorted(
+            zip(coef_names, coef_vals), key=lambda t: abs(t[1])
+        )
+        fi_names = [t[0] for t in abs_coefs]
+        fi_vals = [abs(t[1]) for t in abs_coefs]
+
+        importance_fig = go.Figure(
+            go.Bar(
+                x=fi_vals,
+                y=fi_names,
+                orientation="h",
+                marker_color="steelblue",
+            )
+        )
+        importance_fig.update_layout(
+            title="Feature Importance (|Coefficient|)",
+            xaxis_title="|Coefficient|",
+            yaxis_title="Variable",
+            template="plotly_white",
+        )
+
+        return model_data, info, notification, importance_fig
 
     except Exception as e:
-        return None, dmc.Alert(f"Error: {e!s}", color="red"), None
+        return None, dmc.Alert(f"Error: {e!s}", color="red"), None, {}
 
 
 @callback(
@@ -997,3 +1128,118 @@ def generate_plot(n_clicks, model_data, dataset_name, plot_type, nobs):
         )
         return fig
 
+
+@callback(
+    [Output("lr-cv-plot", "figure"), Output("lr-cv-summary", "children")],
+    Input("lr-cv-run-btn", "n_clicks"),
+    [
+        State("lr-dataset", "value"),
+        State("lr-response", "value"),
+        State("lr-explanatory", "value"),
+        State("lr-cv-folds", "value"),
+        State("lr-cv-scoring", "value"),
+        State("lr-options", "value"),
+    ],
+    prevent_initial_call=True,
+)
+def run_lr_cv(n_clicks, dataset_name, response, explanatory, cv_folds, scoring, options):
+    """Run k-fold cross-validation on the linear regression model.
+
+    Args:
+        n_clicks: Button click counter (trigger only).
+        dataset_name: Name of the dataset.
+        response: Response variable name.
+        explanatory: List of explanatory variable names.
+        cv_folds: Number of CV folds (k).
+        scoring: Scoring metric identifier for cross_val_score.
+        options: List of model option strings (e.g. ["standardize"]).
+
+    Returns:
+        Tuple of (box_plot_figure, summary_children).
+    """
+    if not all([dataset_name, response, explanatory]):
+        return (
+            go.Figure(),
+            dmc.Alert(
+                "Please select dataset, response, and explanatory variables.",
+                color="yellow",
+            ),
+        )
+
+    try:
+        df = data_manager.get_dataset(dataset_name)
+
+        X = df[explanatory].copy()
+        y = df[response].copy()
+
+        # Remove missing values
+        mask = ~(X.isna().any(axis=1) | y.isna())
+        X = X[mask]
+        y = y[mask]
+
+        # Optionally standardise
+        if options and "standardize" in options:
+            scaler = StandardScaler()
+            X_arr = scaler.fit_transform(X)
+            X = pd.DataFrame(X_arr, columns=X.columns, index=X.index)
+
+        model = LinearRegression()
+        kf = KFold(n_splits=int(cv_folds), shuffle=True, random_state=42)
+        scores = cross_val_score(model, X, y, cv=kf, scoring=scoring)
+
+        # For negative scorers flip sign for display
+        display_scores = scores if scoring == "r2" else -scores
+        metric_label = {
+            "r2": "R\u00b2",
+            "neg_root_mean_squared_error": "RMSE",
+            "neg_mean_absolute_error": "MAE",
+        }.get(scoring, scoring)
+
+        # Box plot of fold scores
+        fig = go.Figure()
+        fig.add_trace(
+            go.Box(
+                y=display_scores,
+                name=metric_label,
+                boxpoints="all",
+                jitter=0.3,
+                pointpos=-1.8,
+                marker_color="steelblue",
+            )
+        )
+        fig.update_layout(
+            title=f"Cross-Validation Scores ({cv_folds}-fold)",
+            yaxis_title=metric_label,
+            template="plotly_white",
+        )
+
+        mean_score = float(np.mean(display_scores))
+        std_score = float(np.std(display_scores))
+        min_score = float(np.min(display_scores))
+        max_score = float(np.max(display_scores))
+
+        summary = dmc.Stack(
+            [
+                dmc.Text("Cross-Validation Results", fw=700, size="lg"),
+                dmc.Divider(),
+                dmc.Text(f"Metric: {metric_label}", fw=500),
+                dmc.Text(f"Folds: {cv_folds}"),
+                dmc.Text(f"Mean \u00b1 Std: {mean_score:.4f} \u00b1 {std_score:.4f}"),
+                dmc.Text(f"Min: {min_score:.4f}"),
+                dmc.Text(f"Max: {max_score:.4f}"),
+            ],
+            gap="xs",
+        )
+
+        return fig, summary
+
+    except Exception as exc:
+        return (
+            go.Figure(),
+            dmc.Notification(
+                title="Error",
+                message=str(exc),
+                color="red",
+                action="show",
+            ),
+        )

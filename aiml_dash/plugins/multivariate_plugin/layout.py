@@ -38,6 +38,7 @@ def _create_lazy_layout(
 
 
 # Create lazy-loading layout functions
+pca_layout = _create_lazy_layout("aiml_dash.pages.multivariate.pca")
 conjoint_layout = _create_lazy_layout("aiml_dash.pages.multivariate.conjoint")
 fullfactor_layout = _create_lazy_layout("aiml_dash.pages.multivariate.full_factor")
 hierarchicalcluster_layout = _create_lazy_layout("aiml_dash.pages.multivariate.hierarchical_cluster")
@@ -47,6 +48,7 @@ perceptualmap_layout = _create_lazy_layout("aiml_dash.pages.multivariate.percept
 prefactor_layout = _create_lazy_layout("aiml_dash.pages.multivariate.pre_factor")
 
 PAGE_LAYOUTS = {
+    "pca": pca_layout,
     "conjoint": conjoint_layout,
     "full-factor": fullfactor_layout,
     "hierarchical-cluster": hierarchicalcluster_layout,
@@ -58,6 +60,7 @@ PAGE_LAYOUTS = {
 
 __all__ = [
     "PAGE_LAYOUTS",
+    "pca_layout",
     "conjoint_layout",
     "fullfactor_layout",
     "hierarchicalcluster_layout",
