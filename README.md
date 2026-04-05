@@ -5,6 +5,7 @@
 [![codecov](https://codecov.io/gh/jeffmaxey/aiml-dash/branch/main/graph/badge.svg)](https://codecov.io/gh/jeffmaxey/aiml-dash)
 [![Commit activity](https://img.shields.io/github/commit-activity/m/jeffmaxey/aiml-dash)](https://img.shields.io/github/commit-activity/m/jeffmaxey/aiml-dash)
 [![License](https://img.shields.io/github/license/jeffmaxey/aiml-dash)](https://img.shields.io/github/license/jeffmaxey/aiml-dash)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14%2B-blue)](https://www.python.org/downloads/)
 
 A comprehensive Dash application for Predictive Analytics and Machine Learning with a powerful plugin framework.
 
@@ -97,15 +98,81 @@ uv sync --all-groups
 uv run pre-commit install
 ```
 
+## 🛠️ Technology Stack
+
+| Layer | Libraries |
+|---|---|
+| **Web framework** | Plotly Dash 4.0+, Flask |
+| **UI components** | dash-mantine-components 2.6+, dash-ag-grid 32.3+, dash-iconify |
+| **Data / ML** | pandas 2.1+, numpy 1.24+, scipy 1.11+, scikit-learn 1.3+ |
+| **Config / Validation** | pydantic 2.7+, pydantic-settings |
+| **Security / Perf** | flask-talisman, flask-caching, flask-compress, brotli |
+| **Database** | SQLAlchemy, pyodbc |
+| **Dev tooling** | pytest, ruff, mypy, tox, MkDocs, pre-commit, watchdog |
+| **Deployment** | Docker, Gunicorn |
+
 ## 🏗️ Architecture
 
 AIML Dash uses a modular architecture with several key components:
 
 - **Core Application**: Built with Plotly Dash and Flask
-- **Plugin System**: Dynamic plugin discovery and registration
-- **Data Manager**: Centralized data storage and management
+- **Plugin System**: Dynamic plugin discovery and registration with RBAC filtering
+- **Service Layer**: `AppServices` singleton that bundles plugins, auth, data, and projects
+- **Data Manager**: Centralized in-memory dataset management
 - **Component Library**: Reusable UI components built with dash-mantine-components
 - **Utilities**: Helper functions for statistics, transforms, and database operations
+
+### Directory Structure
+
+```
+aiml-dash/
+├── aiml_dash/
+│   ├── app.py              # Main create_app() factory
+│   ├── run.py              # CLI entry point
+│   ├── auth.py             # UserContext + RBAC (AuthorizationService)
+│   ├── services.py         # AppServices container (plugins, data, auth, projects)
+│   ├── check_setup.py      # Setup validation
+│   ├── components/         # Reusable Dash UI components (shell, editor, common)
+│   ├── pages/              # Legacy page structure
+│   ├── utils/              # config, logging, data_manager, statistics,
+│   │                       #   transforms, database, pagination helpers
+│   └── plugins/            # Plugin system core + all built-in plugins
+│       ├── models.py           # Plugin + PluginPage frozen dataclasses
+│       ├── registry.py         # Central registry, navigation builder
+│       ├── runtime.py          # PluginRuntime lifecycle manager
+│       ├── factory.py          # build_plugin() / build_plugin_pages() helpers
+│       ├── loader.py           # Dynamic plugin discovery
+│       ├── dependency_manager.py
+│       ├── config_manager.py
+│       ├── hot_reload.py       # Dev hot-reloading via watchdog
+│       ├── standalone.py       # Run a single plugin in isolation
+│       ├── core/               # Home, settings, help (locked, always on)
+│       ├── data_plugin/        # Data import / exploration / transformation
+│       ├── basics_plugin/      # Statistics & hypothesis testing
+│       ├── design_plugin/      # Experimental design & sampling
+│       ├── model_plugin/       # ML model building
+│       ├── multivariate_plugin/
+│       ├── legacy/             # Legacy analysis tools
+│       ├── example_plugin/     # Reference implementation
+│       └── template_plugin/    # Starter template for new plugins
+├── tests/                  # Pytest suite (317 tests)
+├── docs/                   # MkDocs documentation
+├── Dockerfile
+├── pyproject.toml
+└── Makefile
+```
+
+### Startup Flow
+
+1. `run.py` loads `AppSettings` from environment variables (prefix `AIML_DASH_`, e.g. `AIML_DASH_PORT=8050`)
+2. `create_app(settings)` in `app.py`:
+   - Instantiates `AppServices` (plugins, auth, data, projects)
+   - Loads all static plugins from `_STATIC_PLUGIN_MODULES`
+   - Builds the `dmc.AppShell` layout (header + navbar + aside + main + footer)
+   - Registers all Dash callbacks (routing, theme, state, per-plugin callbacks)
+3. Flask dev server starts at `http://127.0.0.1:8050` (Gunicorn in production)
+
+If `AIML_DASH_DEBUG=true`, a `watchdog`-based hot-reloader automatically restarts the app when plugin files change.
 
 ## 🔌 Plugin Framework
 
@@ -119,17 +186,59 @@ AIML Dash features a powerful plugin framework that makes it easy to extend the 
 - **📖 Well-Documented**: Comprehensive docstrings and type hints throughout
 - **🧪 Standalone Testing**: Plugins can be run independently for development and testing
 - **🔒 Type-Safe**: Full type hints throughout the plugin framework
+- **🛡️ RBAC**: Per-page `allowed_roles` filtering via `UserContext`
+
+### Plugin Data Models
+
+All plugin objects use immutable, type-safe frozen dataclasses:
+
+```python
+@dataclass(frozen=True)
+class PluginPage:
+    id: str                      # Unique page identifier
+    label: str                   # Display name in navigation
+    icon: str                    # Iconify icon (e.g. "carbon:home")
+    layout: Callable[[], Component]  # Callable that returns the Dash layout
+    section: str                 # Nav section (Core, Data, Basics, …)
+    group: str | None            # Optional sub-grouping within a section
+    order: int                   # Sort order within the group
+    group_order: int             # Sort order for the group itself
+    description: str | None
+    allowed_roles: Sequence[str] # RBAC role list; empty = unrestricted
+
+@dataclass(frozen=True)
+class Plugin:
+    id: str
+    name: str
+    description: str
+    pages: Sequence[PluginPage]
+    version: str                 # Semantic version string
+    default_enabled: bool
+    locked: bool                 # If True, cannot be disabled by users
+    register_callbacks: Callable[[object], None] | None
+    dependencies: Sequence[str]  # IDs of required plugins
+    min_app_version: str | None
+    config_schema: dict | None   # JSON schema for plugin config
+```
+
+### Plugin Lifecycle
+
+1. **Discovery** — Static list in `_STATIC_PLUGIN_MODULES` (+ optional dynamic loading)
+2. **Loading** — Import module → call `get_plugin()` → validate dependencies/versions
+3. **Registration** — Store in `PluginRuntime`, build navigation structure
+4. **Callback Registration** — Call `plugin.register_callbacks(app)` for each plugin
+5. **Runtime Management** — Enable/disable via `enabled-plugins` store; filter by user roles
 
 ### Plugin Components
 
 Each plugin consists of these modules:
 
-- `__init__.py` - Plugin registration and metadata
-- `layout.py` - Page layout definitions using Dash Mantine Components
-- `components.py` - Reusable UI components
-- `callbacks.py` - Dash callbacks for interactivity (optional)
+- `__init__.py` - Plugin registration; calls `build_plugin()` from `factory.py`
+- `constants.py` - `PLUGIN_ID`, `PAGE_DEFINITIONS` list (metadata only, no logic)
+- `layout.py` - `PAGE_LAYOUTS` dict mapping `page_id → layout callable`
+- `components.py` - Reusable UI components scoped to this plugin
+- `callbacks.py` - `register_callbacks(app)` — optional Dash interactivity
 - `styles.py` - Style constants and configuration
-- `constants.py` - Plugin-specific constants
 
 ### Available Plugin Categories
 
@@ -190,6 +299,37 @@ AIML Dash uses [dash-mantine-components](https://www.dash-mantine-components.com
 └─────────────────────────────────────────────────────────┘
 ```
 
+## ⚙️ Configuration
+
+All settings are managed via Pydantic with environment variable overrides using the `AIML_DASH_` prefix. You can also use a `.env` file in the project root.
+
+| Environment Variable | Default | Description |
+|---|---|---|
+| `AIML_DASH_HOST` | `127.0.0.1` | Bind address |
+| `AIML_DASH_PORT` | `8050` | Port to listen on |
+| `AIML_DASH_DEBUG` | `false` | Enable debug mode + hot reload |
+
+Example `.env`:
+
+```env
+AIML_DASH_HOST=0.0.0.0
+AIML_DASH_PORT=8000
+AIML_DASH_DEBUG=true
+```
+
+## 💾 State Management
+
+AIML Dash persists UI and data state in the browser using Dash `dcc.Store` components:
+
+| Store ID | Storage | Contents |
+|---|---|---|
+| `color-scheme-storage` | `local` | Light / dark theme preference |
+| `enabled-plugins` | `local` | Which plugins the user has enabled |
+| `app-state` | `session` | Active page, sidebar state |
+| `user-context` | `session` | Current user ID and roles |
+
+The **Project Snapshot** feature serializes all stores plus in-memory datasets to a single JSON file that can be saved and restored to reproduce any analysis workflow.
+
 ## 🤝 Contributing
 
 Contributions are welcome! To contribute:
@@ -217,8 +357,11 @@ See the [Plugin Development Guide](docs/PLUGIN_DEVELOPMENT.md) for detailed inst
 ## 🧪 Testing
 
 ```bash
-# Run all tests
+# Run all tests (recommended)
 uv run pytest
+
+# Run all tests using explicit PYTHONPATH
+PYTHONPATH=. python3 -m pytest tests/ -q
 
 # Run with coverage
 uv run pytest --cov=aiml_dash
