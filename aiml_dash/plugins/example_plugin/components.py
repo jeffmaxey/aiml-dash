@@ -27,7 +27,7 @@ def create_example_stat(label: str, value: str, icon: str, color: str = "blue") 
     icon : str
         Iconify identifier for the icon.
     color : str
-        Mantine colour used for the theme icon.
+        Mantine color used for the theme icon.
 
     Returns
     -------
@@ -75,7 +75,7 @@ def create_feature_card(title: str, description: str, icon: str, color: str = "b
     icon : str
         Iconify identifier for the icon.
     color : str
-        Mantine colour used for the theme icon.
+        Mantine color used for the theme icon.
 
     Returns
     -------

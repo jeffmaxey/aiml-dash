@@ -26,7 +26,7 @@ def create_template_card(title: str, description: str, icon: str, color: str = "
     icon : str
         Iconify identifier for the icon.
     color : str
-        Mantine colour used for the theme icon.
+        Mantine color used for the theme icon.
 
     Returns
     -------
