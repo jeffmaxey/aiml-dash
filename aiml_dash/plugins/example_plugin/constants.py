@@ -11,7 +11,7 @@ EXAMPLE_PAGE_ID = "example"
 PLUGIN_ID = "example"
 PLUGIN_NAME = "Example Plugin"
 PLUGIN_VERSION = "1.0.0"
-PLUGIN_DESCRIPTION = "Sample plugin showcasing a minimal Dash Mantine page."
+PLUGIN_DESCRIPTION = "Interactive showcase of the AIML Dash plugin architecture."
 
 # Section and ordering
 SECTION_NAME = "Plugins"
@@ -23,7 +23,7 @@ GROUP_ORDER = 2
 EXAMPLE_ICON = "carbon:apps"
 
 # Layout configuration
-CONTAINER_SIZE = "md"
+CONTAINER_SIZE = "lg"
 
 PAGE_DEFINITIONS = [
     {
@@ -34,6 +34,6 @@ PAGE_DEFINITIONS = [
         "group": GROUP_NAME,
         "order": PAGE_ORDER,
         "group_order": GROUP_ORDER,
-        "description": "Demonstration of a minimal plugin structure",
+        "description": "Interactive showcase of the AIML Dash plugin architecture",
     }
 ]

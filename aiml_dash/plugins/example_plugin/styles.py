@@ -8,3 +8,9 @@ from aiml_dash.plugins.example_plugin.constants import CONTAINER_SIZE
 
 # Layout configuration
 EXAMPLE_CONTAINER_SIZE = CONTAINER_SIZE
+
+# Shared card style for uniform height in grids
+CARD_STYLE: dict[str, str] = {"height": "100%"}
+
+# Section spacing
+SECTION_GAP = "xl"

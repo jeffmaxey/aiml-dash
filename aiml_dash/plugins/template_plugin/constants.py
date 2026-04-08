@@ -23,7 +23,7 @@ GROUP_ORDER = 1
 TEMPLATE_ICON = "carbon:template"
 
 # Layout configuration
-CONTAINER_SIZE = "md"
+CONTAINER_SIZE = "lg"
 
 PAGE_DEFINITIONS = [
     {
@@ -34,6 +34,6 @@ PAGE_DEFINITIONS = [
         "group": GROUP_NAME,
         "order": PAGE_ORDER,
         "group_order": GROUP_ORDER,
-        "description": "Template for creating new plugins",
+        "description": "Starter template for creating new plugins",
     }
 ]

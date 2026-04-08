@@ -26,6 +26,20 @@ except ImportError:
     WATCHDOG_AVAILABLE = False
     logger.warning("watchdog not available - hot-reloading disabled")
 
+    # Provide stub base class so the module is still importable when
+    # watchdog is not installed.  The concrete subclass
+    # ``PluginReloadHandler`` will never be instantiated at runtime
+    # without watchdog (``PluginHotReloader.__init__`` raises early),
+    # but defining the class must not fail at import time.
+    class FileSystemEventHandler:  # type: ignore[no-redef]
+        """Stub base class used when watchdog is not installed."""
+
+    class FileSystemEvent:  # type: ignore[no-redef]
+        """Stub event class used when watchdog is not installed."""
+
+        src_path: str = ""
+        is_directory: bool = False
+
 
 class PluginReloadHandler(FileSystemEventHandler):
     """File system event handler for plugin hot-reloading."""
@@ -190,11 +204,7 @@ def reload_plugin_module(
         # Also reload any already imported nested submodules,
         # for example pages.*.
         module_prefix = f"{module_path}."
-        modules_to_reload.update(
-            loaded_name
-            for loaded_name in sys.modules
-            if loaded_name.startswith(module_prefix)
-        )
+        modules_to_reload.update(loaded_name for loaded_name in sys.modules if loaded_name.startswith(module_prefix))
 
         # Deterministic order: deepest modules first, then lexical.
         ordered_modules = sorted(
